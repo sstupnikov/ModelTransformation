@@ -1,0 +1,56 @@
+declare IRP: set [ name: string, cik: int, bdate: string, company: string, 
+title: string, isOfficer: boolean, isDirector: boolean,
+emp: set[company: string] ];
+
+declare Positions: fmap [cik: int, company: string] 
+to set [title: string] ;
+
+declare JobChange: set [ name: string, bdate: string, apptDate: string, appointedAs: string, 
+company: string, docID: int, span: int ];
+
+
+declare Employment: fmap [ cik: int ] 
+to set [company: string, positions: set [title: string] ];
+
+declare Person: set [ name: string, cik: int, bdate: string, 
+emp: set [company: string, positions: set [title: string]] ];
+
+declare PeopleLink: set [cik: int, docID: int, span: int];
+
+declare normTitle: function string to string;
+ 
+declare normName: function string to string;
+
+declare compareName: function string, string to boolean; 
+
+insert into Positions ! [cik: i.cik, company: i.company ]
+select [ title: normTitle( i.title )  ]
+from  IRP i;
+
+
+insert into Positions ! [cik: l.cik, company: j.company]
+select [ title: normTitle (j.appointedAs) ]
+from JobChange j, PeopleLink l
+where (j.docID = l.docID) and (j.span = l.span);
+
+
+
+insert into Employment ! [ cik: L.cik ]
+select [ company: j.company,
+	positions: Positions ! [ cik: L.cik, company: j.company ] ]
+from  JobChange j, PeopleLink L
+where (j.docID = L.docID) and (j.span = L.span);
+
+insert into Person
+select [ name: i.name,cik: i.cik, bdate: i.bdate, emp: Employment ! [ cik: i.cik ] ]
+from IRP i;
+
+create link PeopleLink as
+select [ cik: p.cik, docID: j.docID, span: j.span ]
+from IRP p, JobChange j, p.emp e
+match using
+	rule1: (e.company = j.company) and (compareName(p.name, j.name) = true),
+	rule2: (normName(p.name) = normName(j.name))
+check if not(null(j.bdate))  and not(null(p.bdate)) then (j.bdate = p.bdate);
+
+

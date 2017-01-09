@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project name="HIL2AMNApply" default="all" basedir=".">
+
+	<property name="metamodelPath" value="metamodel/" />
+	<property name="hilPath" value="../org.emftext.language.HIL/metamodel/" />	
+	<property name="sourcePath" value="../Synthesis EMFText Application/PersonFusion/" />
+	<property name="targetPath" value="sample/" />
+	<property name="transformationPath" value="transformation/" />	
+	
+	<property name="sourceName" value="PersonFusion" />
+	<property name="targetName" value="${sourceName}-amn" />
+	<property name="transformationName" value="HIL2AMN" />	
+	
+	
+	<target name="all">
+		<!-- Loading metamodels -->		
+		<atl.loadModel name="AMN" metamodel="%EMF" path="${metamodelPath}AMN.ecore"/>
+		<atl.loadModel name="HIL" metamodel="%EMF" path="${hilPath}HIL.ecore"/>
+		
+		
+		<!-- Loading input model -->
+		<atl.loadModel name="${sourceName}" metamodel="HIL" path="${sourcePath}${sourceName}.xmi" />
+  
+		<atl.launch path="${transformationPath}${transformationName}.asm">
+		    <inmodel name="IN" model="${sourceName}"/>
+			<outModel name="OUT" model="${targetName}" metamodel="AMN" />
+		</atl.launch>
+
+		<atl.saveModel model="${targetName}" path="${targetPath}${targetName}.ecore"/>		
+		
+		
+		<atl.launch  path="${transformationPath}AMN2Text.asm">
+			<inmodel name="IN" model="${targetName}"/>			
+			<library name="ATL2String" path="${transformationPath}AMN2String.asm"/>
+		</atl.launch>			
+		
+
+		
+	</target>
+
+</project>

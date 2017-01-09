@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="HIL" nsURI="http://www.ibm.com/HIL/" nsPrefix="hil">
+  <eClassifiers xsi:type="ecore:EClass" name="Program">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="statement" lowerBound="1"
+        upperBound="-1" eType="#//Statement" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Statement" abstract="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Declaration" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1" eType="#//HILType/Type"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Insert" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="into" lowerBound="1" eType="#//Expression/Expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="select" lowerBound="1"
+        upperBound="-1" eType="#//LabeledExp" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fromClause" lowerBound="1"
+        upperBound="-1" eType="#//Expression/AliasedEntity" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="where" eType="#//Expression/Predicate"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CreateLink" eSuperTypes="#//Statement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="select" lowerBound="1"
+        upperBound="-1" eType="#//LabeledExp" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fromClause" lowerBound="1"
+        upperBound="-1" eType="#//Expression/AliasedEntity" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="match" upperBound="-1"
+        eType="#//NamedPredicate" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="check" upperBound="-1"
+        eType="#//IfThen" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="grouping" eType="#//Grouping"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cardinality" eType="#//Cardinality"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LabeledExp">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exp" lowerBound="1" eType="#//Expression/Expression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NamedPredicate">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="predicate" lowerBound="1"
+        eType="#//Expression/Predicate" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IfThen">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ifPred" lowerBound="1"
+        eType="#//Expression/Predicate" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="thenPred" lowerBound="1"
+        eType="#//Expression/Predicate" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Grouping">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="groupOn" lowerBound="1"
+        upperBound="-1" eType="#//Expression/Expression" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="having" lowerBound="1"
+        eType="#//Expression/Predicate" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="groupingPolicy" eType="#//GroupingPolicy"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="GroupingPolicy">
+    <eLiterals name="keep"/>
+    <eLiterals name="discard" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Cardinality">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1" eType="#//Expression/Expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1" eType="#//Expression/Expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1" eType="#//CardinalityKind"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="CardinalityKind">
+    <eLiterals name="ONE_TO_ONE" literal="one2one"/>
+    <eLiterals name="ONE_TO_MANY" value="1"/>
+    <eLiterals name="MANY_TO_ONE" value="2"/>
+  </eClassifiers>
+  <eSubpackages name="HILType" nsURI="http://www.ibm.com/HIL/Type/" nsPrefix="hil-type">
+    <eClassifiers xsi:type="ecore:EClass" name="Type" abstract="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IntType" eSuperTypes="#//HILType/Type"/>
+    <eClassifiers xsi:type="ecore:EClass" name="BooleanType" eSuperTypes="#//HILType/Type"/>
+    <eClassifiers xsi:type="ecore:EClass" name="StringType" eSuperTypes="#//HILType/Type"/>
+    <eClassifiers xsi:type="ecore:EClass" name="DoubleType" eSuperTypes="#//HILType/Type"/>
+    <eClassifiers xsi:type="ecore:EClass" name="RecordType" eSuperTypes="#//HILType/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="element" lowerBound="1"
+          upperBound="-1" eType="#//HILType/RecordElement" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RecordElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
+          eType="#//HILType/Type" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SetType" eSuperTypes="#//HILType/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
+          eType="#//HILType/Type" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="IndexType" eSuperTypes="#//HILType/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="fromType" lowerBound="1"
+          eType="#//HILType/Type" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="toType" lowerBound="1"
+          eType="#//HILType/Type" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="FunctionType" eSuperTypes="#//HILType/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="fromType" lowerBound="1"
+          upperBound="-1" eType="#//HILType/Type" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="toType" lowerBound="1"
+          eType="#//HILType/Type" containment="true"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="Expression" nsURI="http://www.ibm.com/HIL/Expression/" nsPrefix="hil-expr">
+    <eClassifiers xsi:type="ecore:EClass" name="AliasedEntity">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="alias" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="exp" lowerBound="1" eType="#//Expression/Expression"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Expression" abstract="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="IntegerLiteral" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="BooleanLiteral" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="StringLiteral" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          defaultValueLiteral="&quot;&quot;"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DoubleLiteral" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+          defaultValueLiteral="0"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Identifier" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          defaultValueLiteral=""/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="BracketExp" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="exp" lowerBound="1" eType="#//Expression/Expression"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RecordExp" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="exp" lowerBound="1" upperBound="-1"
+          eType="#//Expression/RecordExpElement" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RecordExpElement" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1"
+          eType="#//Expression/Expression" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RecordProjection" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="recordId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DomExp" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="fmapId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="LookupExp" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="indexId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="exp" lowerBound="1" eType="#//Expression/Expression"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="FunctionCallExp" eSuperTypes="#//Expression/Expression">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="functionId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" upperBound="-1"
+          eType="#//Expression/Expression" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Predicate" abstract="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="UDFBooleanFunctionCall" eSuperTypes="#//Expression/Predicate">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="functionId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" upperBound="-1"
+          eType="#//Expression/Expression" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="NotPredicate" eSuperTypes="#//Expression/Predicate">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="pred" lowerBound="1"
+          eType="#//Expression/Predicate" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="BinaryPredicate" eSuperTypes="#//Expression/Predicate">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1"
+          eType="#//Expression/Expression" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1"
+          eType="#//Expression/Expression" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="sign" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="AndPredicate" eSuperTypes="#//Expression/Predicate">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="pred" lowerBound="2"
+          upperBound="-1" eType="#//Expression/Predicate" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="BracketPredicate" eSuperTypes="#//Expression/Predicate">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="pred" lowerBound="1"
+          eType="#//Expression/Predicate" containment="true"/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>

@@ -1,0 +1,896 @@
+-- =============================================================================
+-- HIL2AMN
+-- Version 1.0
+-- Release date : 01.2017 
+-- Author : Sergey Stupnikov (sstupnikov@ipiran.ru)
+-- =============================================================================
+
+-- Atelier B 4.2.1 compatible
+
+-- HIL operation kinds: 
+-- 1. create
+-- 2. insert into collection
+-- 3. insert into index
+
+
+module HIL2AMN;
+create OUT : AMN from IN : HIL;
+
+
+-- NOT COVERED: 
+-- 1. Extraction of typing predicate from CREATE LINK. By now collection to be created 
+--    should be declared explicitly as others.
+-- 2. '?' notation in declarations, statements should create full records for collections
+-- 3. dom expression
+-- 4. block, score, group on, cardinality,  in create link
+
+
+
+-----------------------
+-- GLOBAL VARIABLES
+--
+-- Used to produce SELECT predicates reflecting order executing operations
+-----------------------
+
+-- Maps operation name into set of from collections
+helper def: fromCollections: Map(String, Set(String)) =
+	Map{}
+;
+
+-- Maps operation name into set of into collections
+helper def: intoCollections: Map(String, Set(String)) =
+	Map{}
+;
+
+-- Maps operation name into set of preceding operation names
+helper def: precedingOperations: Map(String, Set(String)) =
+	Map{}
+;
+
+
+-----------------------
+-- Rules
+-----------------------
+rule Program2Refinement{
+	from p: HIL!Program	
+	using{
+		declarations: Set(HIL!Declaration) = p.statement->select(st | st.oclIsKindOf(HIL!Declaration));
+		functions: Set(HIL!Declaration) = declarations->select(st | st.type.oclIsKindOf(HIL!FunctionType));
+		nonFunctions: Set(HIL!Declaration) = declarations->select(st | not st.type.oclIsKindOf(HIL!FunctionType));
+		createLinks: Set(HIL!CreateLink) = p.statement->select(st | st.oclIsKindOf(HIL!CreateLink));
+		inserts: Set(HIL!insert) = p.statement->select(st | st.oclIsKindOf(HIL!Insert));
+
+		precOps: Set(String) = Set{};
+	}
+	to 
+		am: AMN!AbstractMachine(
+			name <- 'HILProgramSemanticsAM',
+			operations <- p.statement->collect(st | thisModule.resolveTemp(st, 'emptyBodyOperation'))
+		),
+		ref: AMN!Refinement(
+			name <- 'HILProgramSemantics',
+			
+			refines <- am,
+			
+			abstractConstants <- functions->collect(f | f.name),						
+			properties <- functions->collect(f | thisModule.resolveTemp(f, 'typing')),
+			
+			abstractVariables <- Set{'state'},
+			abstractVariables <- nonFunctions->collect(d | d.name),
+			abstractVariables <- createLinks->collect(cl | cl.name),
+			
+			invariant <- nonFunctions->collect(f | thisModule.resolveTemp(f, 'typing')),
+			
+			invariant <- stateTyping,			
+			
+			initialization <- nonFunctions->collect(d | thisModule.resolveTemp(d, 'init')),
+			initialization <- stateInit,
+			
+			operations <- p.statement->collect(st | thisModule.resolveTemp(st, 'op'))
+		),
+		--For state invariant
+		stateTyping: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{stateVarInv, stateStruct}
+		),
+		stateVarInv: AMN!Variable(name <- 'state'),
+		stateStruct: AMN!StructType(
+			element <- createLinks->collect(d | thisModule.resolveTemp(d, 'stateTypeElm')),
+			element <- inserts->collect(d | thisModule.resolveTemp(d, 'stateTypeElm'))
+		),
+		-- For state init
+		stateInit: AMN!BecomesEqual(
+			leftExpression <- stateVarInit,
+			rightExpression <- stateInitValue
+		),
+		stateVarInit: AMN!Variable(name <- 'state'),
+		stateInitValue: AMN!RecordValue(
+			element <- createLinks->collect(d | thisModule.resolveTemp(d, 'stateInitElement')),
+			element <- inserts->collect(d | thisModule.resolveTemp(d, 'stateInitElement'))
+		)
+		
+	do{
+		-- Init from and into collections 
+		for(nonDecl in p.statement->select(st | st.oclIsKindOf(HIL!CreateLink) or st.oclIsKindOf(HIL!Insert))){
+			-- Extract from collections
+			thisModule.fromCollections <- 
+				thisModule.fromCollections->including(nonDecl.createStateElementName, 
+					nonDecl.fromClause->select(ae | ae.exp.oclIsKindOf(HIL!Identifier))->					
+					collect(ae | ae.exp.value)->
+					union(nonDecl.select->iterate(e; acc: Set(String) = Set{} | acc->union(e.getUsedIndexNames) ))
+				);												
+			
+			thisModule.debug('used index names');
+			thisModule.debug(nonDecl.select->iterate(e; acc: Set(String) = Set{} | acc->union(e.getUsedIndexNames) ));
+			
+			-- Extract into collections
+			if(nonDecl.oclIsKindOf(HIL!CreateLink)){
+				thisModule.intoCollections <- 
+					thisModule.intoCollections->including(nonDecl.createStateElementName, Set{nonDecl.name});
+			}
+			if(nonDecl.oclIsKindOf(HIL!Insert)){
+				if(nonDecl.into.oclIsKindOf(HIL!Identifier)){
+					thisModule.intoCollections <- 
+						thisModule.intoCollections->including(nonDecl.createStateElementName, Set{nonDecl.into.value});
+				}
+				if(nonDecl.into.oclIsKindOf(HIL!LookupExp)){
+					thisModule.intoCollections <- 
+						thisModule.intoCollections->including(nonDecl.createStateElementName, Set{nonDecl.into.indexId});
+				}
+			}											
+		}		
+
+		thisModule.debug('from collections');
+		thisModule.debug(thisModule.fromCollections);
+		
+		thisModule.debug('into collections');
+		thisModule.debug(thisModule.intoCollections);		
+		
+		-- Init preceding operation map
+		for(nonDecl in p.statement->select(st | st.oclIsKindOf(HIL!CreateLink) or st.oclIsKindOf(HIL!Insert))){
+			precOps <- Set{};
+						
+			for(nonDecl1 in p.statement->select(st | st.oclIsKindOf(HIL!CreateLink) or st.oclIsKindOf(HIL!Insert))){
+				for(coll in thisModule.fromCollections->get(nonDecl.createStateElementName)){
+					if(thisModule.intoCollections->get(nonDecl1.createStateElementName)->includes(coll)){
+						precOps <- precOps.including(nonDecl1.createStateElementName);
+					}
+				}
+			}		
+		
+			thisModule.precedingOperations <- thisModule.precedingOperations->
+				including(nonDecl.createStateElementName, precOps);
+		}		
+						
+		thisModule.debug('preceding Operations');
+		thisModule.debug(thisModule.precedingOperations);	
+		
+		-- Creating predicates for SELECT clauses (operation ordering)
+		for(nonDecl in p.statement->select(st | st.oclIsKindOf(HIL!CreateLink) or st.oclIsKindOf(HIL!Insert))){
+			if(thisModule.precedingOperations->getKeys()->includes(nonDecl.createStateElementName)){
+				for(opName in thisModule.precedingOperations->get(nonDecl.createStateElementName)){
+					thisModule.CreateStateCheckPredicate(thisModule.resolveTemp(nonDecl, 'selectSubst'), opName);					
+				}
+			}
+			
+		}
+	}
+}
+
+rule Statement{
+	from st: HIL!Statement(st.oclIsKindOf(HIL!CreateLink) or st.oclIsKindOf(HIL!Insert))
+	using{
+		collectionName: String = 
+			if st.oclIsKindOf(HIL!CreateLink) then st.name else 
+				if st.into.oclIsKindOf(HIL!Identifier) then st.into.value else 
+					if st.into.oclIsKindOf(HIL!LookupExp) then st.into.indexId else 'unknownVar' endif
+				endif
+			endif; 
+	}
+	to 		
+		-- Init - intended for CreateLink only
+		init: AMN!BecomesEqual(
+			leftExpression <- varInit,
+			rightExpression <- emptySet
+		),
+		varInit: AMN!Variable(name <- if st.oclIsKindOf(HIL!CreateLink) then st.name else 'insert' endif),
+		emptySet: AMN!SetValue,		 
+				
+		-- For state invariant
+		stateTypeElm: AMN!StructTypeElement(
+			name <- st.createStateElementName,
+			type <- booleanType
+		),
+		booleanType: AMN!NamedConstant(name <- 'BOOL'),
+		
+		-- For state init
+		stateInitElement: AMN!RecordValueElement(
+			name <- st.createStateElementName,
+			value <- falseConstant
+		),
+		falseConstant: AMN!NamedConstant(name <- 'FALSE'),
+		
+		
+		-- Operation for Abstract Machine 
+		emptyBodyOperation: AMN!Operation (
+			name <- st.createStatementOpName,
+			substitution <- skip
+		),
+		skip: AMN!Identity,
+
+		-- Operation for refinement
+		op: AMN!Operation(
+			name <- st.createStatementOpName,
+			substitution <- selectSubst
+		),
+		selectSubst: AMN!Select(
+			thenPart <-  seqSubst
+		),		
+
+		seqSubst: AMN!SequenceSubstitution(
+			substitution <- Sequence{insertSubst, stateSetSubst}
+		),						
+		stateSetSubst: AMN!BecomesEqual(
+			leftExpression <- stateVarLookup,
+			rightExpression <- trueConst
+		),
+		stateVarLookup: AMN!RecordLookup(name <- 'state', field <- st.createStateElementName),
+		trueConst: AMN!NamedConstant(name <- 'TRUE'),
+		insertSubst:  AMN!BecomesEqual(
+			leftExpression <- Set{collVar} 
+		),
+		collVar: AMN!Variable(name <- collectionName),
+		
+		-- Collection term to be inserted into collection
+		collection: AMN!SetComprehension(
+			variable <- Set{'rr'},
+			predicate <- Set{existsPred}
+		),
+		existsPred: AMN!ExistentialPredicate(
+			variable <- st.fromClause->collect(ae | ae.alias.toVarName),
+			predicate <- Set{conjunction}
+		),
+		conjunction: AMN!Conjunction(
+			predicate <- st.fromClause->collect(ae | thisModule.resolveTemp(ae, 'typing')),
+			predicate <- Set{recordCondition}
+		),
+		record: AMN!RecordValue,
+		recordCondition: AMN!AtomicPredicate(
+			sign <- '=',
+			expression <- Set{recordVar}
+		),
+		recordVar: AMN!Variable(name <- 'rr'),				
+		
+		-- Outer collection term for insert into index case 
+		outerCollection: AMN!SetComprehension(
+			variable <- Set{'rr1'},
+			predicate <- Set{outerExistsPred}
+		),
+		outerExistsPred: AMN!ExistentialPredicate(
+			variable <- st.fromClause->collect(ae | ae.alias.toVarNameCopy),
+			predicate <- Set{outerConjunction}
+		),
+		outerConjunction: AMN!Conjunction(
+			predicate <- st.fromClause->collect(ae | thisModule.resolveTemp(ae, 'typingCopy')),
+			predicate <- Set{outerCondition}
+		),
+		outerCondition: AMN!AtomicPredicate(
+			sign <- '=',
+			expression <- Sequence{outerRecordVar, map}
+		),
+		outerRecordVar: AMN!Variable(name <- 'rr1'),		
+		map: AMN!BinaryOperator(
+			sign <- '|->'
+		),				
+		outerRecord: AMN!RecordValue,
+		
+		-- Match clause
+		matchDisjunction: AMN!Disjunction,
+		
+		-- Check Conjunction
+		checkConjunction: AMN!Conjunction
+		
+	do{
+		-- Create predicate for collection comprehension			
+		
+		-- If st is create link or insert into collection (not index) then 
+		-- rr is just a record
+		if(st.oclIsKindOf(HIL!CreateLink)){
+			insertSubst.rightExpression <- Set{collection};
+			record.element <- st.select->collect(le | thisModule.resolveTemp(le, 'recElm'));
+			recordCondition.expression <- Set{record};
+			
+			-- Match rules
+			if(st.match->size() > 0){
+				conjunction.predicate <- Set{matchDisjunction};
+				matchDisjunction.predicate <- st.match->collect(np | thisModule.resolveTemp(np.predicate, 'pred'));
+			}
+			
+			-- Check rules
+			if(st.check->size() > 0){
+				conjunction.predicate <- Set{checkConjunction};
+				checkConjunction.predicate <- st.check->collect(it | thisModule.resolveTemp(it, 'pred'));
+			}
+		}
+		-- st is insert into collection (not index)
+		if(st.oclIsKindOf(HIL!Insert)){
+			if(st.into.oclIsKindOf(HIL!Identifier)){				
+				insertSubst.rightExpression <- Set{thisModule.createUnionOperator(st)};
+				
+				record.element <- st.select->collect(le | thisModule.resolveTemp(le, 'recElm'));
+				recordCondition.expression <- Set{record};	
+				
+				conjunction.predicate <- Set{thisModule.resolveTemp(st.where, 'pred')};
+			}
+		}		
+
+		-- If st is insert into index then outer collextion with exists quantifier is required, 
+		-- rr1 is a map
+		if(st.oclIsKindOf(HIL!Insert)){
+			if(st.into.oclIsKindOf(HIL!LookupExp)){				
+				insertSubst.rightExpression <- Set{thisModule.createUnionOperator(st)};				
+				
+				map.expression <- Sequence{thisModule.RecordExpCopyLazy(st.into.exp), collection};
+				
+				record.element <- st.select->collect(le | thisModule.resolveTemp(le, 'recElm'));
+				
+				conjunction.predicate <- Set{thisModule.RecordExp2ConjunctionLazy(st.into.exp)};				
+				
+				recordCondition.expression <- Set{record};
+				
+				conjunction.predicate <- Set{thisModule.resolveTemp(st.where, 'pred')};													
+			}
+		}		
+		
+		
+	}
+}
+
+unique lazy rule createUnionOperator{
+	from st: HIL!Statement(st.oclIsKindOf(HIL!Insert))
+	using{
+		collectionName: String = 
+			if st.oclIsKindOf(HIL!CreateLink) then st.name else 
+				if st.into.oclIsKindOf(HIL!Identifier) then st.into.value else 
+					if st.into.oclIsKindOf(HIL!LookupExp) then st.into.indexId else 'unknownVar' endif
+				endif
+			endif; 
+	}
+	to 
+		union: AMN!BinaryOperator(
+			sign <- '\\/',
+			expression <- Sequence{collVar}
+		),
+		collVar: AMN!Variable(name <- collectionName)
+	do{
+		-- Insertion into collection (not index), st.collection is inserted into union 	
+		if(st.into.oclIsKindOf(HIL!Identifier)){
+			union.expression <- Set{thisModule.resolveTemp(st, 'collection')};
+		}
+		if(st.into.oclIsKindOf(HIL!LookupExp)){
+			union.expression <- Set{thisModule.resolveTemp(st, 'outerCollection')};
+		}
+	}
+}
+
+rule AliasedEntity{
+	from ae: HIL!AliasedEntity
+	to
+		typing: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{aliasVar, thisModule.resolveTemp(ae.exp, 'exp')}
+		),
+		aliasVar: AMN!Variable(name <- ae.alias.toVarName),
+		
+		typingCopy: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{aliasVarCopy, thisModule.resolveTemp(ae.exp, 'expCopy')}
+		),
+		aliasVarCopy: AMN!Variable(name <- ae.alias.toVarNameCopy)
+		
+}
+
+rule Identifier{
+	from id: HIL!Identifier
+	to 
+		exp: AMN!NamedConstant(name <- id.value),
+		expCopy: AMN!NamedConstant(name <- id.value)
+}
+
+rule RecordProjection{
+	from rp: HIL!RecordProjection
+	to 
+		exp: AMN!RecordLookup(name <- rp.recordId.toVarName, field <- rp.elementId),
+		expCopy: AMN!RecordLookup(name <- rp.recordId.toVarName, field <- rp.elementId)
+}
+
+rule LabeledExp{
+	from lexp: HIL!LabeledExp
+	to 
+		recElm: AMN!RecordValueElement(
+			name <- lexp.label.toVarName,
+			value <- thisModule.resolveTemp(lexp.exp, 'exp')
+		)		
+}
+
+rule IntegerLiteral{
+	from il: HIL!IntegerLiteral
+	to
+		exp: AMN!IntegerValue(value <- il.value)
+}
+
+rule BooleanLiteral{
+	from bl: HIL!BooleanLiteral
+	to
+		exp: AMN!BooleanValue(value <- bl.value)
+}
+
+rule StringLiteral{
+	from sl: HIL!StringLiteral
+	to
+		exp: AMN!BooleanValue(value <- sl.value)
+}
+
+rule BracketExp{
+	from be: HIL!BracketExp
+	to
+		exp: AMN!BracketedExp(expression <- thisModule.resolveTemp(be.exp, 'exp'))
+}
+
+rule FunctionCallExp{
+	from fce: HIL!FunctionCallExp
+	to 
+		exp: AMN!FunctionalExpression(
+			sign <- fce.functionId,
+			expression <- fce.parameter->collect(p | thisModule.resolveTemp(p, 'exp'))
+		)
+}
+
+rule LookupExp{
+	from lke: HIL!LookupExp
+	to
+		exp: AMN!FunctionalExpression(
+			sign <- lke.indexId,
+			expression <- Set{thisModule.resolveTemp(lke.exp, 'exp')}
+		) 
+}
+
+rule RecordExp{
+	from re: HIL!RecordExp
+	to
+		exp: AMN!RecordValue(
+			element <- re.exp->collect(e | thisModule.resolveTemp(e, 'exp') )
+		)
+}
+
+rule RecordExpElement{
+	from relm: HIL!RecordExpElement
+	to
+		exp: AMN!RecordValueElement(
+			name <- relm.label,
+			value <- thisModule.resolveTemp(relm.value, 'exp')
+		)
+}
+
+--------------------
+-- Predicates
+--------------------
+rule BracketPredicate{
+	from bp: HIL!BracketPredicate
+	to
+		pred: AMN!Bracketed(
+			predicate <- Set{thisModule.resolveTemp(bp.pred, 'pred')}
+		)
+}
+
+rule NotPredicate{
+	from np: HIL!NotPredicate
+	to
+		pred: AMN!Negation(
+			predicate <- Set{thisModule.resolveTemp(np.pred, 'pred')}
+		)
+}
+
+rule BinaryPredicate{
+	from bp: HIL!BinaryPredicate
+	to
+		pred: AMN!AtomicPredicate(
+			sign <- bp.sign,
+			expression <- Sequence{thisModule.resolveTemp(bp.left, 'exp'), thisModule.resolveTemp(bp.right, 'exp')}
+		)
+}
+
+rule AndPredicate{
+	from ap: HIL!AndPredicate
+	to
+		pred: AMN!Conjunction(
+			predicate <- ap.pred->collect(p | thisModule.resolveTemp(p, 'pred'))
+		)
+}
+
+-- null Boolean function
+rule UDFBooleanFunctionCall{
+	from fc: HIL!UDFBooleanFunctionCall(fc.functionId = 'null' and fc.parameter->size()=1)
+	to 
+		pred: AMN!AtomicPredicate(
+			sign <- '=',
+			expression <- Set{thisModule.resolveTemp(fc.parameter->asSequence()->at(1), 'exp'), nullConst}
+		),
+		nullConst: AMN!NamedConstant(name <- 'null_string')
+}
+
+rule IfThen{
+	from it: HIL!IfThen
+	to
+		pred: AMN!Implication(
+			predicate <- Sequence{thisModule.resolveTemp(it.ifPred, 'pred'), thisModule.resolveTemp(it.thenPred, 'pred')}
+		)
+}
+
+-----------------------------------
+-- Lazy Rules 
+-- 
+-- intended to get RecordExp from insert into lookup expression
+--
+-- Rules marked with 'Copy' produces terms with aux variables like vv1
+-----------------------------------
+
+lazy rule RecordExpLazy{
+	from re: HIL!RecordExp
+	to
+		exp: AMN!RecordValue(
+			element <- re.exp->collect(e | thisModule.RecordExpElementLazy(e) )
+		)
+}
+
+lazy rule RecordExpCopyLazy{
+	from re: HIL!RecordExp
+	to
+		exp: AMN!RecordValue(
+			element <- re.exp->collect(e | thisModule.RecordExpElementCopyLazy(e) )
+		)
+}
+
+lazy rule RecordExpElementLazy{
+	from relm: HIL!RecordExpElement
+	to
+		exp: AMN!RecordValueElement(
+			name <- relm.label
+		)
+	do{
+		if(relm.value.oclIsKindOf(HIL!FunctionCallExp)){
+			exp.value <- thisModule.FunctionCallExpLazy(relm.value);
+		}
+		if(relm.value.oclIsKindOf(HIL!LookupExp)){
+			exp.value <- thisModule.LookupExpLazy(relm.value);
+		}
+		if(relm.value.oclIsKindOf(HIL!RecordProjection)){
+			exp.value <- thisModule.RecordProjectionLazy(relm.value);
+		}	
+		if(relm.value.oclIsKindOf(HIL!RecordExp)){
+			exp.value <- thisModule.RecordExpLazy(relm.value);
+		}			
+	}
+}
+
+lazy rule RecordExpElementCopyLazy{
+	from relm: HIL!RecordExpElement
+	to
+		exp: AMN!RecordValueElement(
+			name <- relm.label
+		)
+	do{
+		if(relm.value.oclIsKindOf(HIL!FunctionCallExp)){
+			exp.value <- thisModule.FunctionCallExpCopyLazy(relm.value);
+		}
+		if(relm.value.oclIsKindOf(HIL!LookupExp)){
+			exp.value <- thisModule.LookupExpCopyLazy(relm.value);
+		}
+		if(relm.value.oclIsKindOf(HIL!RecordProjection)){
+			exp.value <- thisModule.RecordProjectionCopyLazy(relm.value);
+		}	
+		if(relm.value.oclIsKindOf(HIL!RecordExp)){
+			exp.value <- thisModule.RecordExpCopyLazy(relm.value);
+		}			
+	}
+}
+
+
+lazy rule FunctionCallExpLazy{
+	from fce: HIL!FunctionCallExp
+	to 
+		exp: AMN!FunctionalExpression(
+			sign <- fce.functionId
+		)
+	do{
+		
+		for(p in fce.parameter){
+			if(p.oclIsKindOf(HIL!FunctionCallExp)){
+				exp.value <- thisModule.FunctionCallExpLazy(p);
+			}
+			if(p.oclIsKindOf(HIL!LookupExp)){
+				exp.value <- thisModule.LookupExpLazy(p);
+			}
+			if(p.oclIsKindOf(HIL!RecordProjection)){
+				exp.value <- thisModule.RecordProjectionLazy(p);
+			}	
+			if(p.oclIsKindOf(HIL!RecordExp)){
+				exp.value <- thisModule.RecordExpLazy(p);
+			}
+		}
+	}
+}
+
+lazy rule FunctionCallExpCopyLazy{
+	from fce: HIL!FunctionCallExp
+	to 
+		exp: AMN!FunctionalExpression(
+			sign <- fce.functionId
+		)
+	do{
+		
+		for(p in fce.parameter){
+			if(p.oclIsKindOf(HIL!FunctionCallExp)){
+				exp.value <- thisModule.FunctionCallExpCopyLazy(p);
+			}
+			if(p.oclIsKindOf(HIL!LookupExp)){
+				exp.value <- thisModule.LookupExpCopyLazy(p);
+			}
+			if(p.oclIsKindOf(HIL!RecordProjection)){
+				exp.value <- thisModule.RecordProjectionCopyLazy(p);
+			}	
+			if(p.oclIsKindOf(HIL!RecordExp)){
+				exp.value <- thisModule.RecordExpCopyLazy(p);
+			}
+		}
+	}
+}
+
+
+lazy rule LookupExpLazy{
+	from lke: HIL!LookupExp
+	to
+		exp: AMN!FunctionalExpression(
+			sign <- lke.indexId,
+			expression <- Set{thisModule.RecordExpLazy(lke.exp)}
+		) 
+}
+
+lazy rule LookupExpCopyLazy{
+	from lke: HIL!LookupExp
+	to
+		exp: AMN!FunctionalExpression(
+			sign <- lke.indexId,
+			expression <- Set{thisModule.RecordExpCopyLazy(lke.exp)}
+		) 
+}
+
+lazy rule RecordProjectionLazy{
+	from rp: HIL!RecordProjection
+	to 
+		exp: AMN!RecordLookup(name <- rp.recordId.toVarName, field <- rp.elementId)
+}
+
+lazy rule RecordProjectionCopyLazy{
+	from rp: HIL!RecordProjection
+	to 
+		exp: AMN!RecordLookup(name <- rp.recordId.toVarNameCopy, field <- rp.elementId)
+}
+
+
+-- Rule to produce from record like [cik: l.cik, company: j.company]
+-- a conjunction for inner existential predicate (case of insert into index)
+-- The conjunction looks like
+-- (jj1'company = jj'company & ll1'cik = ll'cik)
+lazy rule RecordExp2ConjunctionLazy{
+	from re: HIL!RecordExp
+	to
+		eqPredConj: AMN!Conjunction(
+			predicate <- re.exp->collect(e | thisModule.RecordExpElement2EqualityLazy(e)) 
+		)
+}
+
+lazy rule RecordExpElement2EqualityLazy{
+	from relm: HIL!RecordExpElement
+	to
+		pred: AMN!AtomicPredicate(
+			sign <- '='
+		)
+	do{
+		if(relm.value.oclIsKindOf(HIL!FunctionCallExp)){			
+			pred.expression <- Set{thisModule.FunctionCallExpLazy(relm.value),  thisModule.FunctionCallExpCopyLazy(relm.value)};
+		}
+		if(relm.value.oclIsKindOf(HIL!LookupExp)){
+			pred.expression <- Set{thisModule.LookupExpLazy(relm.value),  thisModule.LookupExpCopyLazy(relm.value)};
+		}
+		if(relm.value.oclIsKindOf(HIL!RecordProjection)){
+			pred.expression <- Set{thisModule.RecordProjectionLazy(relm.value),  thisModule.RecordProjectionCopyLazy(relm.value)};
+		}	
+		if(relm.value.oclIsKindOf(HIL!RecordExp)){
+			pred.expression <- Set{thisModule.RecordExpLazy(relm.value),  thisModule.RecordExpCopyLazy(relm.value)};
+		}			
+	}
+}
+
+-----------------------------------
+-- Declaration Rules 
+-----------------------------------
+
+rule Declaration{
+	from st: HIL!Declaration
+	to 
+		typing: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{nc, thisModule.resolveTemp(st.type, 'exp')}
+		),
+		nc: AMN!NamedConstant(
+			name <- st.name
+		),
+		init: AMN!BecomesEqual(
+			leftExpression <- varInit,
+			rightExpression <- emrtySet
+		),
+		varInit: AMN!Variable(name <- st.name),
+		emrtySet: AMN!SetValue		 
+}
+
+rule StringType2Expression{
+	from int: HIL!StringType
+	to 	exp: AMN!NamedConstant(name <- 'STRING_TYPE')
+}
+
+
+rule IntType2Expression{
+	from int: HIL!IntType
+	to 	exp: AMN!NamedConstant(name <- 'INT')
+}
+
+rule BooleanType2Expression{
+	from bool: HIL!BooleanType
+	to 	exp: AMN!NamedConstant(name <- 'BOOL')
+}
+
+rule FunctionType2Expression{
+	from ft: HIL!FunctionType
+	to
+		exp:  AMN!BinaryOperator(
+			sign <- '-->',
+			expression <- Sequence{fromExp, thisModule.resolveTemp(ft.toType, 'exp')}
+		),
+		fromExp: AMN!BinaryOperator(
+			sign <- '*',
+			expression <- Sequence{ft.fromType}
+		)
+} 
+
+rule IndexType2Expression{
+	from it: HIL!IndexType
+	to
+		exp:  AMN!BinaryOperator(
+			sign <- '+->',
+			expression <- Sequence{it.fromType, it.toType}
+		)
+} 
+
+rule SetType2Expression{
+	from st: HIL!SetType
+	to
+		exp: AMN!FunctionalExpression(
+			sign <- 'POW',
+			expression <- Set{st.type}
+		)
+} 
+
+rule RecordType2Expression{
+	from rt: HIL!RecordType
+	to
+		exp:  AMN!StructType(
+			element <- rt.element->collect(elm | thisModule.resolveTemp(elm, 'exp')) 
+		)
+} 
+
+rule RecordElement2Expression{
+	from rte: HIL!RecordElement
+	to exp: AMN!StructTypeElement(
+		name <- rte.label,
+		type <- rte.type
+	)
+}
+
+
+-----------------------------------
+-- Creation predicates for SELECT clause (operation ordering) 
+-----------------------------------
+rule CreateStateCheckPredicate(selectSubst: AMN!Select, precedingOperationName: String){
+	to 
+		pred: AMN!AtomicPredicate(
+			sign <- '=',
+			expression <- Sequence{stateConstant, trueConstant}
+		),
+		trueConstant: AMN!NamedConstant(
+			name <- 'TRUE'
+		),
+		stateConstant: AMN!NamedConstant(
+			name <- 'state\'' + precedingOperationName
+		)
+	do{
+		selectSubst.select <- Set{pred};	
+	}
+}
+
+
+-----------------------------------
+-- Helpers
+--
+-- Aimed to get used index names from LabeledExp (select clause)   
+-----------------------------------
+helper context HIL!LabeledExp def: getUsedIndexNames: Set(String) = 
+	self.exp.getUsedIndexNames
+;
+
+helper context HIL!RecordProjection def: getUsedIndexNames: Set(String) = 
+	Set{}
+;
+
+helper context HIL!FunctionCallExp def: getUsedIndexNames: Set(String) = 
+	Set{}
+;
+
+helper context HIL!LookupExp def: getUsedIndexNames: Set(String) = 
+	self.exp.getUsedIndexNames->including(self.indexId)
+;
+
+helper context HIL!RecordExp def: getUsedIndexNames: Set(String) = 
+	self.exp->iterate(e; acc: Set(String) = Set{} | acc->union(e.getUsedIndexNames) )
+;
+
+helper context HIL!RecordExpElement def: getUsedIndexNames: Set(String) =
+	self.value.getUsedIndexNames
+;
+
+-----------------------------------
+-- Helpers
+-----------------------------------
+
+helper context HIL!CreateLink def: createStatementOpName: String =
+	'create' + self.name 
+; 
+
+helper context HIL!CreateLink def: createStateElementName: String =
+	self.name + 'Created' 
+; 
+
+helper context HIL!Insert def: createStatementOpName: String =
+	'insertInto' + self.into.toName +  'From' + self.getFromNames
+; 
+
+helper context HIL!Insert def: getFromNames: String = 
+	self.fromClause->iterate(i; acc : String = '' | acc + i.exp.toName)
+;
+
+helper context HIL!Insert def: createStateElementName: String =
+	self.into.toName +  'From' + self.getFromNames + 'Inserted'
+; 
+
+
+helper context HIL!Expression def: toName: String = 
+	'ExpressionStub'
+;
+
+helper context HIL!LookupExp def: toName: String = 
+	self.indexId
+;
+
+helper context HIL!Identifier def: toName: String =
+	self.value
+;
+
+-- If id is 1-letter, turn it into 2-letter, remain the same otherwise 
+helper context String def: toVarName: String = 
+	if self.size() < 2 then (self + self) else self endif
+;
+
+-- Name for additional copy of variable like 'vv1'
+helper context String def: toVarNameCopy: String = 
+	if self.size() < 2 then (self + self) else self endif + '1'
+;

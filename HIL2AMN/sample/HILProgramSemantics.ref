@@ -1,0 +1,171 @@
+REFINEMENT HILProgramSemantics
+
+REFINES HILProgramSemanticsAM
+
+ABSTRACT_CONSTANTS
+	normTitle,
+	normName,
+	compareName
+
+PROPERTIES
+	normTitle : ((STRING_TYPE) --> STRING_TYPE) &
+	normName : ((STRING_TYPE) --> STRING_TYPE) &
+	compareName : ((STRING_TYPE * STRING_TYPE) --> BOOL)
+
+VARIABLES
+	state,
+	IRP,
+	Positions,
+	JobChange,
+	Employment,
+	Person,
+	PeopleLink
+
+INVARIANT
+	IRP : POW(struct(
+			name: STRING_TYPE,
+			cik: INT,
+			bdate: STRING_TYPE,
+			company: STRING_TYPE,
+			title: STRING_TYPE,
+			isOfficer: BOOL,
+			isDirector: BOOL,
+			emp: POW(struct(
+					company: STRING_TYPE
+					))
+			)) &
+	Positions : (struct(
+		cik: INT,
+		company: STRING_TYPE
+		) +-> POW(struct(
+			title: STRING_TYPE
+			))) &
+	JobChange : POW(struct(
+			name: STRING_TYPE,
+			bdate: STRING_TYPE,
+			apptDate: STRING_TYPE,
+			appointedAs: STRING_TYPE,
+			company: STRING_TYPE,
+			docID: INT,
+			span: INT
+			)) &
+	Employment : (struct(
+		cik: INT
+		) +-> POW(struct(
+			company: STRING_TYPE,
+			positions: POW(struct(
+					title: STRING_TYPE
+					))
+			))) &
+	Person : POW(struct(
+			name: STRING_TYPE,
+			cik: INT,
+			bdate: STRING_TYPE,
+			emp: POW(struct(
+					company: STRING_TYPE,
+					positions: POW(struct(
+							title: STRING_TYPE
+							))
+					))
+			)) &
+	PeopleLink : POW(struct(
+			cik: INT,
+			docID: INT,
+			span: INT
+			)) &
+	state : struct(
+		PeopleLinkCreated: BOOL,
+		PositionsFromIRPInserted: BOOL,
+		PositionsFromJobChangePeopleLinkInserted: BOOL,
+		EmploymentFromJobChangePeopleLinkInserted: BOOL,
+		PersonFromIRPInserted: BOOL
+		)
+
+INITIALISATION
+	IRP := {}
+	||
+	Positions := {}
+	||
+	JobChange := {}
+	||
+	Employment := {}
+	||
+	Person := {}
+	||
+	PeopleLink := {}
+	||
+	state := rec(PeopleLinkCreated: FALSE, PositionsFromIRPInserted: FALSE, PositionsFromJobChangePeopleLinkInserted: FALSE, EmploymentFromJobChangePeopleLinkInserted: FALSE, PersonFromIRPInserted: FALSE)
+
+OPERATIONS
+	insertIntoPositionsFromIRP = 
+	SELECT
+		TRUE = TRUE
+	THEN
+		Positions := (Positions \/ {rr1 | #(ii1).(ii1 : IRP &
+				rr1 = (rec(cik: ii1'cik, company: ii1'company) |-> {rr | #(ii).(ii : IRP &
+						rr = rec(title: normTitle(ii'title)) &
+						ii'cik = ii1'cik &
+						ii'company = ii1'company)}))});
+		state'PositionsFromIRPInserted := TRUE
+	END;
+
+	insertIntoPositionsFromJobChangePeopleLink = 
+	SELECT
+		state'PeopleLinkCreated = TRUE
+	THEN
+		Positions := (Positions \/ {rr1 | #(jj1, ll1).(jj1 : JobChange &
+				ll1 : PeopleLink &
+				rr1 = (rec(cik: ll1'cik, company: jj1'company) |-> {rr | #(jj, ll).(jj : JobChange &
+						ll : PeopleLink &
+						rr = rec(title: normTitle(jj'appointedAs)) &
+						ll'cik = ll1'cik &
+						jj1'company = jj'company &
+						jj'docID = ll'docID &
+						jj'span = ll'span)}))});
+		state'PositionsFromJobChangePeopleLinkInserted := TRUE
+	END;
+
+	insertIntoEmploymentFromJobChangePeopleLink = 
+	SELECT
+		state'PeopleLinkCreated = TRUE &
+		state'PositionsFromJobChangePeopleLinkInserted = TRUE &
+		state'PositionsFromIRPInserted = TRUE
+	THEN
+		Employment := (Employment \/ {rr1 | #(jj1, LL1).(jj1 : JobChange &
+				LL1 : PeopleLink &
+				rr1 = (rec(cik: LL1'cik) |-> {rr | #(jj, LL).(jj : JobChange &
+						LL : PeopleLink &
+						rr = rec(company: jj'company, positions: Positions(rec(cik: LL'cik, company: jj'company))) &
+						LL'cik = LL1'cik &
+						jj'docID = LL'docID &
+						jj'span = LL'span)}))});
+		state'EmploymentFromJobChangePeopleLinkInserted := TRUE
+	END;
+
+	insertIntoPersonFromIRP = 
+	SELECT
+		state'EmploymentFromJobChangePeopleLinkInserted = TRUE
+	THEN
+		Person := (Person \/ {rr | #(ii).(ii : IRP &
+				rr = rec(name: ii'name, cik: ii'cik, bdate: ii'bdate, emp: Employment(rec(cik: ii'cik))))});
+		state'PersonFromIRPInserted := TRUE
+	END;
+
+	createPeopleLink = 
+	SELECT
+		TRUE = TRUE
+	THEN
+		PeopleLink := {rr | #(pp, jj, ee).(pp : IRP &
+				jj : JobChange &
+				ee : pp'emp &
+				rr = rec(cik: pp'cik, docID: jj'docID, span: jj'span) &
+				(ee'company = jj'company &
+					compareName(pp'name, jj'name) = TRUE or
+				normName(pp'name) = normName(jj'name)) &
+				(not((jj'bdate = null_string)) &
+					not((pp'bdate = null_string)) =>
+				jj'bdate = pp'bdate))};
+		state'PeopleLinkCreated := TRUE
+	END
+
+END

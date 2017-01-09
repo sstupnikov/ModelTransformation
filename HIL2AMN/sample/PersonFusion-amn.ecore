@@ -1,0 +1,822 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:amn="http://synthesis.ipi.ac.ru/amn/" xmlns:amn-exp="http://synthesis.ipi.ac.ru/amn/expression"
+    xmlns:amn-pred="http://synthesis.ipi.ac.ru/amn/predicate" xmlns:amn-subst="http://synthesis.ipi.ac.ru/amn/substitution">
+  <amn:AbstractMachine name="HILProgramSemanticsAM">
+    <operations name="insertIntoPositionsFromIRP">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="insertIntoPositionsFromJobChangePeopleLink">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="insertIntoEmploymentFromJobChangePeopleLink">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="insertIntoPersonFromIRP">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="createPeopleLink">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+  </amn:AbstractMachine>
+  <amn:Refinement name="HILProgramSemantics" refines="/0">
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="IRP"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="name" type="/94"/>
+          <element name="cik" type="/112"/>
+          <element name="bdate" type="/95"/>
+          <element name="company" type="/96"/>
+          <element name="title" type="/97"/>
+          <element name="isOfficer" type="/121"/>
+          <element name="isDirector" type="/122"/>
+          <element name="emp" type="/123"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="Positions"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="+->">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="cik" type="/113"/>
+          <element name="company" type="/99"/>
+        </expression>
+        <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+          <expression xsi:type="amn-exp:StructType">
+            <element name="title" type="/100"/>
+          </expression>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="JobChange"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="name" type="/101"/>
+          <element name="bdate" type="/102"/>
+          <element name="apptDate" type="/103"/>
+          <element name="appointedAs" type="/104"/>
+          <element name="company" type="/105"/>
+          <element name="docID" type="/114"/>
+          <element name="span" type="/115"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="Employment"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="+->">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="cik" type="/116"/>
+        </expression>
+        <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+          <expression xsi:type="amn-exp:StructType">
+            <element name="company" type="/106"/>
+            <element name="positions" type="/124"/>
+          </expression>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="Person"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="name" type="/108"/>
+          <element name="cik" type="/117"/>
+          <element name="bdate" type="/109"/>
+          <element name="emp" type="/125"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="PeopleLink"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="cik" type="/118"/>
+          <element name="docID" type="/119"/>
+          <element name="span" type="/120"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:Variable" name="state"/>
+      <expression xsi:type="amn-exp:StructType">
+        <element name="PeopleLinkCreated" type="/28"/>
+        <element name="PositionsFromIRPInserted" type="/3"/>
+        <element name="PositionsFromJobChangePeopleLinkInserted" type="/9"/>
+        <element name="EmploymentFromJobChangePeopleLinkInserted" type="/15"/>
+        <element name="PersonFromIRPInserted" type="/21"/>
+      </expression>
+    </invariant>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="IRP"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="Positions"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="JobChange"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="Employment"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="Person"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="PeopleLink"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="state"/>
+      <rightExpression xsi:type="amn-exp:RecordValue">
+        <element name="PeopleLinkCreated" value="/29"/>
+        <element name="PositionsFromIRPInserted" value="/4"/>
+        <element name="PositionsFromJobChangePeopleLinkInserted" value="/10"/>
+        <element name="EmploymentFromJobChangePeopleLinkInserted" value="/16"/>
+        <element name="PersonFromIRPInserted" value="/22"/>
+      </rightExpression>
+    </initialization>
+    <operations name="insertIntoPositionsFromIRP">
+      <substitution xsi:type="amn-subst:Select">
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="Positions"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="Positions"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr1</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="ii1"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="IRP"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr1"/>
+                      <expression xsi:type="amn-exp:BinaryOperator" sign="|->">
+                        <expression xsi:type="amn-exp:RecordValue">
+                          <element name="cik" value="/127"/>
+                          <element name="company" value="/128"/>
+                        </expression>
+                        <expression xsi:type="amn-exp:SetComprehension">
+                          <variable>rr</variable>
+                          <predicate xsi:type="amn-pred:ExistentialPredicate">
+                            <predicate xsi:type="amn-pred:Conjunction">
+                              <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                                <expression xsi:type="amn-exp:Variable" name="ii"/>
+                                <expression xsi:type="amn-exp:NamedConstant" name="IRP"/>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                <expression xsi:type="amn-exp:Variable" name="rr"/>
+                                <expression xsi:type="amn-exp:RecordValue">
+                                  <element name="title" value="/84"/>
+                                </expression>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:Conjunction">
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="ii"
+                                      field="cik"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="ii1"
+                                      field="cik"/>
+                                </predicate>
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="ii"
+                                      field="company"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="ii1"
+                                      field="company"/>
+                                </predicate>
+                              </predicate>
+                            </predicate>
+                            <variable>ii</variable>
+                          </predicate>
+                        </expression>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <variable>ii1</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state" field="PositionsFromIRPInserted"/>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="insertIntoPositionsFromJobChangePeopleLink">
+      <substitution xsi:type="amn-subst:Select">
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'PeopleLinkCreated"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="Positions"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="Positions"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr1</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="jj1"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="JobChange"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="ll1"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="PeopleLink"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr1"/>
+                      <expression xsi:type="amn-exp:BinaryOperator" sign="|->">
+                        <expression xsi:type="amn-exp:RecordValue">
+                          <element name="cik" value="/129"/>
+                          <element name="company" value="/130"/>
+                        </expression>
+                        <expression xsi:type="amn-exp:SetComprehension">
+                          <variable>rr</variable>
+                          <predicate xsi:type="amn-pred:ExistentialPredicate">
+                            <predicate xsi:type="amn-pred:Conjunction">
+                              <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                                <expression xsi:type="amn-exp:Variable" name="jj"/>
+                                <expression xsi:type="amn-exp:NamedConstant" name="JobChange"/>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                                <expression xsi:type="amn-exp:Variable" name="ll"/>
+                                <expression xsi:type="amn-exp:NamedConstant" name="PeopleLink"/>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                <expression xsi:type="amn-exp:Variable" name="rr"/>
+                                <expression xsi:type="amn-exp:RecordValue">
+                                  <element name="title" value="/85"/>
+                                </expression>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:Conjunction">
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="ll"
+                                      field="cik"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="ll1"
+                                      field="cik"/>
+                                </predicate>
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="jj1"
+                                      field="company"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="jj"
+                                      field="company"/>
+                                </predicate>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:Conjunction">
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="jj"
+                                      field="docID"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="ll"
+                                      field="docID"/>
+                                </predicate>
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="jj"
+                                      field="span"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="ll"
+                                      field="span"/>
+                                </predicate>
+                              </predicate>
+                            </predicate>
+                            <variable>jj</variable>
+                            <variable>ll</variable>
+                          </predicate>
+                        </expression>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <variable>jj1</variable>
+                  <variable>ll1</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state" field="PositionsFromJobChangePeopleLinkInserted"/>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="insertIntoEmploymentFromJobChangePeopleLink">
+      <substitution xsi:type="amn-subst:Select">
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'PeopleLinkCreated"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'PositionsFromJobChangePeopleLinkInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'PositionsFromIRPInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="Employment"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="Employment"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr1</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="jj1"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="JobChange"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="LL1"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="PeopleLink"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr1"/>
+                      <expression xsi:type="amn-exp:BinaryOperator" sign="|->">
+                        <expression xsi:type="amn-exp:RecordValue">
+                          <element name="cik" value="/131"/>
+                        </expression>
+                        <expression xsi:type="amn-exp:SetComprehension">
+                          <variable>rr</variable>
+                          <predicate xsi:type="amn-pred:ExistentialPredicate">
+                            <predicate xsi:type="amn-pred:Conjunction">
+                              <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                                <expression xsi:type="amn-exp:Variable" name="jj"/>
+                                <expression xsi:type="amn-exp:NamedConstant" name="JobChange"/>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                                <expression xsi:type="amn-exp:Variable" name="LL"/>
+                                <expression xsi:type="amn-exp:NamedConstant" name="PeopleLink"/>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                <expression xsi:type="amn-exp:Variable" name="rr"/>
+                                <expression xsi:type="amn-exp:RecordValue">
+                                  <element name="company" value="/50"/>
+                                  <element name="positions" value="/89"/>
+                                </expression>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:Conjunction">
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="LL"
+                                      field="cik"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="LL1"
+                                      field="cik"/>
+                                </predicate>
+                              </predicate>
+                              <predicate xsi:type="amn-pred:Conjunction">
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="jj"
+                                      field="docID"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="LL"
+                                      field="docID"/>
+                                </predicate>
+                                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                                  <expression xsi:type="amn-exp:RecordLookup" name="jj"
+                                      field="span"/>
+                                  <expression xsi:type="amn-exp:RecordLookup" name="LL"
+                                      field="span"/>
+                                </predicate>
+                              </predicate>
+                            </predicate>
+                            <variable>jj</variable>
+                            <variable>LL</variable>
+                          </predicate>
+                        </expression>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <variable>jj1</variable>
+                  <variable>LL1</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state" field="EmploymentFromJobChangePeopleLinkInserted"/>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="insertIntoPersonFromIRP">
+      <substitution xsi:type="amn-subst:Select">
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'EmploymentFromJobChangePeopleLinkInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="Person"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="Person"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="ii"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="IRP"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr"/>
+                      <expression xsi:type="amn-exp:RecordValue">
+                        <element name="name" value="/60"/>
+                        <element name="cik" value="/62"/>
+                        <element name="bdate" value="/64"/>
+                        <element name="emp" value="/90"/>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <variable>ii</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state" field="PersonFromIRPInserted"/>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="createPeopleLink">
+      <substitution xsi:type="amn-subst:Select">
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="PeopleLink"/>
+            <rightExpression xsi:type="amn-exp:SetComprehension">
+              <variable>rr</variable>
+              <predicate xsi:type="amn-pred:ExistentialPredicate">
+                <predicate xsi:type="amn-pred:Conjunction">
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                    <expression xsi:type="amn-exp:Variable" name="pp"/>
+                    <expression xsi:type="amn-exp:NamedConstant" name="IRP"/>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                    <expression xsi:type="amn-exp:Variable" name="jj"/>
+                    <expression xsi:type="amn-exp:NamedConstant" name="JobChange"/>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                    <expression xsi:type="amn-exp:Variable" name="ee"/>
+                    <expression xsi:type="amn-exp:RecordLookup" name="pp" field="emp"/>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                    <expression xsi:type="amn-exp:Variable" name="rr"/>
+                    <expression xsi:type="amn-exp:RecordValue">
+                      <element name="cik" value="/68"/>
+                      <element name="docID" value="/70"/>
+                      <element name="span" value="/72"/>
+                    </expression>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:Disjunction">
+                    <predicate xsi:type="amn-pred:Conjunction">
+                      <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                        <expression xsi:type="amn-exp:RecordLookup" name="ee" field="company"/>
+                        <expression xsi:type="amn-exp:RecordLookup" name="jj" field="company"/>
+                      </predicate>
+                      <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                        <expression xsi:type="amn-exp:FunctionalExpression" sign="compareName">
+                          <expression xsi:type="amn-exp:RecordLookup" name="pp" field="name"/>
+                          <expression xsi:type="amn-exp:RecordLookup" name="jj" field="name"/>
+                        </expression>
+                        <expression xsi:type="amn-exp:BooleanValue" value="true"/>
+                      </predicate>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:FunctionalExpression" sign="normName">
+                        <expression xsi:type="amn-exp:RecordLookup" name="pp" field="name"/>
+                      </expression>
+                      <expression xsi:type="amn-exp:FunctionalExpression" sign="normName">
+                        <expression xsi:type="amn-exp:RecordLookup" name="jj" field="name"/>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:Implication">
+                      <predicate xsi:type="amn-pred:Conjunction">
+                        <predicate xsi:type="amn-pred:Negation">
+                          <predicate xsi:type="amn-pred:Bracketed">
+                            <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                              <expression xsi:type="amn-exp:RecordLookup" name="jj"
+                                  field="bdate"/>
+                              <expression xsi:type="amn-exp:NamedConstant" name="null_string"/>
+                            </predicate>
+                          </predicate>
+                        </predicate>
+                        <predicate xsi:type="amn-pred:Negation">
+                          <predicate xsi:type="amn-pred:Bracketed">
+                            <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                              <expression xsi:type="amn-exp:RecordLookup" name="pp"
+                                  field="bdate"/>
+                              <expression xsi:type="amn-exp:NamedConstant" name="null_string"/>
+                            </predicate>
+                          </predicate>
+                        </predicate>
+                      </predicate>
+                      <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                        <expression xsi:type="amn-exp:RecordLookup" name="jj" field="bdate"/>
+                        <expression xsi:type="amn-exp:RecordLookup" name="pp" field="bdate"/>
+                      </predicate>
+                    </predicate>
+                  </predicate>
+                </predicate>
+                <variable>pp</variable>
+                <variable>jj</variable>
+                <variable>ee</variable>
+              </predicate>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state" field="PeopleLinkCreated"/>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="normTitle"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+      </expression>
+    </properties>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="normName"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+      </expression>
+    </properties>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="compareName"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="BOOL"/>
+      </expression>
+    </properties>
+    <abstractConstants>normTitle</abstractConstants>
+    <abstractConstants>normName</abstractConstants>
+    <abstractConstants>compareName</abstractConstants>
+    <abstractVariables>state</abstractVariables>
+    <abstractVariables>IRP</abstractVariables>
+    <abstractVariables>Positions</abstractVariables>
+    <abstractVariables>JobChange</abstractVariables>
+    <abstractVariables>Employment</abstractVariables>
+    <abstractVariables>Person</abstractVariables>
+    <abstractVariables>PeopleLink</abstractVariables>
+  </amn:Refinement>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="ii1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="IRP"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>ii1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="PeopleLink"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="pp1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="IRP"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="jj1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="JobChange"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="ee1"/>
+          <expression xsi:type="amn-exp:RecordLookup" name="pp" field="emp"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>pp1</variable>
+      <variable>jj1</variable>
+      <variable>ee1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-exp:NamedConstant name="Person"/>
+  <amn-exp:NamedConstant name="Person"/>
+  <amn-exp:RecordLookup name="ii" field="cik"/>
+  <amn-exp:RecordLookup name="ii" field="cik"/>
+  <amn-exp:RecordLookup name="ii" field="company"/>
+  <amn-exp:RecordLookup name="ii" field="company"/>
+  <amn-exp:RecordLookup name="ii" field="title"/>
+  <amn-exp:RecordLookup name="ll" field="cik"/>
+  <amn-exp:RecordLookup name="ll" field="cik"/>
+  <amn-exp:RecordLookup name="jj" field="company"/>
+  <amn-exp:RecordLookup name="jj" field="company"/>
+  <amn-exp:RecordLookup name="jj" field="appointedAs"/>
+  <amn-exp:RecordLookup name="jj" field="docID"/>
+  <amn-exp:RecordLookup name="ll" field="docID"/>
+  <amn-exp:RecordLookup name="jj" field="span"/>
+  <amn-exp:RecordLookup name="ll" field="span"/>
+  <amn-exp:RecordLookup name="LL" field="cik"/>
+  <amn-exp:RecordLookup name="LL" field="cik"/>
+  <amn-exp:RecordLookup name="jj" field="company"/>
+  <amn-exp:RecordLookup name="jj" field="company"/>
+  <amn-exp:RecordLookup name="LL" field="cik"/>
+  <amn-exp:RecordLookup name="LL" field="cik"/>
+  <amn-exp:RecordLookup name="jj" field="company"/>
+  <amn-exp:RecordLookup name="jj" field="company"/>
+  <amn-exp:RecordLookup name="jj" field="docID"/>
+  <amn-exp:RecordLookup name="LL" field="docID"/>
+  <amn-exp:RecordLookup name="jj" field="span"/>
+  <amn-exp:RecordLookup name="LL" field="span"/>
+  <amn-exp:RecordLookup name="ii" field="name"/>
+  <amn-exp:RecordLookup name="ii" field="name"/>
+  <amn-exp:RecordLookup name="ii" field="cik"/>
+  <amn-exp:RecordLookup name="ii" field="cik"/>
+  <amn-exp:RecordLookup name="ii" field="bdate"/>
+  <amn-exp:RecordLookup name="ii" field="bdate"/>
+  <amn-exp:RecordLookup name="ii" field="cik"/>
+  <amn-exp:RecordLookup name="ii" field="cik"/>
+  <amn-exp:RecordLookup name="pp" field="cik"/>
+  <amn-exp:RecordLookup name="pp" field="cik"/>
+  <amn-exp:RecordLookup name="jj" field="docID"/>
+  <amn-exp:RecordLookup name="jj" field="docID"/>
+  <amn-exp:RecordLookup name="jj" field="span"/>
+  <amn-exp:RecordLookup name="jj" field="span"/>
+  <amn-exp:RecordLookup name="ee" field="company"/>
+  <amn-exp:RecordLookup name="jj" field="company"/>
+  <amn-exp:RecordLookup name="pp" field="name"/>
+  <amn-exp:RecordLookup name="jj" field="name"/>
+  <amn-exp:RecordLookup name="pp" field="name"/>
+  <amn-exp:RecordLookup name="jj" field="name"/>
+  <amn-exp:RecordLookup name="jj" field="bdate"/>
+  <amn-exp:RecordLookup name="pp" field="bdate"/>
+  <amn-exp:RecordLookup name="jj" field="bdate"/>
+  <amn-exp:RecordLookup name="pp" field="bdate"/>
+  <amn-exp:FunctionalExpression sign="normTitle">
+    <expression xsi:type="amn-exp:RecordLookup" name="ii" field="title"/>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="normTitle">
+    <expression xsi:type="amn-exp:RecordLookup" name="jj" field="appointedAs"/>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="Positions">
+    <expression xsi:type="amn-exp:RecordValue">
+      <element name="cik" value="/34"/>
+      <element name="company" value="/36"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="Positions">
+    <expression xsi:type="amn-exp:RecordValue">
+      <element name="cik" value="/39"/>
+      <element name="company" value="/41"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="Employment">
+    <expression xsi:type="amn-exp:RecordValue">
+      <element name="cik" value="/48"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="Positions">
+    <expression xsi:type="amn-exp:RecordValue">
+      <element name="cik" value="/52"/>
+      <element name="company" value="/54"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="Employment">
+    <expression xsi:type="amn-exp:RecordValue">
+      <element name="cik" value="/66"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="normTitle"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="normName"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="compareName"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="INT"/>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:FunctionalExpression sign="POW">
+    <expression xsi:type="amn-exp:StructType">
+      <element name="company" type="/98"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="POW">
+    <expression xsi:type="amn-exp:StructType">
+      <element name="title" type="/107"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="POW">
+    <expression xsi:type="amn-exp:StructType">
+      <element name="company" type="/110"/>
+      <element name="positions" type="/126"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="POW">
+    <expression xsi:type="amn-exp:StructType">
+      <element name="title" type="/111"/>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:RecordLookup name="ii1" field="cik"/>
+  <amn-exp:RecordLookup name="ii1" field="company"/>
+  <amn-exp:RecordLookup name="ll1" field="cik"/>
+  <amn-exp:RecordLookup name="jj1" field="company"/>
+  <amn-exp:RecordLookup name="LL1" field="cik"/>
+</xmi:XMI>

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="ASCII"?>
+<hil:Program xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:hil="http://www.ibm.com/HIL/" xmlns:hil-expr="http://www.ibm.com/HIL/Expression/" xmlns:hil-type="http://www.ibm.com/HIL/Type/">
+  <statement xsi:type="hil:Declaration" name="IRP">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="name">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="cik">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+        <element label="bdate">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="company">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="title">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="isOfficer">
+          <type xsi:type="hil-type:BooleanType"/>
+        </element>
+        <element label="isDirector">
+          <type xsi:type="hil-type:BooleanType"/>
+        </element>
+        <element label="emp">
+          <type xsi:type="hil-type:SetType">
+            <type xsi:type="hil-type:RecordType">
+              <element label="company">
+                <type xsi:type="hil-type:StringType"/>
+              </element>
+            </type>
+          </type>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="Positions">
+    <type xsi:type="hil-type:IndexType">
+      <fromType xsi:type="hil-type:RecordType">
+        <element label="cik">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+        <element label="company">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </fromType>
+      <toType xsi:type="hil-type:SetType">
+        <type xsi:type="hil-type:RecordType">
+          <element label="title">
+            <type xsi:type="hil-type:StringType"/>
+          </element>
+        </type>
+      </toType>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="JobChange">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="name">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="bdate">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="apptDate">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="appointedAs">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="company">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="docID">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+        <element label="span">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="Employment">
+    <type xsi:type="hil-type:IndexType">
+      <fromType xsi:type="hil-type:RecordType">
+        <element label="cik">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+      </fromType>
+      <toType xsi:type="hil-type:SetType">
+        <type xsi:type="hil-type:RecordType">
+          <element label="company">
+            <type xsi:type="hil-type:StringType"/>
+          </element>
+          <element label="positions">
+            <type xsi:type="hil-type:SetType">
+              <type xsi:type="hil-type:RecordType">
+                <element label="title">
+                  <type xsi:type="hil-type:StringType"/>
+                </element>
+              </type>
+            </type>
+          </element>
+        </type>
+      </toType>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="Person">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="name">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="cik">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+        <element label="bdate">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="emp">
+          <type xsi:type="hil-type:SetType">
+            <type xsi:type="hil-type:RecordType">
+              <element label="company">
+                <type xsi:type="hil-type:StringType"/>
+              </element>
+              <element label="positions">
+                <type xsi:type="hil-type:SetType">
+                  <type xsi:type="hil-type:RecordType">
+                    <element label="title">
+                      <type xsi:type="hil-type:StringType"/>
+                    </element>
+                  </type>
+                </type>
+              </element>
+            </type>
+          </type>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="PeopleLink">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="cik">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+        <element label="docID">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+        <element label="span">
+          <type xsi:type="hil-type:IntType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="normTitle">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:StringType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="normName">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:StringType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="compareName">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:BooleanType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:LookupExp" indexId="Positions">
+      <exp xsi:type="hil-expr:RecordExp">
+        <exp label="cik">
+          <value xsi:type="hil-expr:RecordProjection" recordId="i" elementId="cik"/>
+        </exp>
+        <exp label="company">
+          <value xsi:type="hil-expr:RecordProjection" recordId="i" elementId="company"/>
+        </exp>
+      </exp>
+    </into>
+    <select label="title">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="normTitle">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="i" elementId="title"/>
+      </exp>
+    </select>
+    <fromClause alias="i">
+      <exp xsi:type="hil-expr:Identifier" value="IRP"/>
+    </fromClause>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:LookupExp" indexId="Positions">
+      <exp xsi:type="hil-expr:RecordExp">
+        <exp label="cik">
+          <value xsi:type="hil-expr:RecordProjection" recordId="l" elementId="cik"/>
+        </exp>
+        <exp label="company">
+          <value xsi:type="hil-expr:RecordProjection" recordId="j" elementId="company"/>
+        </exp>
+      </exp>
+    </into>
+    <select label="title">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="normTitle">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="j" elementId="appointedAs"/>
+      </exp>
+    </select>
+    <fromClause alias="j">
+      <exp xsi:type="hil-expr:Identifier" value="JobChange"/>
+    </fromClause>
+    <fromClause alias="l">
+      <exp xsi:type="hil-expr:Identifier" value="PeopleLink"/>
+    </fromClause>
+    <where xsi:type="hil-expr:AndPredicate">
+      <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="j" elementId="docID"/>
+        <right xsi:type="hil-expr:RecordProjection" recordId="l" elementId="docID"/>
+      </pred>
+      <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="j" elementId="span"/>
+        <right xsi:type="hil-expr:RecordProjection" recordId="l" elementId="span"/>
+      </pred>
+    </where>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:LookupExp" indexId="Employment">
+      <exp xsi:type="hil-expr:RecordExp">
+        <exp label="cik">
+          <value xsi:type="hil-expr:RecordProjection" recordId="L" elementId="cik"/>
+        </exp>
+      </exp>
+    </into>
+    <select label="company">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="j" elementId="company"/>
+    </select>
+    <select label="positions">
+      <exp xsi:type="hil-expr:LookupExp" indexId="Positions">
+        <exp xsi:type="hil-expr:RecordExp">
+          <exp label="cik">
+            <value xsi:type="hil-expr:RecordProjection" recordId="L" elementId="cik"/>
+          </exp>
+          <exp label="company">
+            <value xsi:type="hil-expr:RecordProjection" recordId="j" elementId="company"/>
+          </exp>
+        </exp>
+      </exp>
+    </select>
+    <fromClause alias="j">
+      <exp xsi:type="hil-expr:Identifier" value="JobChange"/>
+    </fromClause>
+    <fromClause alias="L">
+      <exp xsi:type="hil-expr:Identifier" value="PeopleLink"/>
+    </fromClause>
+    <where xsi:type="hil-expr:AndPredicate">
+      <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="j" elementId="docID"/>
+        <right xsi:type="hil-expr:RecordProjection" recordId="L" elementId="docID"/>
+      </pred>
+      <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="j" elementId="span"/>
+        <right xsi:type="hil-expr:RecordProjection" recordId="L" elementId="span"/>
+      </pred>
+    </where>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:Identifier" value="Person"/>
+    <select label="name">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="i" elementId="name"/>
+    </select>
+    <select label="cik">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="i" elementId="cik"/>
+    </select>
+    <select label="bdate">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="i" elementId="bdate"/>
+    </select>
+    <select label="emp">
+      <exp xsi:type="hil-expr:LookupExp" indexId="Employment">
+        <exp xsi:type="hil-expr:RecordExp">
+          <exp label="cik">
+            <value xsi:type="hil-expr:RecordProjection" recordId="i" elementId="cik"/>
+          </exp>
+        </exp>
+      </exp>
+    </select>
+    <fromClause alias="i">
+      <exp xsi:type="hil-expr:Identifier" value="IRP"/>
+    </fromClause>
+  </statement>
+  <statement xsi:type="hil:CreateLink" name="PeopleLink">
+    <select label="cik">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="p" elementId="cik"/>
+    </select>
+    <select label="docID">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="j" elementId="docID"/>
+    </select>
+    <select label="span">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="j" elementId="span"/>
+    </select>
+    <fromClause alias="p">
+      <exp xsi:type="hil-expr:Identifier" value="IRP"/>
+    </fromClause>
+    <fromClause alias="j">
+      <exp xsi:type="hil-expr:Identifier" value="JobChange"/>
+    </fromClause>
+    <fromClause alias="e">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="p" elementId="emp"/>
+    </fromClause>
+    <match name="rule1">
+      <predicate xsi:type="hil-expr:AndPredicate">
+        <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+          <left xsi:type="hil-expr:RecordProjection" recordId="e" elementId="company"/>
+          <right xsi:type="hil-expr:RecordProjection" recordId="j" elementId="company"/>
+        </pred>
+        <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+          <left xsi:type="hil-expr:FunctionCallExp" functionId="compareName">
+            <parameter xsi:type="hil-expr:RecordProjection" recordId="p" elementId="name"/>
+            <parameter xsi:type="hil-expr:RecordProjection" recordId="j" elementId="name"/>
+          </left>
+          <right xsi:type="hil-expr:BooleanLiteral" value="true"/>
+        </pred>
+      </predicate>
+    </match>
+    <match name="rule2">
+      <predicate xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:FunctionCallExp" functionId="normName">
+          <parameter xsi:type="hil-expr:RecordProjection" recordId="p" elementId="name"/>
+        </left>
+        <right xsi:type="hil-expr:FunctionCallExp" functionId="normName">
+          <parameter xsi:type="hil-expr:RecordProjection" recordId="j" elementId="name"/>
+        </right>
+      </predicate>
+    </match>
+    <check>
+      <ifPred xsi:type="hil-expr:AndPredicate">
+        <pred xsi:type="hil-expr:NotPredicate">
+          <pred xsi:type="hil-expr:BracketPredicate">
+            <pred xsi:type="hil-expr:UDFBooleanFunctionCall" functionId="null">
+              <parameter xsi:type="hil-expr:RecordProjection" recordId="j" elementId="bdate"/>
+            </pred>
+          </pred>
+        </pred>
+        <pred xsi:type="hil-expr:NotPredicate">
+          <pred xsi:type="hil-expr:BracketPredicate">
+            <pred xsi:type="hil-expr:UDFBooleanFunctionCall" functionId="null">
+              <parameter xsi:type="hil-expr:RecordProjection" recordId="p" elementId="bdate"/>
+            </pred>
+          </pred>
+        </pred>
+      </ifPred>
+      <thenPred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="j" elementId="bdate"/>
+        <right xsi:type="hil-expr:RecordProjection" recordId="p" elementId="bdate"/>
+      </thenPred>
+    </check>
+  </statement>
+</hil:Program>

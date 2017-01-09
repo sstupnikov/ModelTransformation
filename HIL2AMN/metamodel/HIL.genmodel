@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.emftext.language.HIL/src-gen" modelPluginID="org.emftext.language.HIL"
+    modelName="HIL" importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0"
+    copyrightFields="false">
+  <foreignModel>HIL.ecore</foreignModel>
+  <genPackages prefix="HIL" basePackage="org.emftext.language" disposableProviderFactory="true"
+      ecorePackage="HIL.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="HIL.ecore#//GroupingPolicy">
+      <genEnumLiterals ecoreEnumLiteral="HIL.ecore#//GroupingPolicy/keep"/>
+      <genEnumLiterals ecoreEnumLiteral="HIL.ecore#//GroupingPolicy/discard"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="HIL.ecore#//CardinalityKind">
+      <genEnumLiterals ecoreEnumLiteral="HIL.ecore#//CardinalityKind/ONE_TO_ONE"/>
+      <genEnumLiterals ecoreEnumLiteral="HIL.ecore#//CardinalityKind/ONE_TO_MANY"/>
+      <genEnumLiterals ecoreEnumLiteral="HIL.ecore#//CardinalityKind/MANY_TO_ONE"/>
+    </genEnums>
+    <genClasses ecoreClass="HIL.ecore#//Program">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Program/statement"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="HIL.ecore#//Statement"/>
+    <genClasses ecoreClass="HIL.ecore#//Declaration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Declaration/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Declaration/type"/>
+    </genClasses>
+    <genClasses ecoreClass="HIL.ecore#//Insert">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Insert/into"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Insert/select"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Insert/fromClause"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Insert/where"/>
+    </genClasses>
+    <genClasses ecoreClass="HIL.ecore#//CreateLink">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//CreateLink/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//CreateLink/select"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//CreateLink/fromClause"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//CreateLink/match"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//CreateLink/check"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//CreateLink/grouping"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//CreateLink/cardinality"/>
+    </genClasses>
+    <genClasses ecoreClass="HIL.ecore#//LabeledExp">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//LabeledExp/label"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//LabeledExp/exp"/>
+    </genClasses>
+    <genClasses ecoreClass="HIL.ecore#//NamedPredicate">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//NamedPredicate/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//NamedPredicate/predicate"/>
+    </genClasses>
+    <genClasses ecoreClass="HIL.ecore#//IfThen">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//IfThen/ifPred"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//IfThen/thenPred"/>
+    </genClasses>
+    <genClasses ecoreClass="HIL.ecore#//Grouping">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Grouping/groupOn"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Grouping/having"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Grouping/groupingPolicy"/>
+    </genClasses>
+    <genClasses ecoreClass="HIL.ecore#//Cardinality">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Cardinality/left"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Cardinality/right"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Cardinality/kind"/>
+    </genClasses>
+    <nestedGenPackages prefix="HILType" basePackage="org.emftext.language.HIL" disposableProviderFactory="true"
+        ecorePackage="HIL.ecore#//HILType">
+      <genClasses image="false" ecoreClass="HIL.ecore#//HILType/Type"/>
+      <genClasses ecoreClass="HIL.ecore#//HILType/IntType"/>
+      <genClasses ecoreClass="HIL.ecore#//HILType/BooleanType"/>
+      <genClasses ecoreClass="HIL.ecore#//HILType/StringType"/>
+      <genClasses ecoreClass="HIL.ecore#//HILType/DoubleType"/>
+      <genClasses ecoreClass="HIL.ecore#//HILType/RecordType">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//HILType/RecordType/element"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//HILType/RecordElement">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//HILType/RecordElement/label"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//HILType/RecordElement/type"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//HILType/SetType">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//HILType/SetType/type"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//HILType/IndexType">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//HILType/IndexType/fromType"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//HILType/IndexType/toType"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//HILType/FunctionType">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//HILType/FunctionType/fromType"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//HILType/FunctionType/toType"/>
+      </genClasses>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="Expression" basePackage="org.emftext.language.HIL"
+        disposableProviderFactory="true" ecorePackage="HIL.ecore#//Expression">
+      <genClasses ecoreClass="HIL.ecore#//Expression/AliasedEntity">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/AliasedEntity/alias"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/AliasedEntity/exp"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="HIL.ecore#//Expression/Expression"/>
+      <genClasses ecoreClass="HIL.ecore#//Expression/IntegerLiteral">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/IntegerLiteral/value"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/BooleanLiteral">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/BooleanLiteral/value"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/StringLiteral">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/StringLiteral/value"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/DoubleLiteral">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/DoubleLiteral/value"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/Identifier">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/Identifier/value"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/BracketExp">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/BracketExp/exp"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/RecordExp">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/RecordExp/exp"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/RecordExpElement">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/RecordExpElement/label"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/RecordExpElement/value"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/RecordProjection">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/RecordProjection/recordId"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/RecordProjection/elementId"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/DomExp">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/DomExp/fmapId"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/LookupExp">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/LookupExp/indexId"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/LookupExp/exp"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/FunctionCallExp">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/FunctionCallExp/functionId"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/FunctionCallExp/parameter"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="HIL.ecore#//Expression/Predicate"/>
+      <genClasses ecoreClass="HIL.ecore#//Expression/UDFBooleanFunctionCall">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/UDFBooleanFunctionCall/functionId"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/UDFBooleanFunctionCall/parameter"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/NotPredicate">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/NotPredicate/pred"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/BinaryPredicate">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/BinaryPredicate/left"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/BinaryPredicate/right"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute HIL.ecore#//Expression/BinaryPredicate/sign"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/AndPredicate">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/AndPredicate/pred"/>
+      </genClasses>
+      <genClasses ecoreClass="HIL.ecore#//Expression/BracketPredicate">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference HIL.ecore#//Expression/BracketPredicate/pred"/>
+      </genClasses>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>
