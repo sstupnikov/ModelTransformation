@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="RIF_FLD" nsURI="http://www.emftext.org/language/RIF_FLD" nsPrefix="rif-fld">
+  <eClassifiers xsi:type="ecore:EClass" name="Document" eSuperTypes="#//Annotatable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dialect" eType="#//Name"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="base" eType="#//IRI" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="prefix" upperBound="-1"
+        eType="#//Prefix" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="import" upperBound="-1"
+        eType="#//Import" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="module" upperBound="-1"
+        eType="#//Module" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="group" eType="#//Group"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Prefix">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" lowerBound="1" eType="#//Name"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="iri" lowerBound="1" eType="#//IRI"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Import" eSuperTypes="#//Annotatable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="locator" lowerBound="1"
+        eType="#//Locator" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="profile" eType="#//IRI"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Module" eSuperTypes="#//Annotatable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="locator" lowerBound="1"
+        eType="#//Locator" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Groupable" abstract="true" eSuperTypes="#//Annotatable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Group" eSuperTypes="#//Groupable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="content" upperBound="-1"
+        eType="#//Groupable" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Termula" abstract="true" eSuperTypes="#//Groupable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Binary" abstract="true" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1" eType="#//Termula"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1" eType="#//Termula"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Implies" eSuperTypes="#//Binary"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Equal" eSuperTypes="#//Binary"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Member" eSuperTypes="#//Binary"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Subclass" eSuperTypes="#//Binary"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Compound" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="symbol" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" upperBound="-1"
+        eType="#//Termula" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Quantified" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="symbol" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="var" upperBound="-1" eType="#//Var"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" eType="#//Termula"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Unary" abstract="true" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Neg" eSuperTypes="#//Unary"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Naf" eSuperTypes="#//Unary"/>
+  <eClassifiers xsi:type="ecore:EClass" name="WeakConstraint" eSuperTypes="#//Unary"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Remote" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="moduleRef" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="External" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="locator" eType="#//Locator"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Atom" abstract="true" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PositionalAtom" eSuperTypes="#//Atom">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arg" upperBound="-1" eType="#//Termula"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NamedArgumentAtom" eSuperTypes="#//Atom">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arg" upperBound="-1" eType="#//NamedArgument"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Frame" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="assignment" upperBound="-1"
+        eType="#//PropertyAssignment" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ClosedList" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" upperBound="-1"
+        eType="#//Termula" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OpenList" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="head" lowerBound="1" upperBound="-1"
+        eType="#//Termula" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tail" lowerBound="1" eType="#//Termula"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Constant" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="symbolSpace" eType="#//IRI"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="languageTag" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isUnicodeString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isLocal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Aggregate" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="function" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="comprehension" lowerBound="1"
+        eType="#//Var" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="grouping" upperBound="-1"
+        eType="#//Var" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="termula" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Var" eSuperTypes="#//Termula">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" lowerBound="1" eType="#//Name"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Name">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="stringRepr" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isUnicodeString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NamedArgument">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" lowerBound="1" eType="#//Name"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="#//Termula"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IRI">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="stringRepr" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Locator">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="stringRepr" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Annotatable" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="annotation" eType="#//Annotation"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Annotation">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="id" eType="#//Constant"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="frame" upperBound="-1"
+        eType="#//Frame" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PropertyAssignment">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="property" lowerBound="1"
+        eType="#//Termula" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1" eType="#//Termula"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>
