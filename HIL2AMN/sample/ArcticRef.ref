@@ -1,0 +1,241 @@
+REFINEMENT HILProgramSemantics
+
+REFINES HILProgramSemanticsAM
+
+SEES
+	Context
+
+ABSTRACT_CONSTANTS
+	get_country,
+	get_source_vehicle_id,
+	get_source_vessel_id,
+	get_vehicle_id,
+	get_vessel_id,
+	get_entity_id
+
+PROPERTIES
+	get_country : ((STRING_TYPE) --> STRING_TYPE) &
+	get_source_vehicle_id : ((STRING_TYPE) --> STRING_TYPE) &
+	get_source_vessel_id : ((STRING_TYPE) --> STRING_TYPE) &
+	get_vehicle_id : ((STRING_TYPE * STRING_TYPE) --> STRING_TYPE) &
+	get_vessel_id : ((STRING_TYPE * STRING_TYPE) --> STRING_TYPE) &
+	get_entity_id : ((STRING_TYPE) --> STRING_TYPE)
+
+VARIABLES
+	state,
+	ShipPositions,
+	Ship,
+	VehicleVICT,
+	VesselVICT,
+	VehicleESIM,
+	VesselESIM,
+	Vehicle,
+	Vessel,
+	VehicleLink
+
+INVARIANT
+	ShipPositions : POW(struct(
+			uid: STRING_TYPE,
+			callSign: STRING_TYPE,
+			name: STRING_TYPE,
+			nameLat: STRING_TYPE,
+			isoCountryCode: STRING_TYPE,
+			imo: STRING_TYPE,
+			mmsi: STRING_TYPE
+			)) &
+	Ship : POW(struct(
+			uid: STRING_TYPE,
+			call_sign: STRING_TYPE,
+			name: STRING_TYPE,
+			country: STRING_TYPE,
+			speed: STRING_TYPE,
+			max_range: STRING_TYPE,
+			max_crew: STRING_TYPE,
+			description: STRING_TYPE,
+			imo_number: STRING_TYPE,
+			length: STRING_TYPE,
+			breadth: STRING_TYPE,
+			displacement: STRING_TYPE,
+			deadweight: STRING_TYPE
+			)) &
+	VehicleVICT : POW(struct(
+			uid: STRING_TYPE,
+			call: STRING_TYPE,
+			name: STRING_TYPE,
+			latName: STRING_TYPE,
+			country: STRING_TYPE,
+			vehicleType: STRING_TYPE
+			)) &
+	VesselVICT : POW(struct(
+			uid: STRING_TYPE,
+			imoNumber: STRING_TYPE,
+			mmsi: STRING_TYPE,
+			vehicleId: STRING_TYPE
+			)) &
+	VehicleESIM : POW(struct(
+			uid: STRING_TYPE,
+			call: STRING_TYPE,
+			name: STRING_TYPE,
+			country: STRING_TYPE,
+			maxSpeed: STRING_TYPE,
+			maxRange: STRING_TYPE,
+			maxCrew: STRING_TYPE,
+			description: STRING_TYPE,
+			vehicleType: STRING_TYPE,
+			ownerId: STRING_TYPE
+			)) &
+	VesselESIM : POW(struct(
+			uid: STRING_TYPE,
+			imoNumber: STRING_TYPE,
+			length: STRING_TYPE,
+			width: STRING_TYPE,
+			displacement: STRING_TYPE,
+			deadweight: STRING_TYPE,
+			vehicleId: STRING_TYPE
+			)) &
+	Vehicle : POW(struct(
+			uid: STRING_TYPE,
+			call: STRING_TYPE,
+			name: STRING_TYPE,
+			latName: STRING_TYPE,
+			country: STRING_TYPE,
+			vehicleType: STRING_TYPE,
+			description: STRING_TYPE,
+			maxCrew: STRING_TYPE,
+			maxRange: STRING_TYPE,
+			maxSpeed: STRING_TYPE,
+			ownerId: STRING_TYPE
+			)) &
+	Vessel : POW(struct(
+			uid: STRING_TYPE,
+			imoNumber: STRING_TYPE,
+			mmsi: STRING_TYPE,
+			vehicleId: STRING_TYPE,
+			length: STRING_TYPE,
+			width: STRING_TYPE,
+			deadweight: STRING_TYPE,
+			displacement: STRING_TYPE
+			)) &
+	VehicleLink : POW(struct(
+			vehicleVict: struct(
+				uid: STRING_TYPE,
+				call: STRING_TYPE,
+				name: STRING_TYPE
+				),
+			vehicleEsim: struct(
+				uid: STRING_TYPE,
+				call: STRING_TYPE,
+				name: STRING_TYPE
+				)
+			)) &
+	state : struct(
+		VehicleLinkCreated: BOOL,
+		VehicleESIMFromShipInserted: BOOL,
+		VesselESIMFromShipInserted: BOOL,
+		VehicleVICTFromShipPositionsInserted: BOOL,
+		VesselVICTFromShipPositionsInserted: BOOL,
+		VehicleFromVehicleVICTVehicleESIMVehicleLinkInserted: BOOL,
+		VesselFromVesselVICTVesselESIMVehicleLinkInserted: BOOL
+		)
+
+INITIALISATION
+	ShipPositions := {}
+	||
+	Ship := {}
+	||
+	VehicleVICT := {}
+	||
+	VesselVICT := {}
+	||
+	VehicleESIM := {}
+	||
+	VesselESIM := {}
+	||
+	Vehicle := {}
+	||
+	Vessel := {}
+	||
+	VehicleLink := {}
+	||
+	state := rec(VehicleLinkCreated: FALSE, VehicleESIMFromShipInserted: FALSE, VesselESIMFromShipInserted: FALSE, VehicleVICTFromShipPositionsInserted: FALSE, VesselVICTFromShipPositionsInserted: FALSE, VehicleFromVehicleVICTVehicleESIMVehicleLinkInserted: FALSE, VesselFromVesselVICTVesselESIMVehicleLinkInserted: FALSE)
+
+OPERATIONS
+	insertIntoVehicleESIMFromShip = 
+	SELECT
+		TRUE = TRUE
+	THEN
+		VehicleESIM := (VehicleESIM \/ {rr | #(ss).(ss : Ship &
+				rr = rec(uid: get_source_vehicle_id(ss'uid), call: ss'call_sign, name: ss'name, country: ss'country, maxSpeed: ss'speed, maxRange: ss'max_range, maxCrew: ss'max_crew, description: ss'description, vehicleType: "Vessel", ownerId: get_entity_id(ss'uid)))});
+		state'VehicleESIMFromShipInserted := TRUE
+	END;
+
+	insertIntoVesselESIMFromShip = 
+	SELECT
+		TRUE = TRUE
+	THEN
+		VesselESIM := (VesselESIM \/ {rr | #(ss).(ss : Ship &
+				rr = rec(uid: get_source_vessel_id(ss'uid), imoNumber: ss'imo_number, length: ss'length, width: ss'breadth, displacement: ss'displacement, deadweight: ss'deadweight, vehicleId: get_source_vehicle_id(ss'uid)))});
+		state'VesselESIMFromShipInserted := TRUE
+	END;
+
+	insertIntoVehicleVICTFromShipPositions = 
+	SELECT
+		TRUE = TRUE
+	THEN
+		VehicleVICT := (VehicleVICT \/ {rr | #(sp).(sp : ShipPositions &
+				rr = rec(uid: get_source_vehicle_id(sp'uid), call: sp'callSign, name: sp'name, latName: sp'nameLat, country: get_country(sp'isoCountryCode), vehicleType: "Vessel"))});
+		state'VehicleVICTFromShipPositionsInserted := TRUE
+	END;
+
+	insertIntoVesselVICTFromShipPositions = 
+	SELECT
+		TRUE = TRUE
+	THEN
+		VesselVICT := (VesselVICT \/ {rr | #(sp).(sp : ShipPositions &
+				rr = rec(uid: get_source_vessel_id(sp'uid), imoNumber: sp'imo, mmsi: sp'mmsi, vehicleId: get_source_vehicle_id(sp'uid)))});
+		state'VesselVICTFromShipPositionsInserted := TRUE
+	END;
+
+	createVehicleLink = 
+	SELECT
+		state'VehicleESIMFromShipInserted = TRUE &
+		state'VehicleVICTFromShipPositionsInserted = TRUE
+	THEN
+		VehicleLink := {rr | #(vv, ve).(vv : VehicleVICT &
+				ve : VehicleESIM &
+				rr = rec(vehicleVict: rec(uid: vv'uid, call: vv'call, name: vv'name), vehicleEsim: rec(uid: ve'uid, call: ve'call, name: ve'name)) &
+				(vv'call = ve'call))};
+		state'VehicleLinkCreated := TRUE
+	END;
+
+	insertIntoVehicleFromVehicleVICTVehicleESIMVehicleLink = 
+	SELECT
+		state'VehicleESIMFromShipInserted = TRUE &
+		state'VehicleLinkCreated = TRUE &
+		state'VehicleVICTFromShipPositionsInserted = TRUE
+	THEN
+		Vehicle := (Vehicle \/ {rr | #(vv, ve, vl).(vv : VehicleVICT &
+				ve : VehicleESIM &
+				vl : VehicleLink &
+				rr = rec(uid: get_vehicle_id(vv'uid, ve'uid), call: vv'call, name: vv'name, latName: vv'latName, country: vv'country, vehicleType: vv'vehicleType, description: ve'description, maxCrew: ve'maxCrew, maxRange: ve'maxRange, maxSpeed: ve'maxSpeed, ownerId: ve'ownerId) &
+				vv'uid = vl'vehicleVict'uid &
+				ve'uid = vl'vehicleEsim'uid)});
+		state'VehicleFromVehicleVICTVehicleESIMVehicleLinkInserted := TRUE
+	END;
+
+	insertIntoVesselFromVesselVICTVesselESIMVehicleLink = 
+	SELECT
+		state'VesselESIMFromShipInserted = TRUE &
+		state'VehicleLinkCreated = TRUE &
+		state'VesselVICTFromShipPositionsInserted = TRUE
+	THEN
+		Vessel := (Vessel \/ {rr | #(vv, ve, vl).(vv : VesselVICT &
+				ve : VesselESIM &
+				vl : VehicleLink &
+				rr = rec(uid: get_vessel_id(vv'uid, ve'uid), imoNumber: vv'imoNumber, mmsi: vv'mmsi, vehicleId: get_vehicle_id(vv'vehicleId, ve'vehicleId), length: ve'length, width: ve'width, deadweight: ve'deadweight, displacement: ve'displacement) &
+				vv'vehicleId = vl'vehicleVict'uid &
+				ve'vehicleId = vl'vehicleEsim'uid)});
+		state'VesselFromVesselVICTVesselESIMVehicleLinkInserted := TRUE
+	END
+
+END

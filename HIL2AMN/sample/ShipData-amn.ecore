@@ -1,0 +1,1401 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:amn="http://synthesis.ipi.ac.ru/amn/" xmlns:amn-exp="http://synthesis.ipi.ac.ru/amn/expression"
+    xmlns:amn-pred="http://synthesis.ipi.ac.ru/amn/predicate" xmlns:amn-subst="http://synthesis.ipi.ac.ru/amn/substitution">
+  <amn:AbstractMachine name="Context">
+    <sets name="STRING_TYPE"/>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="null_string"/>
+      <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+    </properties>
+    <abstractVariables>null_string</abstractVariables>
+  </amn:AbstractMachine>
+  <amn:AbstractMachine name="HILProgramSemanticsAM">
+    <operations name="insertIntoVehicleESIMFromShip">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="insertIntoVesselESIMFromShip">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="insertIntoVehicleVICTFromShipPositions">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="insertIntoVesselVICTFromShipPositions">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="createVehicleLink">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="insertIntoVehicleFromVehicleVICTVehicleESIMVehicleLink">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+    <operations name="insertIntoVesselFromVesselVICTVesselESIMVehicleLink">
+      <substitution xsi:type="amn-subst:Identity"/>
+    </operations>
+  </amn:AbstractMachine>
+  <amn:Refinement name="HILProgramSemantics" sees="/0" refines="/1">
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="ShipPositions"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="uid" type="/186"/>
+          <element name="callSign" type="/187"/>
+          <element name="name" type="/188"/>
+          <element name="nameLat" type="/189"/>
+          <element name="isoCountryCode" type="/190"/>
+          <element name="imo" type="/191"/>
+          <element name="mmsi" type="/192"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="Ship"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="uid" type="/193"/>
+          <element name="call_sign" type="/194"/>
+          <element name="name" type="/195"/>
+          <element name="country" type="/196"/>
+          <element name="speed" type="/197"/>
+          <element name="max_range" type="/198"/>
+          <element name="max_crew" type="/199"/>
+          <element name="description" type="/200"/>
+          <element name="imo_number" type="/201"/>
+          <element name="length" type="/202"/>
+          <element name="breadth" type="/203"/>
+          <element name="displacement" type="/204"/>
+          <element name="deadweight" type="/205"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="VehicleVICT"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="uid" type="/206"/>
+          <element name="call" type="/207"/>
+          <element name="name" type="/208"/>
+          <element name="latName" type="/209"/>
+          <element name="country" type="/210"/>
+          <element name="vehicleType" type="/211"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="VesselVICT"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="uid" type="/212"/>
+          <element name="imoNumber" type="/213"/>
+          <element name="mmsi" type="/214"/>
+          <element name="vehicleId" type="/215"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="VehicleESIM"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="uid" type="/216"/>
+          <element name="call" type="/217"/>
+          <element name="name" type="/218"/>
+          <element name="country" type="/219"/>
+          <element name="maxSpeed" type="/220"/>
+          <element name="maxRange" type="/221"/>
+          <element name="maxCrew" type="/222"/>
+          <element name="description" type="/223"/>
+          <element name="vehicleType" type="/224"/>
+          <element name="ownerId" type="/225"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="VesselESIM"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="uid" type="/226"/>
+          <element name="imoNumber" type="/227"/>
+          <element name="length" type="/228"/>
+          <element name="width" type="/229"/>
+          <element name="displacement" type="/230"/>
+          <element name="deadweight" type="/231"/>
+          <element name="vehicleId" type="/232"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="Vehicle"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="uid" type="/233"/>
+          <element name="call" type="/234"/>
+          <element name="name" type="/235"/>
+          <element name="latName" type="/236"/>
+          <element name="country" type="/237"/>
+          <element name="vehicleType" type="/238"/>
+          <element name="description" type="/239"/>
+          <element name="maxCrew" type="/240"/>
+          <element name="maxRange" type="/241"/>
+          <element name="maxSpeed" type="/242"/>
+          <element name="ownerId" type="/243"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="Vessel"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="uid" type="/244"/>
+          <element name="imoNumber" type="/245"/>
+          <element name="mmsi" type="/246"/>
+          <element name="vehicleId" type="/247"/>
+          <element name="length" type="/248"/>
+          <element name="width" type="/249"/>
+          <element name="deadweight" type="/250"/>
+          <element name="displacement" type="/251"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="VehicleLink"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="vehicleVict" type="/258"/>
+          <element name="vehicleEsim" type="/259"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:Variable" name="state"/>
+      <expression xsi:type="amn-exp:StructType">
+        <element name="VehicleLinkCreated" type="/32"/>
+        <element name="VehicleESIMFromShipInserted" type="/4"/>
+        <element name="VesselESIMFromShipInserted" type="/11"/>
+        <element name="VehicleVICTFromShipPositionsInserted" type="/18"/>
+        <element name="VesselVICTFromShipPositionsInserted" type="/25"/>
+        <element name="VehicleFromVehicleVICTVehicleESIMVehicleLinkInserted" type="/38"/>
+        <element name="VesselFromVesselVICTVesselESIMVehicleLinkInserted" type="/45"/>
+      </expression>
+    </invariant>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="ShipPositions"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="Ship"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="VehicleVICT"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="VesselVICT"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="VehicleESIM"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="VesselESIM"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="Vehicle"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="Vessel"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="VehicleLink"/>
+      <rightExpression xsi:type="amn-exp:SetValue"/>
+    </initialization>
+    <initialization xsi:type="amn-subst:BecomesEqual">
+      <leftExpression xsi:type="amn-exp:Variable" name="state"/>
+      <rightExpression xsi:type="amn-exp:RecordValue">
+        <element name="VehicleLinkCreated" value="/33"/>
+        <element name="VehicleESIMFromShipInserted" value="/5"/>
+        <element name="VesselESIMFromShipInserted" value="/12"/>
+        <element name="VehicleVICTFromShipPositionsInserted" value="/19"/>
+        <element name="VesselVICTFromShipPositionsInserted" value="/26"/>
+        <element name="VehicleFromVehicleVICTVehicleESIMVehicleLinkInserted" value="/39"/>
+        <element name="VesselFromVesselVICTVesselESIMVehicleLinkInserted" value="/46"/>
+      </rightExpression>
+    </initialization>
+    <operations name="insertIntoVehicleESIMFromShip">
+      <substitution xsi:type="amn-subst:Select">
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="VehicleESIM"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="VehicleESIM"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="ss"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="Ship"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr"/>
+                      <expression xsi:type="amn-exp:RecordValue">
+                        <element name="uid" value="/167"/>
+                        <element name="call" value="/64"/>
+                        <element name="name" value="/66"/>
+                        <element name="country" value="/68"/>
+                        <element name="maxSpeed" value="/70"/>
+                        <element name="maxRange" value="/72"/>
+                        <element name="maxCrew" value="/74"/>
+                        <element name="description" value="/76"/>
+                        <element name="vehicleType" value="/165"/>
+                        <element name="ownerId" value="/168"/>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <variable>ss</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state">
+              <field>VehicleESIMFromShipInserted</field>
+            </leftExpression>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="insertIntoVesselESIMFromShip">
+      <substitution xsi:type="amn-subst:Select">
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="VesselESIM"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="VesselESIM"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="ss"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="Ship"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr"/>
+                      <expression xsi:type="amn-exp:RecordValue">
+                        <element name="uid" value="/169"/>
+                        <element name="imoNumber" value="/80"/>
+                        <element name="length" value="/82"/>
+                        <element name="width" value="/84"/>
+                        <element name="displacement" value="/86"/>
+                        <element name="deadweight" value="/88"/>
+                        <element name="vehicleId" value="/170"/>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <variable>ss</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state">
+              <field>VesselESIMFromShipInserted</field>
+            </leftExpression>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="insertIntoVehicleVICTFromShipPositions">
+      <substitution xsi:type="amn-subst:Select">
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="VehicleVICT"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="VehicleVICT"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="sp"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="ShipPositions"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr"/>
+                      <expression xsi:type="amn-exp:RecordValue">
+                        <element name="uid" value="/171"/>
+                        <element name="call" value="/92"/>
+                        <element name="name" value="/94"/>
+                        <element name="latName" value="/96"/>
+                        <element name="country" value="/172"/>
+                        <element name="vehicleType" value="/166"/>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <variable>sp</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state">
+              <field>VehicleVICTFromShipPositionsInserted</field>
+            </leftExpression>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="insertIntoVesselVICTFromShipPositions">
+      <substitution xsi:type="amn-subst:Select">
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="VesselVICT"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="VesselVICT"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="sp"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="ShipPositions"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr"/>
+                      <expression xsi:type="amn-exp:RecordValue">
+                        <element name="uid" value="/173"/>
+                        <element name="imoNumber" value="/100"/>
+                        <element name="mmsi" value="/102"/>
+                        <element name="vehicleId" value="/174"/>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                  <variable>sp</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state">
+              <field>VesselVICTFromShipPositionsInserted</field>
+            </leftExpression>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="createVehicleLink">
+      <substitution xsi:type="amn-subst:Select">
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'VehicleESIMFromShipInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'VehicleVICTFromShipPositionsInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="VehicleLink"/>
+            <rightExpression xsi:type="amn-exp:SetComprehension">
+              <variable>rr</variable>
+              <predicate xsi:type="amn-pred:ExistentialPredicate">
+                <predicate xsi:type="amn-pred:Conjunction">
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                    <expression xsi:type="amn-exp:Variable" name="vv"/>
+                    <expression xsi:type="amn-exp:NamedConstant" name="VehicleVICT"/>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                    <expression xsi:type="amn-exp:Variable" name="ve"/>
+                    <expression xsi:type="amn-exp:NamedConstant" name="VehicleESIM"/>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                    <expression xsi:type="amn-exp:Variable" name="rr"/>
+                    <expression xsi:type="amn-exp:RecordValue">
+                      <element name="vehicleVict" value="/178"/>
+                      <element name="vehicleEsim" value="/179"/>
+                    </expression>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:Disjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:RecordLookup" name="vv">
+                        <field>call</field>
+                      </expression>
+                      <expression xsi:type="amn-exp:RecordLookup" name="ve">
+                        <field>call</field>
+                      </expression>
+                    </predicate>
+                  </predicate>
+                </predicate>
+                <variable>vv</variable>
+                <variable>ve</variable>
+              </predicate>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state">
+              <field>VehicleLinkCreated</field>
+            </leftExpression>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="insertIntoVehicleFromVehicleVICTVehicleESIMVehicleLink">
+      <substitution xsi:type="amn-subst:Select">
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'VehicleESIMFromShipInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'VehicleLinkCreated"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'VehicleVICTFromShipPositionsInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="Vehicle"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="Vehicle"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="vv"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="VehicleVICT"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="ve"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="VehicleESIM"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="vl"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="VehicleLink"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr"/>
+                      <expression xsi:type="amn-exp:RecordValue">
+                        <element name="uid" value="/175"/>
+                        <element name="call" value="/121"/>
+                        <element name="name" value="/123"/>
+                        <element name="latName" value="/125"/>
+                        <element name="country" value="/127"/>
+                        <element name="vehicleType" value="/129"/>
+                        <element name="description" value="/131"/>
+                        <element name="maxCrew" value="/133"/>
+                        <element name="maxRange" value="/135"/>
+                        <element name="maxSpeed" value="/137"/>
+                        <element name="ownerId" value="/139"/>
+                      </expression>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:Conjunction">
+                      <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                        <expression xsi:type="amn-exp:RecordLookup" name="vv">
+                          <field>uid</field>
+                        </expression>
+                        <expression xsi:type="amn-exp:RecordLookup" name="vl">
+                          <field>vehicleVict</field>
+                          <field>uid</field>
+                        </expression>
+                      </predicate>
+                      <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                        <expression xsi:type="amn-exp:RecordLookup" name="ve">
+                          <field>uid</field>
+                        </expression>
+                        <expression xsi:type="amn-exp:RecordLookup" name="vl">
+                          <field>vehicleEsim</field>
+                          <field>uid</field>
+                        </expression>
+                      </predicate>
+                    </predicate>
+                  </predicate>
+                  <variable>vv</variable>
+                  <variable>ve</variable>
+                  <variable>vl</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state">
+              <field>VehicleFromVehicleVICTVehicleESIMVehicleLinkInserted</field>
+            </leftExpression>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <operations name="insertIntoVesselFromVesselVICTVesselESIMVehicleLink">
+      <substitution xsi:type="amn-subst:Select">
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'VesselESIMFromShipInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'VehicleLinkCreated"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <select xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:NamedConstant" name="state'VesselVICTFromShipPositionsInserted"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+        </select>
+        <thenPart xsi:type="amn-subst:SequenceSubstitution">
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:Variable" name="Vessel"/>
+            <rightExpression xsi:type="amn-exp:BinaryOperator" sign="\/">
+              <expression xsi:type="amn-exp:Variable" name="Vessel"/>
+              <expression xsi:type="amn-exp:SetComprehension">
+                <variable>rr</variable>
+                <predicate xsi:type="amn-pred:ExistentialPredicate">
+                  <predicate xsi:type="amn-pred:Conjunction">
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="vv"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="VesselVICT"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="ve"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="VesselESIM"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                      <expression xsi:type="amn-exp:Variable" name="vl"/>
+                      <expression xsi:type="amn-exp:NamedConstant" name="VehicleLink"/>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                      <expression xsi:type="amn-exp:Variable" name="rr"/>
+                      <expression xsi:type="amn-exp:RecordValue">
+                        <element name="uid" value="/176"/>
+                        <element name="imoNumber" value="/147"/>
+                        <element name="mmsi" value="/149"/>
+                        <element name="vehicleId" value="/177"/>
+                        <element name="length" value="/153"/>
+                        <element name="width" value="/155"/>
+                        <element name="deadweight" value="/157"/>
+                        <element name="displacement" value="/159"/>
+                      </expression>
+                    </predicate>
+                    <predicate xsi:type="amn-pred:Conjunction">
+                      <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                        <expression xsi:type="amn-exp:RecordLookup" name="vv">
+                          <field>vehicleId</field>
+                        </expression>
+                        <expression xsi:type="amn-exp:RecordLookup" name="vl">
+                          <field>vehicleVict</field>
+                          <field>uid</field>
+                        </expression>
+                      </predicate>
+                      <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                        <expression xsi:type="amn-exp:RecordLookup" name="ve">
+                          <field>vehicleId</field>
+                        </expression>
+                        <expression xsi:type="amn-exp:RecordLookup" name="vl">
+                          <field>vehicleEsim</field>
+                          <field>uid</field>
+                        </expression>
+                      </predicate>
+                    </predicate>
+                  </predicate>
+                  <variable>vv</variable>
+                  <variable>ve</variable>
+                  <variable>vl</variable>
+                </predicate>
+              </expression>
+            </rightExpression>
+          </substitution>
+          <substitution xsi:type="amn-subst:BecomesEqual">
+            <leftExpression xsi:type="amn-exp:RecordLookup" name="state">
+              <field>VesselFromVesselVICTVesselESIMVehicleLinkInserted</field>
+            </leftExpression>
+            <rightExpression xsi:type="amn-exp:NamedConstant" name="TRUE"/>
+          </substitution>
+        </thenPart>
+      </substitution>
+    </operations>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="get_country"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+      </expression>
+    </properties>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="get_source_vehicle_id"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+      </expression>
+    </properties>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="get_source_vessel_id"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+      </expression>
+    </properties>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="get_vehicle_id"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+      </expression>
+    </properties>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="get_vessel_id"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+      </expression>
+    </properties>
+    <properties xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:NamedConstant" name="get_entity_id"/>
+      <expression xsi:type="amn-exp:BinaryOperator" sign="-->">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="*">
+          <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+        </expression>
+        <expression xsi:type="amn-exp:NamedConstant" name="STRING_TYPE"/>
+      </expression>
+    </properties>
+    <abstractConstants>get_country</abstractConstants>
+    <abstractConstants>get_source_vehicle_id</abstractConstants>
+    <abstractConstants>get_source_vessel_id</abstractConstants>
+    <abstractConstants>get_vehicle_id</abstractConstants>
+    <abstractConstants>get_vessel_id</abstractConstants>
+    <abstractConstants>get_entity_id</abstractConstants>
+    <abstractVariables>state</abstractVariables>
+    <abstractVariables>ShipPositions</abstractVariables>
+    <abstractVariables>Ship</abstractVariables>
+    <abstractVariables>VehicleVICT</abstractVariables>
+    <abstractVariables>VesselVICT</abstractVariables>
+    <abstractVariables>VehicleESIM</abstractVariables>
+    <abstractVariables>VesselESIM</abstractVariables>
+    <abstractVariables>Vehicle</abstractVariables>
+    <abstractVariables>Vessel</abstractVariables>
+    <abstractVariables>VehicleLink</abstractVariables>
+  </amn:Refinement>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="ss1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="Ship"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>ss1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="ss1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="Ship"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>ss1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="sp1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="ShipPositions"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>sp1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="sp1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="ShipPositions"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>sp1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="VehicleLink"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="vv1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="VehicleVICT"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="ve1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="VehicleESIM"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>vv1</variable>
+      <variable>ve1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="vv1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="VehicleVICT"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="ve1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="VehicleESIM"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="vl1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="VehicleLink"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>vv1</variable>
+      <variable>ve1</variable>
+      <variable>vl1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="insert"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="BOOL"/>
+  <amn-exp:NamedConstant name="FALSE"/>
+  <amn-exp:SetComprehension>
+    <variable>rr1</variable>
+    <predicate xsi:type="amn-pred:ExistentialPredicate">
+      <predicate xsi:type="amn-pred:Conjunction">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="vv1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="VesselVICT"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="ve1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="VesselESIM"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:Variable" name="vl1"/>
+          <expression xsi:type="amn-exp:NamedConstant" name="VehicleLink"/>
+        </predicate>
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+          <expression xsi:type="amn-exp:Variable" name="rr1"/>
+          <expression xsi:type="amn-exp:BinaryOperator" sign="|->"/>
+        </predicate>
+      </predicate>
+      <variable>vv1</variable>
+      <variable>ve1</variable>
+      <variable>vl1</variable>
+    </predicate>
+  </amn-exp:SetComprehension>
+  <amn-exp:RecordValue/>
+  <amn-pred:Disjunction/>
+  <amn-pred:Conjunction/>
+  <amn-exp:NamedConstant name="VehicleESIM"/>
+  <amn-exp:NamedConstant name="VehicleESIM"/>
+  <amn-exp:NamedConstant name="VesselESIM"/>
+  <amn-exp:NamedConstant name="VesselESIM"/>
+  <amn-exp:NamedConstant name="VehicleVICT"/>
+  <amn-exp:NamedConstant name="VehicleVICT"/>
+  <amn-exp:NamedConstant name="VesselVICT"/>
+  <amn-exp:NamedConstant name="VesselVICT"/>
+  <amn-exp:NamedConstant name="Vehicle"/>
+  <amn-exp:NamedConstant name="Vehicle"/>
+  <amn-exp:NamedConstant name="Vessel"/>
+  <amn-exp:NamedConstant name="Vessel"/>
+  <amn-exp:RecordLookup name="ss">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>call_sign</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>call_sign</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>country</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>country</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>speed</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>speed</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>max_range</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>max_range</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>max_crew</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>max_crew</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>description</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>description</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>imo_number</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>imo_number</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>length</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>length</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>breadth</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>breadth</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>displacement</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>displacement</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>deadweight</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>deadweight</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ss">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>callSign</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>callSign</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>nameLat</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>nameLat</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>isoCountryCode</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>imo</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>imo</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>mmsi</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>mmsi</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="sp">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>call</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>call</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>call</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>call</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>call</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>call</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>call</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>call</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>name</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>latName</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>latName</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>country</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>country</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>vehicleType</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>vehicleType</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>description</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>description</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>maxCrew</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>maxCrew</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>maxRange</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>maxRange</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>maxSpeed</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>maxSpeed</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>ownerId</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>ownerId</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vl">
+    <field>vehicleVict</field>
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vl">
+    <field>vehicleEsim</field>
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>imoNumber</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>imoNumber</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>mmsi</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>mmsi</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>vehicleId</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>vehicleId</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>length</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>length</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>width</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>width</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>deadweight</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>deadweight</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>displacement</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>displacement</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vv">
+    <field>vehicleId</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vl">
+    <field>vehicleVict</field>
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="ve">
+    <field>vehicleId</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:RecordLookup name="vl">
+    <field>vehicleEsim</field>
+    <field>uid</field>
+  </amn-exp:RecordLookup>
+  <amn-exp:StringValue value="&quot;Vessel&quot;"/>
+  <amn-exp:StringValue value="&quot;Vessel&quot;"/>
+  <amn-exp:FunctionalExpression sign="get_source_vehicle_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="ss">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_entity_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="ss">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_source_vessel_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="ss">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_source_vehicle_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="ss">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_source_vehicle_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="sp">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_country">
+    <expression xsi:type="amn-exp:RecordLookup" name="sp">
+      <field>isoCountryCode</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_source_vessel_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="sp">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_source_vehicle_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="sp">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_vehicle_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="vv">
+      <field>uid</field>
+    </expression>
+    <expression xsi:type="amn-exp:RecordLookup" name="ve">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_vessel_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="vv">
+      <field>uid</field>
+    </expression>
+    <expression xsi:type="amn-exp:RecordLookup" name="ve">
+      <field>uid</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:FunctionalExpression sign="get_vehicle_id">
+    <expression xsi:type="amn-exp:RecordLookup" name="vv">
+      <field>vehicleId</field>
+    </expression>
+    <expression xsi:type="amn-exp:RecordLookup" name="ve">
+      <field>vehicleId</field>
+    </expression>
+  </amn-exp:FunctionalExpression>
+  <amn-exp:RecordValue>
+    <element name="uid" value="/105"/>
+    <element name="call" value="/107"/>
+    <element name="name" value="/109"/>
+  </amn-exp:RecordValue>
+  <amn-exp:RecordValue>
+    <element name="uid" value="/111"/>
+    <element name="call" value="/113"/>
+    <element name="name" value="/115"/>
+  </amn-exp:RecordValue>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="get_country"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="get_source_vehicle_id"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="get_source_vessel_id"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="get_vehicle_id"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="get_vessel_id"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-subst:BecomesEqual>
+    <leftExpression xsi:type="amn-exp:Variable" name="get_entity_id"/>
+    <rightExpression xsi:type="amn-exp:SetValue"/>
+  </amn-subst:BecomesEqual>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:NamedConstant name="STRING_TYPE"/>
+  <amn-exp:StructType>
+    <element name="uid" type="/252"/>
+    <element name="call" type="/253"/>
+    <element name="name" type="/254"/>
+  </amn-exp:StructType>
+  <amn-exp:StructType>
+    <element name="uid" type="/255"/>
+    <element name="call" type="/256"/>
+    <element name="name" type="/257"/>
+  </amn-exp:StructType>
+</xmi:XMI>

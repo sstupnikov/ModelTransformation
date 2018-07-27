@@ -1,0 +1,12 @@
+MACHINE Context
+
+SETS
+	STRING_TYPE
+
+PROPERTIES
+	null_string : STRING_TYPE
+
+VARIABLES
+	null_string
+
+END
