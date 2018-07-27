@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="ASCII"?>
+<hil:Program xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:hil="http://www.ibm.com/HIL/" xmlns:hil-expr="http://www.ibm.com/HIL/Expression/" xmlns:hil-type="http://www.ibm.com/HIL/Type/">
+  <statement xsi:type="hil:Declaration" name="ShipPositions">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="uid">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="callSign">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="name">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="nameLat">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="isoCountryCode">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="imo">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="mmsi">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="Ship">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="uid">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="call_sign">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="name">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="country">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="speed">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="max_range">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="max_crew">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="description">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="imo_number">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="length">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="breadth">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="displacement">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="deadweight">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="VehicleVICT">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="uid">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="call">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="name">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="latName">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="country">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="vehicleType">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="VesselVICT">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="uid">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="imoNumber">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="mmsi">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="vehicleId">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="VehicleESIM">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="uid">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="call">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="name">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="country">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="maxSpeed">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="maxRange">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="maxCrew">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="description">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="vehicleType">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="ownerId">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="VesselESIM">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="uid">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="imoNumber">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="length">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="width">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="displacement">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="deadweight">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="vehicleId">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="Vehicle">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="uid">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="call">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="name">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="latName">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="country">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="vehicleType">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="description">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="maxCrew">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="maxRange">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="maxSpeed">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="ownerId">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="Vessel">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="uid">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="imoNumber">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="mmsi">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="vehicleId">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="length">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="width">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="deadweight">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+        <element label="displacement">
+          <type xsi:type="hil-type:StringType"/>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="VehicleLink">
+    <type xsi:type="hil-type:SetType">
+      <type xsi:type="hil-type:RecordType">
+        <element label="vehicleVict">
+          <type xsi:type="hil-type:RecordType">
+            <element label="uid">
+              <type xsi:type="hil-type:StringType"/>
+            </element>
+            <element label="call">
+              <type xsi:type="hil-type:StringType"/>
+            </element>
+            <element label="name">
+              <type xsi:type="hil-type:StringType"/>
+            </element>
+          </type>
+        </element>
+        <element label="vehicleEsim">
+          <type xsi:type="hil-type:RecordType">
+            <element label="uid">
+              <type xsi:type="hil-type:StringType"/>
+            </element>
+            <element label="call">
+              <type xsi:type="hil-type:StringType"/>
+            </element>
+            <element label="name">
+              <type xsi:type="hil-type:StringType"/>
+            </element>
+          </type>
+        </element>
+      </type>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="get_country">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:StringType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="get_source_vehicle_id">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:StringType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="get_source_vessel_id">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:StringType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="get_vehicle_id">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:StringType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="get_vessel_id">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:StringType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Declaration" name="get_entity_id">
+    <type xsi:type="hil-type:FunctionType">
+      <fromType xsi:type="hil-type:StringType"/>
+      <toType xsi:type="hil-type:StringType"/>
+    </type>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:Identifier" value="VehicleESIM"/>
+    <select label="uid">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_source_vehicle_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="s">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <select label="call">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>call_sign</elementId>
+      </exp>
+    </select>
+    <select label="name">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>name</elementId>
+      </exp>
+    </select>
+    <select label="country">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>country</elementId>
+      </exp>
+    </select>
+    <select label="maxSpeed">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>speed</elementId>
+      </exp>
+    </select>
+    <select label="maxRange">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>max_range</elementId>
+      </exp>
+    </select>
+    <select label="maxCrew">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>max_crew</elementId>
+      </exp>
+    </select>
+    <select label="description">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>description</elementId>
+      </exp>
+    </select>
+    <select label="vehicleType">
+      <exp xsi:type="hil-expr:StringLiteral" value="&quot;Vessel&quot;"/>
+    </select>
+    <select label="ownerId">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_entity_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="s">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <fromClause alias="s">
+      <exp xsi:type="hil-expr:Identifier" value="Ship"/>
+    </fromClause>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:Identifier" value="VesselESIM"/>
+    <select label="uid">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_source_vessel_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="s">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <select label="imoNumber">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>imo_number</elementId>
+      </exp>
+    </select>
+    <select label="length">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>length</elementId>
+      </exp>
+    </select>
+    <select label="width">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>breadth</elementId>
+      </exp>
+    </select>
+    <select label="displacement">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>displacement</elementId>
+      </exp>
+    </select>
+    <select label="deadweight">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="s">
+        <elementId>deadweight</elementId>
+      </exp>
+    </select>
+    <select label="vehicleId">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_source_vehicle_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="s">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <fromClause alias="s">
+      <exp xsi:type="hil-expr:Identifier" value="Ship"/>
+    </fromClause>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:Identifier" value="VehicleVICT"/>
+    <select label="uid">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_source_vehicle_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="sp">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <select label="call">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="sp">
+        <elementId>callSign</elementId>
+      </exp>
+    </select>
+    <select label="name">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="sp">
+        <elementId>name</elementId>
+      </exp>
+    </select>
+    <select label="latName">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="sp">
+        <elementId>nameLat</elementId>
+      </exp>
+    </select>
+    <select label="country">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_country">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="sp">
+          <elementId>isoCountryCode</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <select label="vehicleType">
+      <exp xsi:type="hil-expr:StringLiteral" value="&quot;Vessel&quot;"/>
+    </select>
+    <fromClause alias="sp">
+      <exp xsi:type="hil-expr:Identifier" value="ShipPositions"/>
+    </fromClause>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:Identifier" value="VesselVICT"/>
+    <select label="uid">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_source_vessel_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="sp">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <select label="imoNumber">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="sp">
+        <elementId>imo</elementId>
+      </exp>
+    </select>
+    <select label="mmsi">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="sp">
+        <elementId>mmsi</elementId>
+      </exp>
+    </select>
+    <select label="vehicleId">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_source_vehicle_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="sp">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <fromClause alias="sp">
+      <exp xsi:type="hil-expr:Identifier" value="ShipPositions"/>
+    </fromClause>
+  </statement>
+  <statement xsi:type="hil:CreateLink" name="VehicleLink">
+    <select label="vehicleVict">
+      <exp xsi:type="hil-expr:RecordExp">
+        <exp label="uid">
+          <value xsi:type="hil-expr:RecordProjection" recordId="vv">
+            <elementId>uid</elementId>
+          </value>
+        </exp>
+        <exp label="call">
+          <value xsi:type="hil-expr:RecordProjection" recordId="vv">
+            <elementId>call</elementId>
+          </value>
+        </exp>
+        <exp label="name">
+          <value xsi:type="hil-expr:RecordProjection" recordId="vv">
+            <elementId>name</elementId>
+          </value>
+        </exp>
+      </exp>
+    </select>
+    <select label="vehicleEsim">
+      <exp xsi:type="hil-expr:RecordExp">
+        <exp label="uid">
+          <value xsi:type="hil-expr:RecordProjection" recordId="ve">
+            <elementId>uid</elementId>
+          </value>
+        </exp>
+        <exp label="call">
+          <value xsi:type="hil-expr:RecordProjection" recordId="ve">
+            <elementId>call</elementId>
+          </value>
+        </exp>
+        <exp label="name">
+          <value xsi:type="hil-expr:RecordProjection" recordId="ve">
+            <elementId>name</elementId>
+          </value>
+        </exp>
+      </exp>
+    </select>
+    <fromClause alias="vv">
+      <exp xsi:type="hil-expr:Identifier" value="VehicleVICT"/>
+    </fromClause>
+    <fromClause alias="ve">
+      <exp xsi:type="hil-expr:Identifier" value="VehicleESIM"/>
+    </fromClause>
+    <match name="rule1">
+      <predicate xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="vv">
+          <elementId>call</elementId>
+        </left>
+        <right xsi:type="hil-expr:RecordProjection" recordId="ve">
+          <elementId>call</elementId>
+        </right>
+      </predicate>
+    </match>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:Identifier" value="Vehicle"/>
+    <select label="uid">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_vehicle_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="vv">
+          <elementId>uid</elementId>
+        </parameter>
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="ve">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <select label="call">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="vv">
+        <elementId>call</elementId>
+      </exp>
+    </select>
+    <select label="name">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="vv">
+        <elementId>name</elementId>
+      </exp>
+    </select>
+    <select label="latName">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="vv">
+        <elementId>latName</elementId>
+      </exp>
+    </select>
+    <select label="country">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="vv">
+        <elementId>country</elementId>
+      </exp>
+    </select>
+    <select label="vehicleType">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="vv">
+        <elementId>vehicleType</elementId>
+      </exp>
+    </select>
+    <select label="description">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>description</elementId>
+      </exp>
+    </select>
+    <select label="maxCrew">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>maxCrew</elementId>
+      </exp>
+    </select>
+    <select label="maxRange">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>maxRange</elementId>
+      </exp>
+    </select>
+    <select label="maxSpeed">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>maxSpeed</elementId>
+      </exp>
+    </select>
+    <select label="ownerId">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>ownerId</elementId>
+      </exp>
+    </select>
+    <fromClause alias="vv">
+      <exp xsi:type="hil-expr:Identifier" value="VehicleVICT"/>
+    </fromClause>
+    <fromClause alias="ve">
+      <exp xsi:type="hil-expr:Identifier" value="VehicleESIM"/>
+    </fromClause>
+    <fromClause alias="vl">
+      <exp xsi:type="hil-expr:Identifier" value="VehicleLink"/>
+    </fromClause>
+    <where xsi:type="hil-expr:AndPredicate">
+      <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="vv">
+          <elementId>uid</elementId>
+        </left>
+        <right xsi:type="hil-expr:RecordProjection" recordId="vl">
+          <elementId>vehicleVict</elementId>
+          <elementId>uid</elementId>
+        </right>
+      </pred>
+      <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="ve">
+          <elementId>uid</elementId>
+        </left>
+        <right xsi:type="hil-expr:RecordProjection" recordId="vl">
+          <elementId>vehicleEsim</elementId>
+          <elementId>uid</elementId>
+        </right>
+      </pred>
+    </where>
+  </statement>
+  <statement xsi:type="hil:Insert">
+    <into xsi:type="hil-expr:Identifier" value="Vessel"/>
+    <select label="uid">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_vessel_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="vv">
+          <elementId>uid</elementId>
+        </parameter>
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="ve">
+          <elementId>uid</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <select label="imoNumber">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="vv">
+        <elementId>imoNumber</elementId>
+      </exp>
+    </select>
+    <select label="mmsi">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="vv">
+        <elementId>mmsi</elementId>
+      </exp>
+    </select>
+    <select label="vehicleId">
+      <exp xsi:type="hil-expr:FunctionCallExp" functionId="get_vehicle_id">
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="vv">
+          <elementId>vehicleId</elementId>
+        </parameter>
+        <parameter xsi:type="hil-expr:RecordProjection" recordId="ve">
+          <elementId>vehicleId</elementId>
+        </parameter>
+      </exp>
+    </select>
+    <select label="length">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>length</elementId>
+      </exp>
+    </select>
+    <select label="width">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>width</elementId>
+      </exp>
+    </select>
+    <select label="deadweight">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>deadweight</elementId>
+      </exp>
+    </select>
+    <select label="displacement">
+      <exp xsi:type="hil-expr:RecordProjection" recordId="ve">
+        <elementId>displacement</elementId>
+      </exp>
+    </select>
+    <fromClause alias="vv">
+      <exp xsi:type="hil-expr:Identifier" value="VesselVICT"/>
+    </fromClause>
+    <fromClause alias="ve">
+      <exp xsi:type="hil-expr:Identifier" value="VesselESIM"/>
+    </fromClause>
+    <fromClause alias="vl">
+      <exp xsi:type="hil-expr:Identifier" value="VehicleLink"/>
+    </fromClause>
+    <where xsi:type="hil-expr:AndPredicate">
+      <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="vv">
+          <elementId>vehicleId</elementId>
+        </left>
+        <right xsi:type="hil-expr:RecordProjection" recordId="vl">
+          <elementId>vehicleVict</elementId>
+          <elementId>uid</elementId>
+        </right>
+      </pred>
+      <pred xsi:type="hil-expr:BinaryPredicate" sign="=">
+        <left xsi:type="hil-expr:RecordProjection" recordId="ve">
+          <elementId>vehicleId</elementId>
+        </left>
+        <right xsi:type="hil-expr:RecordProjection" recordId="vl">
+          <elementId>vehicleEsim</elementId>
+          <elementId>uid</elementId>
+        </right>
+      </pred>
+    </where>
+  </statement>
+</hil:Program>

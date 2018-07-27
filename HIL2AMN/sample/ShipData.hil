@@ -1,0 +1,137 @@
+// Source schema
+declare ShipPositions : set[ uid: string, callSign: string, name:  string, nameLat: string, isoCountryCode: string, 
+imo: string, mmsi: string];
+declare Ship : set[uid: string, call_sign: string, name: string, country: string, 
+speed: string, max_range: string, max_crew: string, description: string, imo_number: string,
+length: string, breadth: string, displacement: string, deadweight: string];
+
+// Source schema
+declare VehicleVICT : set[uid: string, call: string, name: string, latName: string, 
+country: string, vehicleType: string];
+declare VesselVICT : set[uid: string, imoNumber: string, mmsi: string, vehicleId: string];
+declare VehicleESIM : set[uid: string, call: string, name: string, country: string,
+maxSpeed: string, maxRange: string, maxCrew: string, description: string, vehicleType: string,
+ownerId: string];
+declare VesselESIM : set[uid: string, imoNumber: string, length: string, width: string,
+displacement: string, deadweight: string, vehicleId: string];
+
+// Target schemas
+declare Vehicle : set[uid: string, call: string, name: string, latName: string, country: string,
+vehicleType: string, description: string, maxCrew: string, maxRange: string, maxSpeed: string,
+ownerId: string];
+declare Vessel : set[uid: string, imoNumber: string, mmsi: string, vehicleId: string,
+length: string, width: string, deadweight: string, displacement: string];
+declare VehicleLink : set[vehicleVict: [uid: string, call: string, name: string], 
+vehicleEsim: [uid: string, call: string, name: string]];
+
+// Conflict resolution functions
+declare get_country: function string to string;
+declare get_source_vehicle_id: function string to string;
+declare get_source_vessel_id: function string to string;
+declare get_vehicle_id: function string, string to string;
+declare get_vessel_id: function string, string to string;
+declare get_entity_id: function string to string;
+
+// Transformation rules
+insert into VehicleESIM
+select [ 
+    uid: get_source_vehicle_id(s.uid)
+    , call: s.call_sign
+    , name: s.name
+    , country: s.country
+    , maxSpeed: s.speed
+    , maxRange: s.max_range
+    , maxCrew: s.max_crew
+    , description: s.description
+    , vehicleType: "Vessel"
+    , ownerId: get_entity_id(s.uid)
+    ]
+from Ship s;
+
+insert into VesselESIM
+select [ 
+    uid: get_source_vessel_id(s.uid)
+    , imoNumber: s.imo_number
+    , length: s.length
+    , width: s.breadth
+    , displacement: s.displacement
+    , deadweight: s.deadweight
+    , vehicleId: get_source_vehicle_id(s.uid)
+    ]
+from Ship s;
+
+// Transformation rules
+insert into VehicleVICT
+select [ 
+    uid: get_source_vehicle_id(sp.uid)
+    , call: sp.callSign
+    , name: sp.name
+    , latName: sp.nameLat
+    , country: get_country(sp.isoCountryCode)
+    , vehicleType: "Vessel"
+    ]
+from ShipPositions sp;
+
+insert into VesselVICT
+select [ 
+    uid: get_source_vessel_id(sp.uid)
+    , imoNumber: sp.imo
+    , mmsi: sp.mmsi
+    , vehicleId: get_source_vehicle_id(sp.uid)
+    ]
+from ShipPositions sp;
+
+
+
+// Transformation rules
+create link VehicleLink as
+select [
+    vehicleVict: [
+        uid: vv.uid
+        , call: vv.call
+        , name: vv.name
+        ]
+    , vehicleEsim: [
+        uid: ve.uid
+        , call: ve.call
+        , name: ve.name
+        ]
+    ]
+from VehicleVICT vv, VehicleESIM ve
+match using
+    rule1: (vv.call = ve.call) 
+;
+
+
+insert into Vehicle
+select [ 
+    uid: get_vehicle_id(vv.uid, ve.uid)
+    , call: vv.call
+    , name: vv.name
+    , latName: vv.latName
+    , country: vv.country
+    , vehicleType: vv.vehicleType
+    , description: ve.description
+    , maxCrew: ve.maxCrew
+    , maxRange: ve.maxRange
+    , maxSpeed: ve.maxSpeed
+    , ownerId: ve.ownerId
+    ]
+from VehicleVICT vv, VehicleESIM ve, VehicleLink vl
+where (vv.uid = vl.vehicleVict.uid) and (ve.uid = vl.vehicleEsim.uid)
+;
+
+insert into Vessel
+select [ 
+    uid: get_vessel_id(vv.uid, ve.uid)
+    , imoNumber: vv.imoNumber
+    , mmsi: vv.mmsi
+    , vehicleId: get_vehicle_id(vv.vehicleId, ve.vehicleId)
+    , length: ve.length
+    , width: ve.width
+    , deadweight: ve.deadweight
+    , displacement: ve.displacement
+    ]
+from VesselVICT vv, VesselESIM ve, VehicleLink vl
+where (vv.vehicleId = vl.vehicleVict.uid) and (ve.vehicleId = vl.vehicleEsim.uid)
+;
