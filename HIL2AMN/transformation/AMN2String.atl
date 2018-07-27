@@ -452,7 +452,14 @@ helper context AMN!RecordValueElement def: toString(indent: String) : String =
 ;
 
 helper context AMN!RecordLookup def: toString(indent: String) : String =
-	self.name + '\'' + self.field
+	self.name + '\'' + 
+	if self.field->size() > 0 
+	then 
+		let s: String = self.field->iterate(i; acc : String = '' | acc + i + '\'') in
+			s.substring(1, s.size()-1)
+	else 
+		''
+	endif
 ;
 
 

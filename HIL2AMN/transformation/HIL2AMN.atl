@@ -1,7 +1,7 @@
 -- =============================================================================
 -- HIL2AMN
--- Version 1.0
--- Release date : 01.2017 
+-- Version 1.1
+-- Release date : 07.2018 
 -- Author : Sergey Stupnikov (sstupnikov@ipiran.ru)
 -- =============================================================================
 
@@ -23,6 +23,18 @@ create OUT : AMN from IN : HIL;
 -- 2. '?' notation in declarations, statements should create full records for collections
 -- 3. dom expression
 -- 4. block, score, group on, cardinality,  in create link
+-- 5. Record projection should be as follows: 'arecord.anelement' 
+--    (not, for instance, as 'arecord.anelement1.anelement2') 
+
+-----------------------
+-- Latest modifications: 
+--
+-- 1. Empty getUsedIndexNames helper added for StringLiteral, IntLiteral, DoubleLiteral, BooleanLiteral
+-- 2. Path expressions like "vl.vehileVict.uid" with more than one record projection 
+--    are mapped into RecordLookup expressions like "vl'vehileVict'uid"
+-- 3. Potential problem detected: Atelier B do not allow string constants. These constants should be replaced 
+--    with identifiers of constants of STRING_TYPE defined in Context machine. 
+-----------------------
 
 
 
@@ -63,14 +75,23 @@ rule Program2Refinement{
 		precOps: Set(String) = Set{};
 	}
 	to 
+		-- Context machine
+		ctxt: AMN!AbstractMachine(
+			name <- 'Context',
+			sets <- stringSet
+		),
+		stringSet: AMN!SetDecl(name <- 'STRING_TYPE'),
+		
+		-- Abstract machine with empty operations
 		am: AMN!AbstractMachine(
 			name <- 'HILProgramSemanticsAM',
 			operations <- p.statement->collect(st | thisModule.resolveTemp(st, 'emptyBodyOperation'))
 		),
+		-- Refinement - the main specification
 		ref: AMN!Refinement(
-			name <- 'HILProgramSemantics',
-			
-			refines <- am,
+			name <- 'HILProgramSemantics',			
+			refines <- am,			
+			sees <- ctxt,
 			
 			abstractConstants <- functions->collect(f | f.name),						
 			properties <- functions->collect(f | thisModule.resolveTemp(f, 'typing')),
@@ -110,6 +131,9 @@ rule Program2Refinement{
 		)
 		
 	do{
+		-- Add properties for string constants in Context machine
+		thisModule.CreateStringConstantTypingPredicate(ctxt, 'null');
+		
 		-- Init from and into collections 
 		for(nonDecl in p.statement->select(st | st.oclIsKindOf(HIL!CreateLink) or st.oclIsKindOf(HIL!Insert))){
 			-- Extract from collections
@@ -428,7 +452,7 @@ rule BooleanLiteral{
 rule StringLiteral{
 	from sl: HIL!StringLiteral
 	to
-		exp: AMN!BooleanValue(value <- sl.value)
+		exp: AMN!StringValue(value <- sl.value)
 }
 
 rule BracketExp{
@@ -728,10 +752,10 @@ rule Declaration{
 		),
 		init: AMN!BecomesEqual(
 			leftExpression <- varInit,
-			rightExpression <- emrtySet
+			rightExpression <- emptySet
 		),
 		varInit: AMN!Variable(name <- st.name),
-		emrtySet: AMN!SetValue		 
+		emptySet: AMN!SetValue		 
 }
 
 rule StringType2Expression{
@@ -818,6 +842,23 @@ rule CreateStateCheckPredicate(selectSubst: AMN!Select, precedingOperationName: 
 	}
 }
 
+-----------------------------------
+-- Typing predicates for string constants 
+-----------------------------------
+rule CreateStringConstantTypingPredicate(mach: AMN!AbstractMachine, constantName: String){
+	to 
+		prop : AMN!AtomicPredicate (
+			sign <- ':',
+			expression <- Sequence{constName, constType}
+		),
+		constName : AMN!NamedConstant(name <- constantName + '_string'),
+		constType : AMN!NamedConstant (name <- 'STRING_TYPE')
+	do{
+		mach.abstractVariables <- constantName + '_string';
+		mach.properties <- prop; 		
+	}
+}
+
 
 -----------------------------------
 -- Helpers
@@ -836,6 +877,23 @@ helper context HIL!FunctionCallExp def: getUsedIndexNames: Set(String) =
 	Set{}
 ;
 
+helper context HIL!StringLiteral def: getUsedIndexNames: Set(String) = 
+	Set{}
+;
+
+helper context HIL!IntegerLiteral def: getUsedIndexNames: Set(String) = 
+	Set{}
+;
+
+helper context HIL!BooleanLiteral def: getUsedIndexNames: Set(String) = 
+	Set{}
+;
+
+helper context HIL!DoubleLiteral def: getUsedIndexNames: Set(String) = 
+	Set{}
+;
+
+
 helper context HIL!LookupExp def: getUsedIndexNames: Set(String) = 
 	self.exp.getUsedIndexNames->including(self.indexId)
 ;
@@ -847,6 +905,8 @@ helper context HIL!RecordExp def: getUsedIndexNames: Set(String) =
 helper context HIL!RecordExpElement def: getUsedIndexNames: Set(String) =
 	self.value.getUsedIndexNames
 ;
+
+
 
 -----------------------------------
 -- Helpers
