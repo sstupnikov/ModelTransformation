@@ -1,0 +1,212 @@
+
+{ Mediator; in: module;
+params: { a/integer, b/Person };
+
+frame:
+{ TheLittaMadonna; 
+metaframe
+a: 1; metaslot c: 4;  end
+b: "summer";
+end
+in: painting;
+author: "Leonardo da Vinci", "Renoir";
+inRoom: TheLeonardoDaVinciRoom metavalue in: frame; end, MainBuilding metavalue in: frame; end;
+},
+{ TheLeonardoDaVinciRoom;
+},
+{ MainBuilding;
+},
+{ : TheLittaMadonna metavalue in: frame; end;
+}
+;
+
+
+type:
+
+{ Hiring; in: type, script;
+params: { a/integer, b/Person };
+supertypes: Person;
+retirementBenefit: integer;
+states: 
+	{hired;
+		token: { hiredToken: Person[name] };
+		initial: { 1, 2 }; 
+	};
+	
+gates:
+	{start;
+		token: { startToken: Person };
+		initial: { 1, 2 }; 
+	};
+
+transitions:
+	{ check;
+		from: start;
+		bind_from: {start, ch, 1,  (cardinal(start) > 1)    };
+		to: hired;
+		bind_to: {hired, ch, 2,   (cardinal(hired) > 0)  };
+		action: { checkAction; in: function; params: {+ch/integer}; };
+	}; 
+},
+
+{ Star; in: concept, structure;
+  metaframe
+   def: "Star is a ball of plasma";
+  end
+
+},
+
+{Man:CMan; in: type; 
+actual_params: { a/1, b/2 };
+},
+
+{ Person; 
+  metaframe a:1; end
+
+  in: type;
+  
+  name: string;
+  metaslot
+   card_numb: 1;
+   init: "John Doe";
+   in: structure, component;
+  end
+  metaslot
+   a: 1;
+  end  
+  
+  passport: integer;
+  metaslot
+   a: 1;
+  end
+},
+
+{ Man; in: type;
+params: { a/integer, b/Person };
+  wife: Woman;
+  metaslot
+   inverse: husband;
+  end
+brother: {Man:CMan1; in: type; actual_params: {a/2, b/4}; };
+},
+
+{ Woman; in: type;
+  husband: Man;
+},
+
+{ Employee; in: type;
+	supertypes: Person;
+	employer: Person;
+	raiseSalary: RaiseSalary;
+	name: string;
+	cast: integer;
+	
+	manager: Employee[employer, emp/Person:employer/Person, s/string:employer/Person.passport/string];
+	
+	i: {integer; precision: 10; scale: 11; };
+	
+	hire: {in: function; 
+		params: {salary/integer metavalue a: 1; end, position/string};
+		{predicative: { 
+			e(v/Employee[name, employer]) & b() <-> a() -> c() 
+			
+		}};		
+	};
+	
+	r: {real; precision: 10;};
+	s: {string; length: 10; };
+	b: Boolean;
+	e: {enum; enum_list: { sunday; monday }};
+	metaslot
+	 init: sunday;
+	end
+
+	ran: {range; l_bound: 1; u_bound: 2; type_of_element: integer;};
+	
+	c: {collection; in: nonobject; type_of_element: integer;};
+	vset: {set; in: nonobject; type_of_element: Person;};
+	vbag: {bag; in: nonobject; type_of_element: Person;};
+	vseq: {sequence; in: nonobject; type_of_element: Person; length: 10;};		
+	varr: {array; in: nonobject; index: {integer;}, {real;}; type_of_element: Person;};
+	human: {union; type_of_label: string; "man": Man; "woman": integer; };
+	marrige: {product; husband: Man; wife: integer;};	
+
+	
+	t: {time; in: nonobject; from: {yy; 5}; to: {ff}; };
+	ts: {timeslice; in: nonobject; from: {mm; 7}; to: {hh}; };	
+	ti: {interval; from: {dd}; to: {mi}; };
+	
+		
+}
+;
+
+class_specification:
+{ person; in: class;
+	instance_section: Person;
+},
+
+{ employee; in: class, structure;
+	superclass: person;
+	class_section: {EmpType; in: type; maxSalary: real;};
+	instance_section: Employee;
+},
+
+{ painting; in: class;
+},
+
+{ asymmetric; in: association, metaclass;
+},
+
+{ component; in: metaclass;
+},
+
+{ structure; in: metaclass;
+},
+
+{ HasWife; in: association, metaclass, component; 
+superclass: asymmetric;
+inverse: HasHusband;
+association_type: { {0, 4} , {0, 1}};
+domain: person, employee;
+range: person, employee;
+class_section: Person;
+instance_section: {HasWifeIT; in: type; a: real;};
+instance_instance_section: {HasWifeIIT; in: type; b: real;};
+},
+
+{ HasHusband; in: association, metaclass;
+};
+
+function: 
+{ RaiseSalary; in: function;
+	{predicative: { (a(v/Person[name], 1, true, [ 1 ], {[ 0 ]}, { x/string  | a(x) } , f(x)~ ) & b() <-> c() -> d()  | e()) &
+	                 ^g() &  all v/string (a()) & ex w/Employee (b(  (1+2%3)*3  )) &
+	                 h(a.b().c~ , b(a(v))~) &
+	
+		
+		(a.b().c~ < b(a(v))~)  <-> all v/string (a()) & ex w/Employee (b()) & a(v/string + b) & (a <= {v/string, w/string | a(v) }) 
+	              } 
+	};
+	{ p/Person, p1/Person  { 
+			a() :- b().
+			c() :- d().
+			e() :- if a() then begin a() :- b(). end .
+			f() :- while a() do begin a() :- b(). end .
+			;
+			begin
+			 c() :- d().
+			end
+			;
+			begin
+			 g() :- h().
+			end						
+		} 
+	}
+}, 
+{ Hire; in: function;
+	{{	a() :- b().	}}
+}
+;
+
+
+}

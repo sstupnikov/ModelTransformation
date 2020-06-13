@@ -1,0 +1,86 @@
+{ Query; in: module;
+
+type: 
+{ TQ; in: type;
+		a: string;
+		b: string;
+		c: string;
+		d: string;
+		e: string;
+		f: string;	
+}
+;
+
+class_specification:
+{ A; in: class;
+	instance_section: { TA; in: type;
+		a: string;
+		b: string;
+		c: string;
+	};
+},
+{ B; in: class;
+	instance_section: { TB; in: type;
+		d: string;
+		e: string;
+		f: string;
+	};
+},
+{ C; in: class;
+	instance_section: { TC; in: type;
+		d: string;
+		g: string;
+		h: string;
+	};
+},
+{ E; in: class;
+	instance_section: { TE; in: type;
+		p: string;
+		q: string;
+		r: string;
+	};
+},
+{ D; in: class;
+	instance_section: { TD; in: type;
+		g: string;
+		k: string;
+		h: string;
+	};
+},
+{ F; in: class;
+	instance_section: { TF; in: type;
+		d: string;
+		h: string;
+		m: string;
+		n: string;
+	};
+}
+;
+
+function: 
+{ query; in: function;
+{{	
+
+q(x/TQ[a, b, c, d, e, f]) :- 
+A(x/TA[a, b, c]) & 
+B(x/TB[db: d, e, f]) & 
+C(x/TC[dc: d, gc: g, hc: h]) & 
+E(x/TE[p, q, r]) & 
+D(x/TD[gd: g, hd: h, k]) & 
+F(x/TF[df: d, hf: h, m, n]) &
+(db = dc) &
+(gc = gd) &
+(hc = hd) &
+(dc = df) &
+(hc = hf) &
+(a <= p) &
+(b + m = r) &
+(abs(5) > (1 - 3)%2) & 
+(true <> false) &
+( (1) > (2*1.05 + "database")  )
+. 	
+
+}}
+};
+
+}
