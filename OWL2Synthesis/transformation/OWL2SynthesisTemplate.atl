@@ -1,0 +1,86 @@
+module OWL2Synthesis;
+create OUT : Synthesis from IN : OWL;
+
+rule Graph2SchemaDef {
+ from
+  agraph : OWL!Graph
+  (
+   agraph.oclIsTypeOf(OWL!Graph)
+  )
+ to
+  aschemadef : Synthesis!SchemaDef (
+   modules <- agraph.ontology,
+   name <- agraph.ontology->any(e |
+    e.oclIsKindOf(OWL!OWLOntology)
+   ).uriRef->any(e |
+    e.oclIsKindOf(OWL!URIReference)
+   ).fragmentIdentifier.name
+  )
+ do {
+  
+ }
+}
+
+rule OWLOntology2ModuleDef {
+ from
+  aowlontology : OWL!OWLOntology
+  (
+   aowlontology.oclIsTypeOf(OWL!OWLOntology)
+  )
+ to
+  amoduledef : Synthesis!ModuleDef
+ do {
+  amoduledef.containedTypes <- aowlontology.owlUniverse->select(e |
+   e.oclIsKindOf(OWL!OWLClass)
+  )->collect(e |
+   thisModule.resolveTemp(e, 'aadtdef')
+  );
+  amoduledef.containedClasses <- aowlontology.owlUniverse->select(e |
+   e.oclIsKindOf(OWL!OWLClass)
+  )->collect(e |
+   thisModule.resolveTemp(e, 'aclassdef')
+  );
+ }
+}
+
+rule OWLClass {
+ from
+  aowlclass : OWL!OWLClass
+  (
+   aowlclass.oclIsTypeOf(OWL!OWLClass)
+  )
+ to
+  aadtdef : Synthesis!ADTDef (
+   typeInModule <- aowlclass.ontology
+  ),
+  aclassdef : Synthesis!ClassDef (
+   classInModule <- aowlclass.ontology
+  )
+ do {
+  aadtdef.supertypes <- aowlclass.subclassOf->select(e |
+   e.oclIsKindOf(OWL!OWLClass)
+  )->collect(e |
+   thisModule.resolveTemp(e, 'aadtdef')
+  );
+  aclassdef.superclasses <- aowlclass.subclassOf->select(e |
+   e.oclIsKindOf(OWL!OWLClass)
+  )->collect(e |
+   thisModule.resolveTemp(e, 'aclassdef')
+  );
+ }
+}
+
+rule OWLObjectProperty {
+ from
+  aowlobjectproperty : OWL!OWLObjectProperty
+  (
+   aowlobjectproperty.oclIsTypeOf(OWL!OWLObjectProperty)
+  )
+ to
+  aassociationmetaclassdef : Synthesis!AssociationMetaclassDef,
+  aattributedef : Synthesis!AttributeDef
+ do {
+  aassociationmetaclassdef.inverse <- thisModule.resolveTemp(aowlobjectproperty.OWLInverseOf, 'aassociationdef');
+  aattributedef.inverseAttribute <- thisModule.resolveTemp(aowlobjectproperty.OWLInverseOf, 'aattributedef');
+ }
+}

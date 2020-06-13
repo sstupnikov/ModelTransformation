@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Similarities:Package xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:Similarities="http://synthesis.ipi.ac.ru/similarities" name="Upper">
+  <eSubpackages name="OWL">
+    <eClassifiers xsi:type="Similarities:Class" name="RDFSResource">
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="uriRef" upperBound="-1"
+          eType="#//@eSubpackages.0/@eClassifiers.4"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="RDFSClass" eSuperTypes="#//@eSubpackages.0/@eClassifiers.0">
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="subclassOf"
+          upperBound="-1" eType="#//@eSubpackages.0/@eClassifiers.1"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="Graph">
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="ontology" upperBound="-1"
+          eType="#//@eSubpackages.0/@eClassifiers.3"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="OWLOntology" eSuperTypes="#//@eSubpackages.0/@eClassifiers.0">
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="owlUniverse"
+          upperBound="-1" eType="#//@eSubpackages.0/@eClassifiers.6"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="URIReference">
+      <eStructuralFeatures xsi:type="Similarities:Attribute" name="fragmentIdentifier"
+          eType="#//@eSubpackages.0/@eClassifiers.5"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="FragmentIdentifier">
+      <eStructuralFeatures xsi:type="Similarities:Attribute" name="name" eType="#//@eSubpackages.2/@eClassifiers.0"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="OWLUniverse"/>
+    <eClassifiers xsi:type="Similarities:Class" name="OWLClass" eSuperTypes="#//@eSubpackages.0/@eClassifiers.6 #//@eSubpackages.0/@eClassifiers.1"/>
+    <eClassifiers xsi:type="Similarities:Class" name="OWLObjectProperty">
+      <eStructuralFeatures xsi:type="Similarities:Attribute" name="OWLInverseOf"
+          upperBound="1" eType="#//@eSubpackages.0/@eClassifiers.8"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="Synthesis">
+    <eClassifiers xsi:type="Similarities:Class" name="ElementDef">
+      <eStructuralFeatures xsi:type="Similarities:Attribute" name="name" eType="#//@eSubpackages.2/@eClassifiers.0"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="SchemaDef" eSuperTypes="#//@eSubpackages.1/@eClassifiers.0">
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="modules" upperBound="-1"
+          eType="#//@eSubpackages.1/@eClassifiers.2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="ModuleDef" eSuperTypes="#//@eSubpackages.1/@eClassifiers.0">
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="containedTypes"
+          upperBound="-1" eType="#//@eSubpackages.1/@eClassifiers.3"/>
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="containedClasses"
+          upperBound="-1" eType="#//@eSubpackages.1/@eClassifiers.5"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="TypeDef" eSuperTypes="#//@eSubpackages.1/@eClassifiers.0">
+      <eStructuralFeatures xsi:type="Similarities:Attribute" name="typeInModule"
+          upperBound="1" eType="#//@eSubpackages.1/@eClassifiers.2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="ADTDef" eSuperTypes="#//@eSubpackages.1/@eClassifiers.3">
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="supertypes"
+          upperBound="-1" eType="#//@eSubpackages.1/@eClassifiers.4"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="ClassDef" eSuperTypes="#//@eSubpackages.1/@eClassifiers.0">
+      <eStructuralFeatures xsi:type="Similarities:Reference" name="superclasses"
+          upperBound="-1" eType="#//@eSubpackages.1/@eClassifiers.5"/>
+      <eStructuralFeatures xsi:type="Similarities:Attribute" name="classInModule"
+          eType="#//@eSubpackages.1/@eClassifiers.2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="AttributeDef" eSuperTypes="#//@eSubpackages.1/@eClassifiers.0">
+      <eStructuralFeatures xsi:type="Similarities:Attribute" name="inverseAttribute"
+          upperBound="1" eType="#//@eSubpackages.1/@eClassifiers.6"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="AssociationDef" eSuperTypes="#//@eSubpackages.1/@eClassifiers.0">
+      <eStructuralFeatures xsi:type="Similarities:Attribute" name="inverse" upperBound="1"
+          eType="#//@eSubpackages.1/@eClassifiers.7"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="Similarities:Class" name="AssociationMetaclassDef"
+        eSuperTypes="#//@eSubpackages.1/@eClassifiers.7"/>
+  </eSubpackages>
+  <eSubpackages name="PrimitiveTypes">
+    <eClassifiers xsi:type="Similarities:DataType" name="String"/>
+    <eClassifiers xsi:type="Similarities:DataType" name="Boolean"/>
+    <eClassifiers xsi:type="Similarities:DataType" name="Integer"/>
+  </eSubpackages>
+  <Similarity name="ontology-modules">
+    <source elements="#//@eSubpackages.0/@eClassifiers.2 #//@eSubpackages.0/@eClassifiers.2/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.1 #//@eSubpackages.1/@eClassifiers.1/@eStructuralFeatures.0"/>
+  </Similarity>
+  <Similarity name="Graph-SchemaDef">
+    <source elements="#//@eSubpackages.0/@eClassifiers.2"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.1"/>
+  </Similarity>
+  <Similarity name="OWLOntology-ModuleDef">
+    <source elements="#//@eSubpackages.0/@eClassifiers.3"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.2"/>
+  </Similarity>
+  <Similarity name="Graph.name-SchemaDef.name">
+    <source elements="#//@eSubpackages.0/@eClassifiers.2 #//@eSubpackages.0/@eClassifiers.2/@eStructuralFeatures.0 #//@eSubpackages.0/@eClassifiers.3 #//@eSubpackages.0/@eClassifiers.0/@eStructuralFeatures.0 #//@eSubpackages.0/@eClassifiers.4 #//@eSubpackages.0/@eClassifiers.4/@eStructuralFeatures.0 #//@eSubpackages.0/@eClassifiers.5 #//@eSubpackages.0/@eClassifiers.5/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.1 #//@eSubpackages.1/@eClassifiers.0/@eStructuralFeatures.0"/>
+  </Similarity>
+  <Similarity name="owlUniverse-containedTypes">
+    <source elements="#//@eSubpackages.0/@eClassifiers.3 #//@eSubpackages.0/@eClassifiers.3/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.2 #//@eSubpackages.1/@eClassifiers.2/@eStructuralFeatures.0"/>
+  </Similarity>
+  <Similarity name="owlUniverse-containedClasses">
+    <source elements="#//@eSubpackages.0/@eClassifiers.3 #//@eSubpackages.0/@eClassifiers.3/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.2 #//@eSubpackages.1/@eClassifiers.2/@eStructuralFeatures.1"/>
+  </Similarity>
+  <Similarity name="OWLClass-ADTDef">
+    <source elements="#//@eSubpackages.0/@eClassifiers.7"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.4"/>
+  </Similarity>
+  <Similarity name="OWLClass-ClassDef">
+    <source elements="#//@eSubpackages.0/@eClassifiers.7"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.5"/>
+  </Similarity>
+  <Similarity name="subclassOf-supertypes">
+    <source elements="#//@eSubpackages.0/@eClassifiers.7 #//@eSubpackages.0/@eClassifiers.1/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.4 #//@eSubpackages.1/@eClassifiers.4/@eStructuralFeatures.0"/>
+  </Similarity>
+  <Similarity name="subclassOf-superclasses">
+    <source elements="#//@eSubpackages.0/@eClassifiers.7 #//@eSubpackages.0/@eClassifiers.1/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.5 #//@eSubpackages.1/@eClassifiers.5/@eStructuralFeatures.0"/>
+  </Similarity>
+  <Similarity name="ontology-typeInModule">
+    <source elements="#//@eSubpackages.0/@eClassifiers.7 #//@eSubpackages.0/@eClassifiers.2/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.4 #//@eSubpackages.1/@eClassifiers.3/@eStructuralFeatures.0"/>
+  </Similarity>
+  <Similarity name="ontology-classInModule">
+    <source elements="#//@eSubpackages.0/@eClassifiers.7 #//@eSubpackages.0/@eClassifiers.2/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.5 #//@eSubpackages.1/@eClassifiers.5/@eStructuralFeatures.1"/>
+  </Similarity>
+  <Similarity name="OWLInverseOf-inverseAttribute">
+    <source elements="#//@eSubpackages.0/@eClassifiers.8 #//@eSubpackages.0/@eClassifiers.8/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.6 #//@eSubpackages.1/@eClassifiers.6/@eStructuralFeatures.0"/>
+  </Similarity>
+  <Similarity name="OWLInverseOf-inverse">
+    <source elements="#//@eSubpackages.0/@eClassifiers.8 #//@eSubpackages.0/@eClassifiers.8/@eStructuralFeatures.0"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.8 #//@eSubpackages.1/@eClassifiers.7/@eStructuralFeatures.0"/>
+  </Similarity>
+  <Similarity name="OWLObjectProperty-AssociationMetaclassDef">
+    <source elements="#//@eSubpackages.0/@eClassifiers.8"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.8"/>
+  </Similarity>
+  <Similarity name="OWLObjectProperty-AttributeDef">
+    <source elements="#//@eSubpackages.0/@eClassifiers.8"/>
+    <target elements="#//@eSubpackages.1/@eClassifiers.6"/>
+  </Similarity>
+</Similarities:Package>

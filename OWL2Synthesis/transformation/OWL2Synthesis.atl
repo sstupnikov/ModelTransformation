@@ -1,0 +1,222 @@
+-- @atlcompiler atl2006
+
+module OWL2Synthesis; 
+create OUT: Synthesis from IN: OWL;
+
+rule Graph2Schema{
+	from g: OWL!OWLGraph	
+	to s: Synthesis!SchemaDef(
+		name <- g.ontology->collect(e | e.resourceName())->sum() + 'Schema',
+		--name <- g.ontology->any(e | e.oclIsKindOf(OWL!OWLOntology)).uriRef->any( e | e.oclIsKindOf(OWL!URIReference)).fragmentIdentifier.name,
+		
+		modules <- g.ontology				
+	),
+	-- Built-In Metaclasses
+	owl: Synthesis!MetaclassDef(name <- 'owl'),
+	ont: Synthesis!MetaclassDef(name <- 'ontology'),
+	onProp: Synthesis!MetaclassDef(name <- 'onProperty'),
+	func: Synthesis!MetaclassDef(name <- 'functionalProperty'),
+	invFunc: Synthesis!MetaclassDef(name <- 'inverseFunctionalProperty'),
+	trans: Synthesis!MetaclassDef(name <- 'transitiveProperty'),
+	symm: Synthesis!MetaclassDef(name <- 'symmetricProperty')
+	do{
+		--s.modules <- g.ontology->collect(e | thisModule.resolveTemp(e, 'm'));
+	}
+}
+
+helper context OWL!RDFSResource def: resourceName(): String =	
+	let r : OWL!LocalName = 
+		self.uriRef->any( e | e.oclIsKindOf(OWL!URIReference)).fragmentIdentifier
+	in if not r.oclIsUndefined() then r.name else 'AResource' endif;
+		
+helper context OWL!RDFSResource def: getURI : String =
+	let r : OWL!UniformResourceIdentifier = 
+		self.uriRef->any( e | e.oclIsKindOf(OWL!URIReference)).uri
+	in if not r.oclIsUndefined() then r.name else 'AURI' endif;
+
+helper context OWL!RDFSResource def: getNameOrURI() : String =
+	let name: String = self.resourceName()
+	in let uri: String = self.getURI()
+	in if name <> 'AResource'  then name else uri endif;
+
+rule Ontology2Module{
+	from o: OWL!OWLOntology
+	to m: Synthesis!ModuleDef(
+			name <- o.resourceName() + 'OwlOntology'		
+	)
+	do{
+		m.classes <- Set{Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'ontology')};
+		m.containedTypes <- o.owlUniverse->
+			select(e | e.oclIsTypeOf(OWL!OWLClass))->
+			collect(e | thisModule.resolveTemp(e, 'type'));
+		m.containedClasses <- o.owlUniverse->
+			select(e | e.oclIsTypeOf(OWL!OWLClass))-> 
+			collect(e | thisModule.resolveTemp(e, 'class'));
+	}
+}
+
+-- This rule returns ADTDef for OWLClass by default, 
+-- to return ClassDef a call of thisModule.resolveTemp(e, 'class') is required
+rule OWLClass{
+	from c: OWL!OWLClass(
+		c.oclIsTypeOf(OWL!OWLClass)
+	)
+	using{
+		ont: OWL!OWLOntology = c.ontology->any(o | o.oclIsKindOf(OWL!OWLOntology));
+		sup: Set(OWL!OWLClass) = c.subClassOf->select(e | e.oclIsTypeOf(OWL!OWLClass));
+	}
+	to 
+		type: Synthesis!ADTDef(
+			name <- c.resourceName(),
+			supertypes <- sup			
+		),	
+		class: Synthesis!ClassDef(
+			name <- c.resourceName().toLower(),
+			instanceType <- type			
+		)
+	do{
+		type.classes <- Set{Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'owl')};
+		class.classes <- Set{Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'owl')};
+		class.superclasses <- sup->collect(e | thisModule.resolveTemp(e, 'class'));
+	}
+}
+
+rule Integer2BuiltInType{
+	from d: OWL!RDFSDataType(d.getURI = 'http://www.w3.org/2001/XMLSchema#integer' )
+	to  int: Synthesis!IntegerDef(name <- 'integer', unsigned <- false)
+}
+
+rule NonNegativeInteger2BuiltInType{
+	from d: OWL!RDFSDataType(d.getURI = 'http://www.w3.org/2001/XMLSchema#nonNegativeInteger' )
+	to  int: Synthesis!IntegerDef(name <- 'integer', unsigned <- true)
+}
+
+rule Positive2BuiltInType{
+	from d: OWL!RDFSDataType(d.getURI = 'http://www.w3.org/2001/XMLSchema#positiveInteger' )
+	to  int: Synthesis!IntegerDef(name <- 'integer', unsigned <- true)
+}
+
+rule String2BuiltInType{
+	from d: OWL!RDFSDataType(d.getURI = 'http://www.w3.org/2001/XMLSchema#string' )
+	to  int: Synthesis!StringDef(name <- 'string')
+}
+
+rule Boolean2BuiltInType{
+	from d: OWL!RDFSDataType(d.getURI = 'http://www.w3.org/2001/XMLSchema#boolean' )
+	to bool: Synthesis!EnumDef(values <- Set{t, f}, name <- 'boolean'),
+		t: Synthesis!StringValueDef(value <- 'true'),
+		f:  Synthesis!StringValueDef(value <- 'false')	
+}
+
+rule OWLDatatypeProperty2Attribute{
+	from p: OWL!OWLDatatypeProperty
+	using{
+		domain: OWL!OWLClass = p.domain->any(c | c.oclIsKindOf(OWL!OWLClass));
+		range: OWL!OWLClass = p.range->any(c | c.oclIsKindOf(OWL!RDFSDataType));
+		card: OWL!CardinalityRestriction = domain.
+			subClassOf->any(c | if c.oclIsTypeOf(OWL!CardinalityRestriction) then c.OWLOnProperty = p else false endif);
+		minCard: OWL!MinCardinalityRestriction = domain.
+			subClassOf->any(c | if c.oclIsTypeOf(OWL!MinCardinalityRestriction) then c.OWLOnProperty = p else false endif);
+		maxCard: OWL!MaxCardinalityRestriction = domain.
+			subClassOf->any(c | if c.oclIsTypeOf(OWL!MaxCardinalityRestriction) then c.OWLOnProperty = p else false endif);
+	}	
+	to a: Synthesis!AttributeDef(
+		name <- p.resourceName(),
+		attributeOf <- domain,		
+		type <- range,
+		metaslot <- f
+	),
+	f: Synthesis!FrameDef(
+		name <- 'metaslotOf' + p.resourceName()
+	)
+	do{
+		if(not card.oclIsUndefined()) 
+			a.cardinality <- card.OWLCardinality.lexicalForm.toInteger();
+		
+		f.slots <- Set{};
+		if(not minCard.oclIsUndefined())
+			f.slots <- f.slots->including(thisModule.resolveTemp(minCard, 's'));
+		if (not maxCard.oclIsUndefined())			
+			f.slots <- f.slots->including(thisModule.resolveTemp(maxCard, 's'));		
+	}
+}
+
+
+rule OWLObjectProperty{
+	from p: OWL!OWLObjectProperty 
+	using{
+		domain: OWL!OWLClass = p.domain->any(c | c.oclIsKindOf(OWL!OWLClass));
+		range: OWL!OWLClass = p.range->any(c | c.oclIsKindOf(OWL!OWLClass));
+		card: OWL!CardinalityRestriction = domain.
+			subClassOf->any(c | if c.oclIsTypeOf(OWL!CardinalityRestriction) then c.OWLOnProperty = p else false endif);
+		minCard: OWL!MinCardinalityRestriction = domain.
+			subClassOf->any(c | if c.oclIsTypeOf(OWL!MinCardinalityRestriction) then c.OWLOnProperty = p else false endif);
+		maxCard: OWL!MaxCardinalityRestriction = domain.
+			subClassOf->any(c | if c.oclIsTypeOf(OWL!MaxCardinalityRestriction) then c.OWLOnProperty = p else false endif);
+		sup: Set(OWL!OWLObjectProperty) = p.subPropertyOf->select(e | e.oclIsKindOf(OWL!OWLObjectProperty));
+		--funcProp: Set(OWL!FunctionalProperty) = p.ontology->
+		--	any(e | e.oclIsKindOf(OWL!OWLOntology)).owlUniverse->
+		--	select(e | e.oclIsKindOf(OWL!FunctionalProperty));
+		funcProp: Set(OWL!FunctionalProperty) = OWL!FunctionalProperty.allInstances();
+	}
+	to a: Synthesis!AttributeDef(
+		name <- p.resourceName(),
+		attributeOf <- domain,		
+		type <- range,
+		metaslot <- f,
+		inverseAttribute <- p.OWLInverseOf,
+		classes <- Set{assoc}
+	),
+	f: Synthesis!FrameDef(
+		name <- 'metaslotOf' + p.resourceName()
+	),
+	assoc: Synthesis!AssociationMetaclassDef(
+		name <- p.resourceName() + 'Metaclass',		 
+		maxCard <- -1,
+		maxInverseCard <- -1,
+		minCard <- 0,
+		minInverseCard <- 0		
+	)
+	do{		
+		if(not card.oclIsUndefined()) 
+			a.cardinality <- card.OWLCardinality.lexicalForm.toInteger();		
+	
+		f.slots <- Set{};
+		if(not minCard.oclIsUndefined())
+			f.slots <- f.slots->including(thisModule.resolveTemp(minCard, 's'));
+		if (not maxCard.oclIsUndefined())			
+			f.slots <- f.slots->including(thisModule.resolveTemp(maxCard, 's'));
+		
+
+		assoc.classes <- Set{Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'owl'),
+			Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'onProperty')};		
+		assoc.classInModule <- a.attributeOf.typeInModule;
+		assoc.domain <- thisModule.resolveTemp(domain, 'class');
+		assoc.range <- thisModule.resolveTemp(range, 'class');
+		assoc.inverse <- thisModule.resolveTemp(p.OWLInverseOf, 'assoc');
+		assoc.superclasses <- sup->collect(e | thisModule.resolveTemp(e, 'assoc'));
+		
+		if(p.oclIsKindOf(OWL!InverseFunctionalProperty)) 
+			assoc.classes <- assoc.classes->including(Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'inverseFunctionalProperty'));		
+		if (p.oclIsKindOf(OWL!SymmetricProperty))
+			assoc.classes <- assoc.classes->including(Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'symmetricProperty'));					
+		if (p.oclIsKindOf(OWL!TransitiveProperty))
+			assoc.classes <- assoc.classes->including(Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'transitiveProperty'));					
+		
+		if(funcProp->exists(e | e.isDefinedBy->any(e | e.oclIsKindOf(OWL!OWLObjectProperty)) = p))			
+			assoc.classes <- assoc.classes->including(Synthesis!MetaclassDef.allInstances()->any(m | m.name = 'functionalProperty'));					
+	}
+}
+
+rule MinCardinalityRestriction2Slot{
+	from r: OWL!MinCardinalityRestriction
+	to s: Synthesis!SlotDef(name <- 'min_card', values <- Set{v}),
+		v: Synthesis!IntegerValueDef(value <- r.OWLMinCardinality.lexicalForm.toInteger())
+}
+
+rule MaxCardinalityRestriction2Slot{
+	from r: OWL!MaxCardinalityRestriction
+	to s: Synthesis!SlotDef(name <- 'max_card', values <- Set{v}),
+		v: Synthesis!IntegerValueDef(value <- r.OWLMaxCardinality.lexicalForm.toInteger())
+}
+

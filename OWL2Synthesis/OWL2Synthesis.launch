@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.atl.eclipse.adt.launching.atlTransformation">
+<mapAttribute key="Input">
+<mapEntry key="IN" value="OWL"/>
+</mapAttribute>
+<mapAttribute key="Libs"/>
+<booleanAttribute key="ContinueAfterError" value="false"/>
+<mapAttribute key="Model Handler">
+<mapEntry key="IN" value=""/>
+<mapEntry key="OWL" value="EMF"/>
+<mapEntry key="OUT" value=""/>
+<mapEntry key="Synthesis" value="EMF"/>
+</mapAttribute>
+<stringAttribute key="Project Name" value="ATL Unifier"/>
+<listAttribute key="Superimpose"/>
+<mapAttribute key="ModelType">
+<mapEntry key="IN" value="MODELINPUT"/>
+<mapEntry key="OWL" value="METAMODELINPUT"/>
+<mapEntry key="OUT" value="MODELOUTPUT"/>
+<mapEntry key="Synthesis" value="METAMODELOUTPUT"/>
+</mapAttribute>
+<booleanAttribute key="Mode Debug" value="false"/>
+<mapAttribute key="Output">
+<mapEntry key="OUT" value="Synthesis"/>
+</mapAttribute>
+<stringAttribute key="ATL File Name" value="/ATL Unifier/Transformations/OWL2Synthesis.atl"/>
+<booleanAttribute key="AllowInterModelReferences" value="false"/>
+<mapAttribute key="Path">
+<mapEntry key="IN" value="/ATL Unifier/Samples/Museum-OWL.ecore"/>
+<mapEntry key="OWL" value="/ATL Unifier/Metamodels/OWL.ecore"/>
+<mapEntry key="OUT" value="/ATL Unifier/Samples/Synthesis-Museum.ecore"/>
+<mapEntry key="Synthesis" value="/ATL Unifier/Metamodels/Synthesis.ecore"/>
+</mapAttribute>
+</launchConfiguration>
