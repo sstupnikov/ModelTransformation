@@ -1,0 +1,51 @@
+REFINEMENT ResearcherRef
+
+REFINES MResearcher
+
+SEES
+	FundingAgency_structure_Context
+
+EXTENDS
+	Person
+
+VARIABLES
+	research_area,
+	researcher
+
+INVARIANT
+	researcher : POW(ext_Researcher) &
+	research_area : (ext_Researcher --> Researcher_research_area_Enum) &
+	researcher <: person
+
+INITIALISATION
+	ANY aresearch_area WHERE
+		aresearch_area : (ext_Researcher --> Researcher_research_area_Enum)&
+		!(av).((av : ext_Researcher =>
+			aresearch_area(av) = biology))
+	THEN
+		research_area := aresearch_area
+	END
+	||
+	researcher := {}
+
+OPERATIONS
+	ss <-- ee(av, ii, bb, pp, st) = 
+	PRE
+		av : ext_Researcher &
+		ii : INTEGER &
+		bb : BOOL &
+		pp : ext_Person &
+		st : POW(ext_Person)
+	THEN
+		ANY ss1 WHERE
+			ss1 : seq((0 .. 255)) &
+			1 = 2 &
+			!(xx, yy).((xx : ext_Researcher &
+					yy : ext_Researcher =>
+				xx = yy))
+		THEN
+			ss := ss1
+		END
+	END
+
+END

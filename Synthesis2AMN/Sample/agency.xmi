@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="ASCII"?>
+<syn:SchemaDef xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:syn="http://synthesis.ipi.ac.ru/Synthesis/" xmlns:syn-bit="http://synthesis.ipi.ac.ru/Synthesis/BuiltInTypes/" xmlns:syn-form="http://synthesis.ipi.ac.ru/Synthesis/Formulae/" xmlns:syn-val="http://synthesis.ipi.ac.ru/Synthesis/Values/" name="FundingAgencySchema">
+  <containedClasses xsi:type="syn:MetaclassDef" name="component" instances="//@modules.0"/>
+  <containedClasses xsi:type="syn:MetaclassDef" name="structure" instances="//@modules.1"/>
+  <modules name="FundingAgency" classes="//@containedClasses.0" imports="//@modules.1">
+    <parameters name="a" type="//@modules.0/@parameters.0/@containedType">
+      <containedType xsi:type="syn-bit:IntegerDef"/>
+    </parameters>
+  </modules>
+  <modules name="FundingAgency_structure" classes="//@containedClasses.1">
+    <containedClasses xsi:type="syn:AssociationMetaclassDef" name="symmetric" instanceType="//@modules.1/@containedClasses.0/@containedInstanceType" subclasses="//@modules.1/@containedClasses.1" domain="//@modules.1/@containedClasses.6" range="//@modules.1/@containedClasses.6">
+      <containedInstanceType name="Symmetric">
+        <attributes name="symmetricity" type="//@modules.1/@containedClasses.0/@containedInstanceType/@attributes.0/@containedType">
+          <containedType xsi:type="syn:InvariantDef" typeOfAttribute="//@modules.1/@containedClasses.0/@containedInstanceType/@attributes.0">
+            <predicativeSpec xsi:type="syn-form:UniversallyQuantifiedFormula">
+              <formula xsi:type="syn-form:Implication">
+                <formula xsi:type="syn-form:Atom" symbol="is_in">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-val:SequenceValueDef" contents="//@modules.1/@containedClasses.0/@containedInstanceType/@attributes.0/@containedType/@predicativeSpec/@formula.0/@formula.0/@terms.1/@containedContents.0 //@modules.1/@containedClasses.0/@containedInstanceType/@attributes.0/@containedType/@predicativeSpec/@formula.0/@formula.0/@terms.1/@containedContents.1">
+                    <containedContents xsi:type="syn-form:Variable" name="s1"/>
+                    <containedContents xsi:type="syn-form:Variable" name="s2"/>
+                  </terms>
+                </formula>
+                <formula xsi:type="syn-form:Atom" symbol="is_in">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-val:SequenceValueDef" contents="//@modules.1/@containedClasses.0/@containedInstanceType/@attributes.0/@containedType/@predicativeSpec/@formula.0/@formula.1/@terms.1/@containedContents.0 //@modules.1/@containedClasses.0/@containedInstanceType/@attributes.0/@containedType/@predicativeSpec/@formula.0/@formula.1/@terms.1/@containedContents.1">
+                    <containedContents xsi:type="syn-form:Variable" name="s2"/>
+                    <containedContents xsi:type="syn-form:Variable" name="s1"/>
+                  </terms>
+                </formula>
+              </formula>
+              <variables name="s1" type="//@modules.1/@containedTypes.4"/>
+              <variables name="s2" type="//@modules.1/@containedTypes.4"/>
+            </predicativeSpec>
+          </containedType>
+        </attributes>
+      </containedInstanceType>
+    </containedClasses>
+    <containedClasses xsi:type="syn:AssociationMetaclassDef" name="teachesAM" instanceType="//@modules.1/@containedClasses.1/@containedInstanceType" superclasses="//@modules.1/@containedClasses.0" domain="//@modules.1/@containedClasses.2 //@modules.1/@containedClasses.4" range="//@modules.1/@containedClasses.3 //@modules.1/@containedClasses.12" maxCard="10" maxInverseCard="2" minCard="3" minInverseCard="1">
+      <containedInstanceType name="Teaches">
+        <attributes name="nonPhD" type="//@modules.1/@containedClasses.1/@containedInstanceType/@attributes.0/@containedType">
+          <containedType xsi:type="syn:InvariantDef" typeOfAttribute="//@modules.1/@containedClasses.1/@containedInstanceType/@attributes.0">
+            <predicativeSpec xsi:type="syn-form:UniversallyQuantifiedFormula">
+              <formula xsi:type="syn-form:Implication">
+                <formula xsi:type="syn-form:RelationPredicate" symbol="&lt;>">
+                  <terms xsi:type="syn-form:NavigationPath">
+                    <terms xsi:type="syn-form:Variable" name="t"/>
+                    <terms xsi:type="syn-form:Variable" name="degree"/>
+                  </terms>
+                  <terms xsi:type="syn-form:Variable" name="PhD"/>
+                </formula>
+                <formula xsi:type="syn-form:RelationPredicate" symbol="le">
+                  <terms xsi:type="syn-form:FunctionCall" name="cardinal">
+                    <terms xsi:type="syn-form:CollectionComprehension">
+                      <variables name="s" type="//@modules.1/@containedTypes.1"/>
+                      <formula xsi:type="syn-form:Atom" symbol="is_in">
+                        <terms xsi:type="syn-form:Variable" name="this"/>
+                        <terms xsi:type="syn-val:SequenceValueDef" contents="//@modules.1/@containedClasses.1/@containedInstanceType/@attributes.0/@containedType/@predicativeSpec/@formula.0/@formula.1/@terms.0/@terms.0/@formula/@terms.1/@containedContents.0 //@modules.1/@containedClasses.1/@containedInstanceType/@attributes.0/@containedType/@predicativeSpec/@formula.0/@formula.1/@terms.0/@terms.0/@formula/@terms.1/@containedContents.1">
+                          <containedContents xsi:type="syn-form:Variable" name="t"/>
+                          <containedContents xsi:type="syn-form:Variable" name="s"/>
+                        </terms>
+                      </formula>
+                    </terms>
+                  </terms>
+                  <terms xsi:type="syn-val:IntValueDef" value="5"/>
+                </formula>
+              </formula>
+              <variables name="t" type="//@modules.1/@containedTypes.0"/>
+            </predicativeSpec>
+          </containedType>
+        </attributes>
+      </containedInstanceType>
+    </containedClasses>
+    <containedClasses name="teacher" instanceType="//@modules.1/@containedTypes.0" superclasses="//@modules.1/@containedClasses.6"/>
+    <containedClasses name="student" instanceType="//@modules.1/@containedTypes.1" superclasses="//@modules.1/@containedClasses.6"/>
+    <containedClasses name="proposal" instanceType="//@modules.1/@containedTypes.2"/>
+    <containedClasses name="review" instanceType="//@modules.1/@containedTypes.3"/>
+    <containedClasses name="person" instanceType="//@modules.1/@containedTypes.4" subclasses="//@modules.1/@containedClasses.2 //@modules.1/@containedClasses.3 //@modules.1/@containedClasses.7"/>
+    <containedClasses name="researcher" instanceType="//@modules.1/@containedTypes.5" subclasses="//@modules.1/@containedClasses.8" superclasses="//@modules.1/@containedClasses.6"/>
+    <containedClasses name="expert" instanceType="//@modules.1/@containedTypes.6" superclasses="//@modules.1/@containedClasses.7"/>
+    <containedClasses name="secretary" instanceType="//@modules.1/@containedTypes.7"/>
+    <containedClasses name="employee" instanceType="//@modules.1/@containedTypes.10" subclasses="//@modules.1/@containedClasses.11"/>
+    <containedClasses name="specialist" instanceType="//@modules.1/@containedTypes.11" superclasses="//@modules.1/@containedClasses.10"/>
+    <containedClasses name="evaluation" instanceType="//@modules.1/@containedTypes.9"/>
+    <containedClasses name="dispatcher" instanceType="//@modules.1/@containedTypes.12"/>
+    <containedTypes xsi:type="syn:ADTDef" name="Teacher" supertypes="//@modules.1/@containedTypes.11">
+      <attributes name="teaches" cardinality="15" inverseAttribute="//@modules.1/@containedTypes.1/@attributes.0" classes="//@modules.1/@containedClasses.1" type="//@modules.1/@containedTypes.0/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.1/@containedTypes.0/@attributes.0" ofType="//@modules.1/@containedTypes.1"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Student">
+      <attributes name="isTaughtBy" type="//@modules.1/@containedTypes.1/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.1/@containedTypes.1/@attributes.0" ofType="//@modules.1/@containedTypes.0"/>
+      </attributes>
+      <attributes name="grade" type="//@modules.1/@containedTypes.1/@attributes.1/@containedType">
+        <initialValue xsi:type="syn-val:IntValueDef" value="1"/>
+        <containedType xsi:type="syn-bit:IntegerDef" typeOfAttribute="//@modules.1/@containedTypes.1/@attributes.1"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Proposal" typeOfAttribute="//@modules.1/@containedTypes.3/@attributes.0">
+      <attributes name="area" type="//@modules.1/@containedTypes.2/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.2/@attributes.0"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Review">
+      <attributes name="for_proposal" type="//@modules.1/@containedTypes.2"/>
+      <attributes name="by_expert" type="//@modules.1/@containedTypes.6"/>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Person" subtypes="//@modules.1/@containedTypes.5">
+      <attributes name="name" type="//@modules.1/@containedTypes.4/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.4/@attributes.0"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Researcher" subtypes="//@modules.1/@containedTypes.6" supertypes="//@modules.1/@containedTypes.4">
+      <attributes name="research_area" type="//@modules.1/@containedTypes.5/@attributes.0/@containedType">
+        <initialValue xsi:type="syn-form:Variable" name="biology"/>
+        <containedType xsi:type="syn-bit:EnumDef" typeOfAttribute="//@modules.1/@containedTypes.5/@attributes.0">
+          <enumList>computer_science</enumList>
+          <enumList>mathematics</enumList>
+          <enumList>biology</enumList>
+          <enumList>chemistry</enumList>
+        </containedType>
+      </attributes>
+      <attributes name="e" type="//@modules.1/@containedTypes.5/@attributes.1/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.5/@attributes.1">
+          <parameters name="i" parameterKind="+" type="//@modules.1/@containedTypes.5/@attributes.1/@containedType/@parameters.0/@containedType">
+            <containedType xsi:type="syn-bit:IntegerDef"/>
+          </parameters>
+          <parameters name="b" parameterKind="+" type="//@modules.1/@containedTypes.5/@attributes.1/@containedType/@parameters.1/@containedType">
+            <containedType xsi:type="syn-bit:BooleanDef"/>
+          </parameters>
+          <parameters name="s" parameterKind="-" type="//@modules.1/@containedTypes.5/@attributes.1/@containedType/@parameters.2/@containedType">
+            <containedType xsi:type="syn-bit:StringDef"/>
+          </parameters>
+          <parameters name="p" parameterKind="+" type="//@modules.1/@containedTypes.4"/>
+          <parameters name="st" parameterKind="+" type="//@modules.1/@containedTypes.5/@attributes.1/@containedType/@parameters.4/@containedType">
+            <containedType xsi:type="syn-bit:SetDef" ofType="//@modules.1/@containedTypes.4"/>
+          </parameters>
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+              <terms xsi:type="syn-val:IntValueDef" value="1"/>
+              <terms xsi:type="syn-val:IntValueDef" value="2"/>
+            </formula>
+            <formula xsi:type="syn-form:UniversallyQuantifiedFormula">
+              <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                <terms xsi:type="syn-form:Variable" name="x"/>
+                <terms xsi:type="syn-form:Variable" name="y"/>
+              </formula>
+              <variables name="x" type="//@modules.1/@containedTypes.5"/>
+              <variables name="y" type="//@modules.1/@containedTypes.5"/>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Expert" typeOfAttribute="//@modules.1/@containedTypes.3/@attributes.1 //@modules.1/@containedTypes.9/@attributes.1" supertypes="//@modules.1/@containedTypes.5">
+      <attributes name="area_of_expertise" type="//@modules.1/@containedTypes.6/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.6/@attributes.0"/>
+      </attributes>
+      <attributes name="invExp" type="//@modules.1/@containedTypes.6/@attributes.1/@containedType">
+        <containedType xsi:type="syn:InvariantDef" typeOfAttribute="//@modules.1/@containedTypes.6/@attributes.1">
+          <predicativeSpec xsi:type="syn-form:UniversallyQuantifiedFormula">
+            <formula xsi:type="syn-form:BracketFormula">
+              <formula xsi:type="syn-form:Conjunction">
+                <formula xsi:type="syn-form:Atom" symbol="dispatcher">
+                  <terms xsi:type="syn-form:Variable" name="x"/>
+                </formula>
+                <formula xsi:type="syn-form:Atom" symbol="specialist">
+                  <terms xsi:type="syn-form:Variable" name="x"/>
+                </formula>
+              </formula>
+            </formula>
+            <variables name="x" type="//@modules.1/@containedTypes.11"/>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Secretary">
+      <attributes name="available_experts" type="//@modules.1/@containedTypes.7/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.1/@containedTypes.7/@attributes.0" ofType="//@modules.1/@containedTypes.6"/>
+      </attributes>
+      <attributes name="search_for_experts" type="//@modules.1/@containedTypes.7/@attributes.1/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.7/@attributes.1">
+          <parameters name="number_of_experts" parameterKind="-" type="//@modules.1/@containedTypes.7/@attributes.1/@containedType/@parameters.0/@containedType">
+            <containedType xsi:type="syn-bit:IntegerDef"/>
+          </parameters>
+          <predicativeSpec xsi:type="syn-form:ExistentiallyQuantifiedFormula">
+            <formula xsi:type="syn-form:Conjunction">
+              <formula xsi:type="syn-form:Conjunction">
+                <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                  <terms xsi:type="syn-form:Variable" name="exps"/>
+                  <terms xsi:type="syn-form:CollectionComprehension">
+                    <variables name="exp" type="//@modules.1/@containedTypes.6"/>
+                    <formula xsi:type="syn-form:Conjunction">
+                      <formula xsi:type="syn-form:Atom" symbol="is_in">
+                        <terms xsi:type="syn-form:Variable" name="expert"/>
+                        <terms xsi:type="syn-form:Variable" name="exp"/>
+                      </formula>
+                      <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                        <terms xsi:type="syn-form:NavigationPath">
+                          <terms xsi:type="syn-form:Variable" name="exp"/>
+                          <terms xsi:type="syn-form:Variable" name="research_area"/>
+                        </terms>
+                        <terms xsi:type="syn-form:Variable" name="computer_science"/>
+                      </formula>
+                    </formula>
+                  </terms>
+                </formula>
+                <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                  <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                    <terms xsi:type="syn-form:Variable" name="this"/>
+                    <terms xsi:type="syn-form:Variable" name="available_experts"/>
+                  </terms>
+                  <terms xsi:type="syn-form:Variable" name="exps"/>
+                </formula>
+              </formula>
+              <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                <terms xsi:type="syn-form:Variable" name="number_of_experts"/>
+                <terms xsi:type="syn-form:FunctionCall" name="card">
+                  <terms xsi:type="syn-form:Variable" name="exps"/>
+                </terms>
+              </formula>
+            </formula>
+            <variables name="exps" type="//@modules.1/@containedTypes.7/@attributes.1/@containedType/@predicativeSpec/@variables.0/@containedType">
+              <containedType xsi:type="syn-bit:SetDef" ofType="//@modules.1/@containedTypes.6"/>
+            </variables>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+      <attributes name="dispatch" type="//@modules.1/@containedTypes.7/@attributes.2/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.7/@attributes.2">
+          <parameters name="revi" parameterKind="+" type="//@modules.1/@containedTypes.3"/>
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:Negation">
+              <formula xsi:type="syn-form:Atom" symbol="is_empty">
+                <terms xsi:type="syn-form:NavigationPath">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-form:Variable" name="available_experts"/>
+                </terms>
+              </formula>
+            </formula>
+            <formula xsi:type="syn-form:ExistentiallyQuantifiedFormula">
+              <formula xsi:type="syn-form:Conjunction">
+                <formula xsi:type="syn-form:Conjunction">
+                  <formula xsi:type="syn-form:Atom" symbol="is_in">
+                    <terms xsi:type="syn-form:NavigationPath">
+                      <terms xsi:type="syn-form:Variable" name="this"/>
+                      <terms xsi:type="syn-form:Variable" name="available_experts"/>
+                    </terms>
+                    <terms xsi:type="syn-form:Variable" name="exp"/>
+                  </formula>
+                  <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                    <terms xsi:type="syn-form:NavigationPath">
+                      <terms xsi:type="syn-form:Variable" name="exp"/>
+                      <terms xsi:type="syn-form:Variable" name="area_of_expertise"/>
+                    </terms>
+                    <terms xsi:type="syn-form:NavigationPath">
+                      <terms xsi:type="syn-form:Variable" name="revi"/>
+                      <terms xsi:type="syn-form:Variable" name="for_proposal"/>
+                      <terms xsi:type="syn-form:Variable" name="area"/>
+                    </terms>
+                  </formula>
+                </formula>
+                <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                  <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                    <terms xsi:type="syn-form:Variable" name="revi"/>
+                    <terms xsi:type="syn-form:Variable" name="by_expert"/>
+                  </terms>
+                  <terms xsi:type="syn-form:Variable" name="exp"/>
+                </formula>
+              </formula>
+              <variables name="exp" type="//@modules.1/@containedTypes.6"/>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Submission" typeOfAttribute="//@modules.1/@containedTypes.9/@attributes.0">
+      <attributes name="field" type="//@modules.1/@containedTypes.8/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.8/@attributes.0"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Evaluation">
+      <attributes name="subm_ref" type="//@modules.1/@containedTypes.8"/>
+      <attributes name="by_specialist" type="//@modules.1/@containedTypes.6"/>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Employee" subtypes="//@modules.1/@containedTypes.11">
+      <attributes name="first_name" type="//@modules.1/@containedTypes.10/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.10/@attributes.0"/>
+      </attributes>
+      <attributes name="last_name" type="//@modules.1/@containedTypes.10/@attributes.1/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.10/@attributes.1"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Specialist" subtypes="//@modules.1/@containedTypes.0" supertypes="//@modules.1/@containedTypes.10">
+      <attributes name="research_field" type="//@modules.1/@containedTypes.11/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:EnumDef" typeOfAttribute="//@modules.1/@containedTypes.11/@attributes.0">
+          <enumList>computer_science</enumList>
+          <enumList>mathematics</enumList>
+          <enumList>biology</enumList>
+          <enumList>chemistry</enumList>
+        </containedType>
+      </attributes>
+      <attributes name="degree" type="//@modules.1/@containedTypes.11/@attributes.1/@containedType">
+        <containedType xsi:type="syn-bit:EnumDef" typeOfAttribute="//@modules.1/@containedTypes.11/@attributes.1">
+          <enumList>PhD</enumList>
+          <enumList>DrSc</enumList>
+          <enumList>MSc</enumList>
+        </containedType>
+      </attributes>
+      <attributes name="field_of_expertise" type="//@modules.1/@containedTypes.11/@attributes.2/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.11/@attributes.2"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Dispatcher">
+      <attributes name="experts" type="//@modules.1/@containedTypes.12/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.1/@containedTypes.12/@attributes.0" ofType="//@modules.1/@containedTypes.11"/>
+      </attributes>
+      <attributes name="experts_got" type="//@modules.1/@containedTypes.12/@attributes.1/@containedType">
+        <containedType xsi:type="syn-bit:BooleanDef" typeOfAttribute="//@modules.1/@containedTypes.12/@attributes.1"/>
+      </attributes>
+      <attributes name="relevant_experts" type="//@modules.1/@containedTypes.12/@attributes.2/@containedType">
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.1/@containedTypes.12/@attributes.2" ofType="//@modules.1/@containedTypes.11"/>
+      </attributes>
+      <attributes name="get_experts" type="//@modules.1/@containedTypes.12/@attributes.3/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.12/@attributes.3">
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+              <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                <terms xsi:type="syn-form:Variable" name="this"/>
+                <terms xsi:type="syn-form:Variable" name="experts"/>
+              </terms>
+              <terms xsi:type="syn-form:Variable" name="expert"/>
+            </formula>
+            <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+              <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                <terms xsi:type="syn-form:Variable" name="this"/>
+                <terms xsi:type="syn-form:Variable" name="experts_got"/>
+              </terms>
+              <terms xsi:type="syn-val:BooleanValueDef" value="true"/>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+      <attributes name="check_expert" type="//@modules.1/@containedTypes.12/@attributes.4/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.12/@attributes.4">
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:Negation">
+              <formula xsi:type="syn-form:Atom" symbol="is_empty">
+                <terms xsi:type="syn-form:NavigationPath">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-form:Variable" name="experts"/>
+                </terms>
+              </formula>
+            </formula>
+            <formula xsi:type="syn-form:ExistentiallyQuantifiedFormula">
+              <formula xsi:type="syn-form:Conjunction">
+                <formula xsi:type="syn-form:Conjunction">
+                  <formula xsi:type="syn-form:Atom" symbol="is_in">
+                    <terms xsi:type="syn-form:NavigationPath">
+                      <terms xsi:type="syn-form:Variable" name="this"/>
+                      <terms xsi:type="syn-form:Variable" name="experts"/>
+                    </terms>
+                    <terms xsi:type="syn-form:Variable" name="exp"/>
+                  </formula>
+                  <formula xsi:type="syn-form:BracketFormula">
+                    <formula xsi:type="syn-form:Disjunction">
+                      <formula xsi:type="syn-form:BracketFormula">
+                        <formula xsi:type="syn-form:Conjunction">
+                          <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="exp"/>
+                              <terms xsi:type="syn-form:Variable" name="research_field"/>
+                            </terms>
+                            <terms xsi:type="syn-form:Variable" name="computer_science"/>
+                          </formula>
+                          <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                            <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                              <terms xsi:type="syn-form:Variable" name="this"/>
+                              <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                            </terms>
+                            <terms xsi:type="syn-form:FunctionCall" name="uni">
+                              <terms xsi:type="syn-form:NavigationPath">
+                                <terms xsi:type="syn-form:Variable" name="this"/>
+                                <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                              </terms>
+                              <terms xsi:type="syn-val:SetValueDef" contents="//@modules.1/@containedTypes.12/@attributes.4/@containedType/@predicativeSpec/@formula.1/@formula.0/@formula.0/@formula.1/@formula.0/@formula.0/@formula.0/@formula.1/@terms.1/@terms.1/@containedContents.0">
+                                <containedContents xsi:type="syn-form:Variable" name="exp"/>
+                              </terms>
+                            </terms>
+                          </formula>
+                        </formula>
+                      </formula>
+                      <formula xsi:type="syn-form:BracketFormula">
+                        <formula xsi:type="syn-form:Conjunction">
+                          <formula xsi:type="syn-form:RelationPredicate" symbol="&lt;>">
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="exp"/>
+                              <terms xsi:type="syn-form:Variable" name="research_field"/>
+                            </terms>
+                            <terms xsi:type="syn-form:Variable" name="computer_science"/>
+                          </formula>
+                          <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                            <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                              <terms xsi:type="syn-form:Variable" name="this"/>
+                              <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                            </terms>
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="this"/>
+                              <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                            </terms>
+                          </formula>
+                        </formula>
+                      </formula>
+                    </formula>
+                  </formula>
+                </formula>
+                <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                  <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                    <terms xsi:type="syn-form:Variable" name="this"/>
+                    <terms xsi:type="syn-form:Variable" name="experts"/>
+                  </terms>
+                  <terms xsi:type="syn-form:FunctionCall" name="differ">
+                    <terms xsi:type="syn-form:NavigationPath">
+                      <terms xsi:type="syn-form:Variable" name="this"/>
+                      <terms xsi:type="syn-form:Variable" name="experts"/>
+                    </terms>
+                    <terms xsi:type="syn-val:SetValueDef" contents="//@modules.1/@containedTypes.12/@attributes.4/@containedType/@predicativeSpec/@formula.1/@formula.0/@formula.1/@terms.1/@terms.1/@containedContents.0">
+                      <containedContents xsi:type="syn-form:Variable" name="exp"/>
+                    </terms>
+                  </terms>
+                </formula>
+              </formula>
+              <variables name="exp" type="//@modules.1/@containedTypes.11"/>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+      <attributes name="count_experts" type="//@modules.1/@containedTypes.12/@attributes.5/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.12/@attributes.5">
+          <parameters name="number_of_experts" parameterKind="-" type="//@modules.1/@containedTypes.12/@attributes.5/@containedType/@parameters.0/@containedType">
+            <containedType xsi:type="syn-bit:IntegerDef"/>
+          </parameters>
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:Conjunction">
+              <formula xsi:type="syn-form:Atom" symbol="is_empty">
+                <terms xsi:type="syn-form:NavigationPath">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-form:Variable" name="experts"/>
+                </terms>
+              </formula>
+              <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-form:Variable" name="experts_got"/>
+                </terms>
+                <terms xsi:type="syn-val:BooleanValueDef" value="true"/>
+              </formula>
+            </formula>
+            <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+              <terms xsi:type="syn-form:Variable" name="number_of_experts"/>
+              <terms xsi:type="syn-form:FunctionCall" name="cardinal">
+                <terms xsi:type="syn-form:NavigationPath">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                </terms>
+              </terms>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+      <attributes name="appoint" type="//@modules.1/@containedTypes.12/@attributes.6/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.12/@attributes.6">
+          <parameters name="revi" parameterKind="+" type="//@modules.1/@containedTypes.9"/>
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:Conjunction">
+              <formula xsi:type="syn-form:Atom" symbol="is_empty">
+                <terms xsi:type="syn-form:NavigationPath">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-form:Variable" name="experts"/>
+                </terms>
+              </formula>
+              <formula xsi:type="syn-form:Negation">
+                <formula xsi:type="syn-form:Atom" symbol="is_empty">
+                  <terms xsi:type="syn-form:NavigationPath">
+                    <terms xsi:type="syn-form:Variable" name="this"/>
+                    <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                  </terms>
+                </formula>
+              </formula>
+            </formula>
+            <formula xsi:type="syn-form:BracketFormula">
+              <formula xsi:type="syn-form:Disjunction">
+                <formula xsi:type="syn-form:ExistentiallyQuantifiedFormula">
+                  <formula xsi:type="syn-form:Conjunction">
+                    <formula xsi:type="syn-form:Conjunction">
+                      <formula xsi:type="syn-form:Conjunction">
+                        <formula xsi:type="syn-form:Atom" symbol="is_in">
+                          <terms xsi:type="syn-form:NavigationPath">
+                            <terms xsi:type="syn-form:Variable" name="this"/>
+                            <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                          </terms>
+                          <terms xsi:type="syn-form:Variable" name="exp"/>
+                        </formula>
+                        <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                          <terms xsi:type="syn-form:NavigationPath">
+                            <terms xsi:type="syn-form:Variable" name="exp"/>
+                            <terms xsi:type="syn-form:Variable" name="field_of_expertise"/>
+                          </terms>
+                          <terms xsi:type="syn-form:NavigationPath">
+                            <terms xsi:type="syn-form:Variable" name="revi"/>
+                            <terms xsi:type="syn-form:Variable" name="subm_ref"/>
+                            <terms xsi:type="syn-form:Variable" name="field"/>
+                          </terms>
+                        </formula>
+                      </formula>
+                      <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                        <terms xsi:type="syn-form:NavigationPath">
+                          <terms xsi:type="syn-form:Variable" name="exp"/>
+                          <terms xsi:type="syn-form:Variable" name="degree"/>
+                        </terms>
+                        <terms xsi:type="syn-form:Variable" name="PhD"/>
+                      </formula>
+                    </formula>
+                    <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                      <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                        <terms xsi:type="syn-form:Variable" name="revi"/>
+                        <terms xsi:type="syn-form:Variable" name="by_specialist"/>
+                      </terms>
+                      <terms xsi:type="syn-form:Variable" name="exp"/>
+                    </formula>
+                  </formula>
+                  <variables name="exp" type="//@modules.1/@containedTypes.11"/>
+                </formula>
+                <formula xsi:type="syn-form:BracketFormula">
+                  <formula xsi:type="syn-form:Conjunction">
+                    <formula xsi:type="syn-form:UniversallyQuantifiedFormula">
+                      <formula xsi:type="syn-form:Implication">
+                        <formula xsi:type="syn-form:BracketFormula">
+                          <formula xsi:type="syn-form:Conjunction">
+                            <formula xsi:type="syn-form:Atom" symbol="is_in">
+                              <terms xsi:type="syn-form:NavigationPath">
+                                <terms xsi:type="syn-form:Variable" name="this"/>
+                                <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                              </terms>
+                              <terms xsi:type="syn-form:Variable" name="exp"/>
+                            </formula>
+                            <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                              <terms xsi:type="syn-form:NavigationPath">
+                                <terms xsi:type="syn-form:Variable" name="exp"/>
+                                <terms xsi:type="syn-form:Variable" name="field_of_expertise"/>
+                              </terms>
+                              <terms xsi:type="syn-form:NavigationPath">
+                                <terms xsi:type="syn-form:Variable" name="revi"/>
+                                <terms xsi:type="syn-form:Variable" name="subm_ref"/>
+                                <terms xsi:type="syn-form:Variable" name="field"/>
+                              </terms>
+                            </formula>
+                          </formula>
+                        </formula>
+                        <formula xsi:type="syn-form:RelationPredicate" symbol="&lt;>">
+                          <terms xsi:type="syn-form:NavigationPath">
+                            <terms xsi:type="syn-form:Variable" name="exp"/>
+                            <terms xsi:type="syn-form:Variable" name="degree"/>
+                          </terms>
+                          <terms xsi:type="syn-form:Variable" name="PhD"/>
+                        </formula>
+                      </formula>
+                      <variables name="exp" type="//@modules.1/@containedTypes.11"/>
+                    </formula>
+                    <formula xsi:type="syn-form:ExistentiallyQuantifiedFormula">
+                      <formula xsi:type="syn-form:Conjunction">
+                        <formula xsi:type="syn-form:Conjunction">
+                          <formula xsi:type="syn-form:Atom" symbol="is_in">
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="this"/>
+                              <terms xsi:type="syn-form:Variable" name="relevant_experts"/>
+                            </terms>
+                            <terms xsi:type="syn-form:Variable" name="exp"/>
+                          </formula>
+                          <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="exp"/>
+                              <terms xsi:type="syn-form:Variable" name="field_of_expertise"/>
+                            </terms>
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="revi"/>
+                              <terms xsi:type="syn-form:Variable" name="subm_ref"/>
+                              <terms xsi:type="syn-form:Variable" name="field"/>
+                            </terms>
+                          </formula>
+                        </formula>
+                        <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                          <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                            <terms xsi:type="syn-form:Variable" name="revi"/>
+                            <terms xsi:type="syn-form:Variable" name="by_specialist"/>
+                          </terms>
+                          <terms xsi:type="syn-form:Variable" name="exp"/>
+                        </formula>
+                      </formula>
+                      <variables name="exp" type="//@modules.1/@containedTypes.11"/>
+                    </formula>
+                  </formula>
+                </formula>
+              </formula>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+    </containedTypes>
+  </modules>
+</syn:SchemaDef>

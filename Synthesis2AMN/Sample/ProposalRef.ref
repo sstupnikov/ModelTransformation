@@ -1,0 +1,25 @@
+REFINEMENT ProposalRef
+
+REFINES MProposal
+
+SEES
+	FundingAgency_structure_Context
+
+VARIABLES
+	area,
+	proposal
+
+INVARIANT
+	proposal : POW(ext_Proposal) &
+	area : (ext_Proposal --> seq((0 .. 255)))
+
+INITIALISATION
+	ANY aarea WHERE
+		aarea : (ext_Proposal --> seq((0 .. 255)))
+	THEN
+		area := aarea
+	END
+	||
+	proposal := {}
+
+END

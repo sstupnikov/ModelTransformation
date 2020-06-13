@@ -1,0 +1,519 @@
+library AMN2String;
+
+-- =============================================================================
+-- AMN2String
+-- Version 2.0
+-- Release date : 
+-- Author : Sergey Stupnikov (ssa@ipi.ac.ru)
+-- =============================================================================
+
+helper context AMN!Element def: toString(indent: String): String =
+	''
+;
+
+-- ABSTRACT MACHINE	
+helper context AMN!AbstractMachine def: toString() : String = 
+	'MACHINE ' + self.name +
+
+	if self.sees->size() > 0 
+	then '\n\nSEES\n' + thisModule.commaSepNames(self.sees) 
+	else '' 
+	endif +
+	
+	if self.usesClause->size() > 0 
+	then '\n\nUSES\n' + thisModule.commaSepNames(self.usesClause) 
+	else '' 
+	endif +
+	
+	if self.includes->size() > 0 
+	then '\n\nINCLUDES\n' + thisModule.commaSepNames(self.includes) 
+	else '' 
+	endif +
+	
+	if self.extendsClause->size() > 0 
+	then '\n\nEXTENDS\n' + thisModule.commaSepNames(self.extendsClause) 
+	else '' 
+	endif +
+
+	if self.sets->size() > 0 
+	then 
+		'\n\nSETS\n' + 
+		( let s: String = self.sets->iterate(i; acc : String = '\t' | acc + i.toString() + ';\n\t') in s.substring(1, s.size()-3) )
+	else '' 
+	endif +
+	
+	if self.abstractConstants->size() > 0 
+	then 
+		'\n\nABSTRACT_CONSTANTS\n' + 
+		( let s: String = self.abstractConstants->iterate(i; acc : String = '\t' | acc + i + ',\n\t') in s.substring(1, s.size()-3) )
+	else '' 
+	endif +
+
+	if self.properties->size() > 0 
+	then 
+		'\n\nPROPERTIES\n' + 
+		( let s: String = self.properties->iterate(i; acc : String = '\t' | acc + i.toString('\t') + ' &\n\t') in s.substring(1, s.size()-4) )
+	else '' 
+	endif +
+  	
+	if self.abstractVariables->size() > 0 
+	then 
+		'\n\nVARIABLES\n' + 
+		( let s: String = self.abstractVariables->iterate(i; acc : String = '\t' | acc + i + ',\n\t') in s.substring(1, s.size()-3) )
+	else '' 
+	endif +
+	
+	if self.invariant->size() > 0 
+	then 
+		'\n\nINVARIANT\n' + 
+		( let s: String = self.invariant->iterate(i; acc : String = '\t' | acc + i.toString('\t') + ' &\n\t') in s.substring(1, s.size()-4) )
+	else '' 
+	endif +	
+
+	if self.initialization->size() > 0 
+	then 
+		'\n\nINITIALISATION\n' + 
+		( let s: String = self.initialization->iterate(i; acc : String = '' | acc + i.toString('\t') + '\n\t||\n') in s.substring(1, s.size()-5) )
+	else '' 
+	endif +	
+	
+	if self.operations->size() > 0 
+	then 
+		'\n\nOPERATIONS\n' + 
+		( let s: String = self.operations->iterate(i; acc : String = '\t' | acc + i.toString('') + ';\n\n\t') in s.substring(1, s.size()-4) )
+	else ''
+	endif +
+	
+	'\n\nEND'
+;
+
+-- REFINEMENT
+helper context AMN!Refinement def: toString() : String = 
+	'REFINEMENT ' + self.name +
+
+	if not self.refines.oclIsUndefined()
+	then '\n\nREFINES ' + self.refines.name
+	else ''
+	endif +
+	
+	if self.sees->size() > 0 
+	then '\n\nSEES\n' + thisModule.commaSepNames(self.sees) 
+	else '' 
+	endif +
+	
+	if self.includes->size() > 0 
+	then '\n\nINCLUDES\n' + thisModule.commaSepNames(self.includes) 
+	else '' 
+	endif +
+	
+	if self.extendsClause->size() > 0 
+	then '\n\nEXTENDS\n' + thisModule.commaSepNames(self.extendsClause) 
+	else '' 
+	endif +
+
+	if self.sets->size() > 0 
+	then 
+		'\n\nSETS\n' + 
+		( let s: String = self.sets->iterate(i; acc : String = '\t' | acc + i.toString() + ',\n\t') in s.substring(1, s.size()-3) )
+	else '' 
+	endif +
+	
+	if self.abstractConstants->size() > 0 
+	then 
+		'\n\nABSTRACT_CONSTANTS\n' + 
+		( let s: String = self.abstractConstants->iterate(i; acc : String = '\t' | acc + i + ',\n\t') in s.substring(1, s.size()-3) )
+	else '' 
+	endif +
+
+	if self.properties->size() > 0 
+	then 
+		'\n\nPROPERTIES\n' + 
+		( let s: String = self.properties->iterate(i; acc : String = '\t' | acc + i.toString('\t') + ' &\n\t') in s.substring(1, s.size()-4) )
+	else '' 
+	endif +
+  	
+	if self.abstractVariables->size() > 0 
+	then 
+		'\n\nVARIABLES\n' + 
+		( let s: String = self.abstractVariables->iterate(i; acc : String = '\t' | acc + i + ',\n\t') in s.substring(1, s.size()-3) )
+	else '' 
+	endif +
+	
+	if self.invariant->size() > 0 
+	then 
+		'\n\nINVARIANT\n' + 
+		( let s: String = self.invariant->iterate(i; acc : String = '\t' | acc + i.toString('\t') + ' &\n\t') in s.substring(1, s.size()-4) )
+	else '' 
+	endif +	
+
+	if self.initialization->size() > 0 
+	then 
+		'\n\nINITIALISATION\n' + 
+		( let s: String = self.initialization->iterate(i; acc : String = '' | acc + i.toString('\t') + '\n\t||\n') in s.substring(1, s.size()-5) )
+	else '' 
+	endif +	
+	
+	if self.operations->size() > 0 
+	then 
+		'\n\nOPERATIONS\n' + 
+		( let s: String = self.operations->iterate(i; acc : String = '\t' | acc + i.toString('') + ';\n\n\t') in s.substring(1, s.size()-4) )
+	else ''  
+	endif +
+	
+	'\n\nEND'	
+;
+
+helper def: commaSepNames(set: Set(AMN!Element)) : String =
+	if set.size() > 0
+	then 
+		let s: String = set->iterate(i; acc : String = '' | acc + '\t' + i.name + ',\n') in
+			s.substring(1, s.size()-2)
+	else ''
+	endif
+;
+
+
+helper context AMN!SetDecl def: toString() : String =
+	self.name +
+	if self.element->size() > 0 
+	then 
+		' = {' + 
+		( let s: String = self.element->iterate(i; acc : String = '' | acc + i + ', ') in s.substring(1, s.size()-2) ) +
+		'}'
+	else '' 
+	endif	
+;
+
+helper context AMN!Operation def: toString(indent: String) : String =
+	if self.outputParams->size() > 0 
+	then 
+		( let s: String = self.outputParams->iterate(i; acc: String = '' | acc + i + ', ') in s.substring(1, s.size()-2) ) + ' <-- ' 
+	else '' 
+	endif +	
+	self.name + 	 
+	if self.inputParams->size() > 0 
+	then 
+		'(' + 
+		( let s: String = self.inputParams->iterate(i; acc: String = '' | acc + i + ', ') in s.substring(1, s.size()-2) ) +
+		')' 
+	else '' 
+	endif +	
+	' = \n' +
+	if not self.substitution.oclIsUndefined()
+	then 
+		self.substitution.toString('\t')
+	else ''
+	endif
+;
+
+-- PREDICATES
+
+helper context AMN!Predicate def: toString(indent: String): String =
+	''
+;
+
+-- Only binary predicates of AMN
+helper context AMN!AtomicPredicate def: toString(indent: String) : String =
+	if self.expression->size() = 2
+	then 
+		let s: Sequence(AMN!Expression) = self.expression->asSequence() in 
+		s->at(1).toString(indent) + 
+		' ' + self.sign + ' ' +
+		s->at(2).toString(indent)
+	else 'Wrong number of params in atomic predicate'  
+	endif
+;
+
+helper context AMN!Bracketed def: toString(indent: String) : String = 
+	'(' + 
+	if self.predicate->size() > 0
+	then self.predicate->asSequence()->at(1).toString(indent + '\t') 
+	else 'Empty brackets'
+	endif +
+	')'
+;
+
+helper context AMN!Conjunction def: toString(indent: String) : String = 
+	if self.predicate->size() > 0
+	then
+		let s: String = self.predicate->iterate(i; acc : String = '' | acc + i.toString(indent) + ' &\n' + indent) in 
+		s.substring(1, s.size() - indent.size() - 3)
+	else 'Empty conjunction'		
+	endif
+;
+
+helper context AMN!Negation def: toString(indent: String) : String = 
+	'not(' +
+	if self.predicate->size() = 1
+	then 
+		self.predicate->asSequence()->at(1).toString(indent + '\t') 
+	else ''
+	endif + 
+	')'
+;
+
+helper context AMN!Disjunction def: toString(indent: String) : String = 
+	if self.predicate->size() > 0
+	then
+		'(' + 
+		( let s: String = self.predicate->iterate(i; acc : String = '' | acc + i.toString(indent + '\t') + ' or\n' + indent) in 
+			s.substring(1, s.size() - indent.size() - 4) ) +
+		')'
+	else 'Empty disjunction'
+	endif
+		
+;
+
+helper context AMN!Implication def: toString(indent: String) : String = 
+	if self.predicate->size() > 0
+	then
+		'(' + 	
+		self.predicate->asSequence()->at(1).toString(indent + '\t') + ' =>\n' + indent +
+		if self.predicate->size() > 1
+		then self.predicate->asSequence()->at(2).toString(indent + '\t')
+		else 'Empty consequent' -- For debug
+		endif +
+		')'
+	else 'Empty implication'
+	endif
+;
+
+helper context AMN!Equivalence def: toString(indent: String) : String = 
+	if self.predicate->size() > 0
+	then
+		'(' + 
+		self.predicate->asSequence()->at(1).toString(indent + '\t') + ' <=>\n' + indent +
+		if self.predicate->size() > 1
+		then self.predicate->asSequence()->at(2).toString(indent + '\t')
+		else 'EMPTY' -- For debug
+		endif +
+		')'
+	else 'Empty equivalence'
+	endif
+;
+
+helper context AMN!UniversalPredicate def: toString(indent: String) : String =
+	if self.variable->size() > 0 and  self.predicate->size() > 0
+	then
+		'!(' +
+		( let s: String = self.variable->iterate(i; acc : String = '' | acc + i + ', ') in
+			s.substring(1, s.size()-2) ) +			
+		').(' +
+		self.predicate->asSequence()->at(1).toString(indent + '\t') +
+		')'	
+	else 'Empty universal'
+	endif
+;
+
+helper context AMN!ExistentialPredicate def: toString(indent: String) : String =
+	if self.variable->size() > 0 and  self.predicate->size() > 0
+	then
+		'#(' +
+		( let s: String = self.variable->iterate(i; acc : String = '' | acc + i + ', ') in
+			s.substring(1, s.size()-2) ) +			
+		').(' +
+		self.predicate->asSequence()->at(1).toString(indent + '\t') +
+		')'
+	else 'Empty existential'
+	endif		
+;
+
+
+-- EXPRESSIONS
+
+helper context AMN!Expression def: toString(indent: String): String =
+	''
+;
+
+helper context AMN!BracketedExpression def: toString(indent: String) : String =
+	'(' + self.expression.toString(indent) +')'
+;
+
+helper context AMN!SetComprehension def: toString(indent: String) : String =
+	'{' +
+	( let s: String = self.variable->iterate(i; acc : String = '' | acc + i + ', ') in
+		s.substring(1, s.size()-2) ) +
+	' | ' +
+	self.predicate->asSequence()->at(1).toString(indent + '\t') +
+	'}'
+;
+
+-- Reverse operator ~ is postfix.
+helper context AMN!UnaryOperator def: toString(indent: String) : String =
+	if self.sign = '~' 
+	then self.expression.toString(indent) + self.sign
+	else self.sign + self.expression.toString(indent)
+	endif
+;
+
+helper context AMN!BinaryOperator def: toString(indent: String) : String =
+	if self.expression.size() > 0
+	then 
+		'(' +
+		( let s: String = self.expression->iterate(i; acc : String = '' | acc + i.toString(indent) + ' ' + self.sign + ' ') in
+			s.substring(1, s.size()- 2 - self.sign.size()) ) +
+		')'
+	else ''
+	endif
+;
+
+helper context AMN!FunctionalExpression def: toString(indent: String) : String =
+	self.sign + '(' +
+	if self.expression.size() > 0
+	then 
+			( let s: String = self.expression->iterate(i; acc : String = '' | acc + i.toString(indent) + ', ') in
+		s.substring(1, s.size()-2) )
+	else '' 
+	endif +						
+	')'
+
+;
+
+helper context AMN!Variable def: toString(indent: String) : String =
+	self.name
+;
+
+helper context AMN!BooleanValue def: toString(indent: String) : String =
+	self.value.toString().toUpper()
+;	
+
+helper context AMN!StringValue def: toString(indent: String) : String =
+	self.value
+;	
+
+helper context AMN!IntegerValue def: toString(indent: String) : String =
+	self.value.toString()
+;	
+
+helper context AMN!SetValue def: toString(indent: String) : String =
+	'{' +
+	if self.value.size() > 0
+	then 
+		( let s: String = self.value->iterate(i; acc : String = '' | acc + i.toString(indent) + ', ') in
+			s.substring(1, s.size()-2) )
+	else ''
+	endif +						
+	'}'
+;	
+
+helper context AMN!NamedConstant def: toString(indent: String) : String =
+	self.name
+;
+
+helper context AMN!CompoundId def: toString(indent: String) : String =
+	if self.id->size() > 0 
+	then 
+		let s: String = self.id->iterate(i; acc : String = '' | acc + i + '.') in
+			s.substring(1, s.size()-1)
+	else 
+		'EMPTY_ID'
+	endif
+;
+
+
+-- SUBSTITUTIONS
+
+helper context AMN!Substitution def: toString(indent: String) : String =
+	''
+;
+
+helper context AMN!Block def: toString(indent: String) : String =	
+	indent + 'BEGIN\n' +
+	indent + self.substitution.toString(indent + '\t') +
+	indent + 'END'
+;
+
+helper context AMN!Identity def: toString(indent: String) : String =
+	indent + 'skip'
+;
+
+helper context AMN!BecomesEqual def: toString(indent: String) : String =
+	indent +
+	if self.leftExpression->size() > 0 
+	then 
+		( let s: String = self.leftExpression->iterate(i; acc : String = '' | acc + i.toString(indent) + ', ') in
+			s.substring(1, s.size()-2) ) 
+	else ''
+	endif +							
+	' := ' +
+	if self.rightExpression->size() > 0
+	then 
+		( let s: String = self.rightExpression->iterate(i; acc : String = '' | acc + i.toString(indent) + ', ') in
+			s.substring(1, s.size()-2) )
+	else ''
+	endif
+;
+
+helper context AMN!Precondition def: toString(indent: String) : String =
+	indent + 'PRE\n' + 
+	if self.pre->size() > 0 
+	then
+		( let s: String = self.pre->iterate(i; acc : String = indent + '\t' | acc + i.toString(indent + '\t') + ' &\n' + indent + '\t') in
+			s.substring(1, s.size() - 4 - indent.size()) )
+	else ''
+	endif +	
+	'\n' + indent + 'THEN\n' + 
+	if not self.thenPart.oclIsUndefined()
+	then 
+		self.thenPart.toString(indent + '\t')
+	else ''
+	endif +		
+	'\n' + indent + 'END'
+;
+	
+helper context AMN!Any def: toString(indent: String) : String =
+	indent + 'ANY ' +
+	if self.any->size() >0 
+	then
+		( let s: String = self.any->iterate(i; acc : String = '' | acc + i + ', ') in
+			s.substring(1, s.size()-2) )
+	else ''
+	endif +
+	' WHERE\n' +
+	if self.where->size() > 0
+	then 
+		( let s: String = self.where->iterate(i; acc : String = indent + '\t' | acc + i.toString(indent + '\t') + '&\n' + indent + '\t') in
+			s.substring(1, s.size() - 3 - indent.size()) ) 
+	else ''
+	endif +	
+	'\n' + indent + 'THEN\n' + 
+	if not self.thenPart.oclIsUndefined()
+	then
+		self.thenPart.toString(indent + '\t') 
+	else ''
+	endif +
+	'\n' + indent + 'END'	
+;
+
+helper context AMN!Call def: toString(indent: String) : String = 
+	indent +
+	if self.output->size() > 0 
+	then 
+		( let s: String = self.output->iterate(i; acc : String = '' | acc + i.toString(indent) + ', ') in
+			s.substring(1, s.size()-2) ) +
+		' <-- ' 
+	else '' 
+	endif +	
+	self.operationName.toString(indent) +
+	if self.actualParam->size() > 0 
+	then 
+		'(' + 
+		( let s: String = self.actualParam->iterate(i; acc : String = '' | acc + i.toString(indent) + ', ') in
+				s.substring(1, s.size()-2) ) +			 
+		')'
+	else ''
+	endif
+;
+
+helper context AMN!Simultaneous def: toString(indent: String) : String =
+	if self.substitution->size() > 0 
+	then 
+		let s: String = self.substitution->iterate(i; acc : String = '' | acc + i.toString(indent) + '\n' + indent + '||\n') in
+			s.substring(1, s.size() - 4 - indent.size())
+	else ''
+	endif
+;
+
+
+
+
