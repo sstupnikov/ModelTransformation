@@ -1,0 +1,127 @@
+/* Hospital
+ * Author: ssa
+ * Creation date: 5/25/2022
+ */
+
+REFINEMENT Hospital
+REFINES HospitalAM
+
+SEES ContextRDF
+
+SETS
+
+    // Properties  
+    IP = { hasNeoplasm };
+    IP_String_Range = { hasName }; 
+    IP_CancerStage_Range = { hasStage }; 
+ 
+    // RDFS Classes
+    IC = { Thing,        
+        BenignNeoplasm, Cancer, LungCancer, MalignantNeoplasm, 
+        NSCLC, Neoplasm, Patient, Person, SCLC 
+    }; 
+
+    // Datatypes
+    CancerStage = { stageI, stageII, stageIII, stageIIIa, stageIIIb, stageIV }
+
+DEFINITIONS
+    STRING_TYPE == seq(0..255)
+
+ABSTRACT_CONSTANTS 
+    
+    //IS_IR, // IRIs for Resources 
+    IS_IP, // IRIs for Properties 
+        
+    //IL_String,    // IRIs for String Values 
+    IL_CancerStage, // IRIs for CancerStage Values 
+    
+    personIRI,
+    neoplasmIRI         
+    
+PROPERTIES
+       
+    //IS_IR: IRI --> IR &
+    IS_IP: IRI +-> IP & IS_IP: FIN(IS_IP) &
+    //IL_String: IRI --> STRING_TYPE &
+    IL_CancerStage: IRI +-> CancerStage & IL_CancerStage: FIN(IL_CancerStage) &
+    
+    // Valid for finite interpretations
+    IRI = dom(IS_IR) \/ dom(IS_IP) \/ dom(IL_String) \/ dom(IL_CancerStage) &
+    card(IRI) = card(IS_IR) + card(IS_IP) + card(IL_String) + card(IL_CancerStage) &
+    
+    personIRI: INT >-> IRI & ran(personIRI) <: dom(IS_IR) &
+    neoplasmIRI: INT >-> IRI & ran(neoplasmIRI) <: dom(IS_IR) &
+    ran(personIRI) /\ ran(neoplasmIRI) = {}
+    
+    
+ABSTRACT_VARIABLES
+        
+    IEXT, // Properties Interpretation
+    IEXT_String_Range, // Interpretation for properties with string range
+    IEXT_CancerStage_Range, // Interpretation for properties with CancerStage range
+    ICEXT // Classes Interpretation
+
+INVARIANT
+    
+    IEXT: IP --> POW(IR*IR) &
+    IEXT_String_Range: IP_String_Range --> POW(IR*STRING_TYPE) &
+    IEXT_CancerStage_Range: IP_CancerStage_Range --> POW(IR*CancerStage) &
+    
+    ICEXT: IC --> POW(IR) &
+        
+    // OWL Class in a subclass of Thing.
+    // Required only for class with no superclasses
+    ICEXT(Neoplasm) <: ICEXT(Thing) &
+    ICEXT(Person) <: ICEXT(Thing) &
+    
+    // SubClassOf 
+    ICEXT(BenignNeoplasm) <: ICEXT(Neoplasm) &
+    ICEXT(MalignantNeoplasm) <: ICEXT(Neoplasm) &
+    ICEXT(Cancer) <: ICEXT(MalignantNeoplasm) &    
+    ICEXT(LungCancer) <: ICEXT(Cancer) &    
+    ICEXT(NSCLC) <: ICEXT(LungCancer) &        
+    ICEXT(SCLC) <: ICEXT(LungCancer) &   
+    ICEXT(Patient) <: ICEXT(Person) &       
+    
+    // hasNeoplasm domain 
+    !xx.(xx: IR & #yy.(yy: IR & (xx|->yy):IEXT(hasNeoplasm)) =>
+        xx: ICEXT(Patient) ) &
+    // hasNeoplasm range
+    !yy.(yy: IR & #xx.(xx: IR & (xx|->yy):IEXT(hasNeoplasm)) =>
+        yy: ICEXT(Neoplasm) ) &
+    // hasStage domain
+    !xx.(xx: IR & #yy.(yy: CancerStage & (xx|->yy):IEXT_CancerStage_Range(hasStage)) =>
+        xx: ICEXT(Neoplasm) ) 
+
+
+INITIALISATION 
+
+    IEXT:= { hasNeoplasm |-> {} } ||
+    IEXT_String_Range:= { hasName |-> {} } ||
+    IEXT_CancerStage_Range:= { hasStage |-> {} } ||
+    ICEXT:= { 
+        Thing |-> {},         
+        BenignNeoplasm |-> {}, Cancer |-> {}, LungCancer |-> {}, 
+        MalignantNeoplasm |-> {}, NSCLC |-> {}, Neoplasm |-> {}, 
+        Patient |-> {}, Person |-> {}, SCLC |-> {}  
+    }
+
+
+OPERATIONS
+    
+res <--  patientsWithTumorOfStageIIIa =
+BEGIN
+    res:= 
+    { rcrd | 
+        rcrd: struct(name: STRING_TYPE)  &
+        #(pp, name, tumor).(
+            pp: ICEXT(Patient) & name: STRING_TYPE & tumor: ICEXT(Neoplasm) &
+            (pp |-> name): IEXT_String_Range(hasName) &
+            (pp |-> tumor): IEXT(hasNeoplasm) &
+            (tumor |-> stageIIIa): IEXT_CancerStage_Range(hasStage)                        
+        )
+    }          
+END
+
+
+END
