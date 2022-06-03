@@ -1,10 +1,10 @@
-/* Hospital
+/* CancerRef
  * Author: ssa
  * Creation date: 5/25/2022
  */
 
-REFINEMENT Hospital
-REFINES HospitalAM
+REFINEMENT CancerRef
+REFINES CancerAM
 
 SEES ContextRDF
 
@@ -13,7 +13,7 @@ SETS
     // Properties  
     IP = { hasNeoplasm };
     IP_String_Range = { hasName }; 
-    IP_CancerStage_Range = { hasStage }; 
+    IP_CancerStage_Range = { hasStage };     
  
     // RDFS Classes
     IC = { Thing,        
@@ -29,25 +29,36 @@ DEFINITIONS
 
 ABSTRACT_CONSTANTS 
     
-    //IS_IR, // IRIs for Resources 
     IS_IP, // IRIs for Properties 
+    IS_IP_String_Range, // IRI for String range properties 
+    IS_IP_CancerStage_Range, // IRI for CancerStage range properties 
         
-    //IL_String,    // IRIs for String Values 
     IL_CancerStage, // IRIs for CancerStage Values 
     
     personIRI,
-    neoplasmIRI         
+    neoplasmIRI
     
 PROPERTIES
-       
-    //IS_IR: IRI --> IR &
-    IS_IP: IRI +-> IP & IS_IP: FIN(IS_IP) &
-    //IL_String: IRI --> STRING_TYPE &
+    
+
+    IS_IP: IRI +-> IP & 
+    IS_IP: FIN(IS_IP) &
+    IS_IP_String_Range: IRI +-> IP_String_Range &
+    IS_IP_String_Range: FIN(IS_IP_String_Range) &
+    IS_IP_CancerStage_Range: IRI +->  IP_CancerStage_Range &
+    IS_IP_CancerStage_Range: FIN(IS_IP_CancerStage_Range) &
+    
+    
     IL_CancerStage: IRI +-> CancerStage & IL_CancerStage: FIN(IL_CancerStage) &
     
     // Valid for finite interpretations
-    IRI = dom(IS_IR) \/ dom(IS_IP) \/ dom(IL_String) \/ dom(IL_CancerStage) &
-    card(IRI) = card(IS_IR) + card(IS_IP) + card(IL_String) + card(IL_CancerStage) &
+    IRI = dom(IS_IR) \/ 
+        dom(IS_IP) \/ dom(IS_IP_String_Range) \/ dom(IS_IP_CancerStage_Range) \/       
+        dom(IL_String) \/ dom(IL_CancerStage) &
+    
+    card(IRI) = card(dom(IS_IR)) + card(dom(IS_IP)) + 
+        card(dom(IS_IP_String_Range)) + card(dom(IS_IP_CancerStage_Range)) +
+        card(dom(IL_String)) + card(dom(IL_CancerStage)) &
     
     personIRI: INT >-> IRI & ran(personIRI) <: dom(IS_IR) &
     neoplasmIRI: INT >-> IRI & ran(neoplasmIRI) <: dom(IS_IR) &
@@ -71,8 +82,7 @@ INVARIANT
         
     // OWL Class in a subclass of Thing.
     // Required only for class with no superclasses
-    ICEXT(Neoplasm) <: ICEXT(Thing) &
-    ICEXT(Person) <: ICEXT(Thing) &
+    ICEXT(Thing) = IR &
     
     // SubClassOf 
     ICEXT(BenignNeoplasm) <: ICEXT(Neoplasm) &
@@ -84,13 +94,13 @@ INVARIANT
     ICEXT(Patient) <: ICEXT(Person) &       
     
     // hasNeoplasm domain 
-    !xx.(xx: IR & #yy.(yy: IR & (xx|->yy):IEXT(hasNeoplasm)) =>
+    !(xx, yy).(xx: IR & yy: IR & (xx|->yy):IEXT(hasNeoplasm) =>
         xx: ICEXT(Patient) ) &
     // hasNeoplasm range
-    !yy.(yy: IR & #xx.(xx: IR & (xx|->yy):IEXT(hasNeoplasm)) =>
+    !(xx, yy).(xx: IR & yy: IR & (xx|->yy):IEXT(hasNeoplasm) =>
         yy: ICEXT(Neoplasm) ) &
     // hasStage domain
-    !xx.(xx: IR & #yy.(yy: CancerStage & (xx|->yy):IEXT_CancerStage_Range(hasStage)) =>
+    !(xx, yy).(xx: IR & yy: CancerStage & (xx|->yy):IEXT_CancerStage_Range(hasStage) =>
         xx: ICEXT(Neoplasm) ) 
 
 
@@ -100,7 +110,7 @@ INITIALISATION
     IEXT_String_Range:= { hasName |-> {} } ||
     IEXT_CancerStage_Range:= { hasStage |-> {} } ||
     ICEXT:= { 
-        Thing |-> {},         
+        Thing |-> IR,         
         BenignNeoplasm |-> {}, Cancer |-> {}, LungCancer |-> {}, 
         MalignantNeoplasm |-> {}, NSCLC |-> {}, Neoplasm |-> {}, 
         Patient |-> {}, Person |-> {}, SCLC |-> {}  
@@ -114,11 +124,11 @@ BEGIN
     res:= 
     { rcrd | 
         rcrd: struct(name: STRING_TYPE)  &
-        #(pp, name, tumor).(
-            pp: ICEXT(Patient) & name: STRING_TYPE & tumor: ICEXT(Neoplasm) &
-            (pp |-> name): IEXT_String_Range(hasName) &
+        #(pp, tumor).(
+            pp: ICEXT(Patient) & tumor: ICEXT(Neoplasm) &
+            (pp |-> rcrd'name): IEXT_String_Range(hasName) &
             (pp |-> tumor): IEXT(hasNeoplasm) &
-            (tumor |-> stageIIIa): IEXT_CancerStage_Range(hasStage)                        
+            (tumor |-> stageIIIa): IEXT_CancerStage_Range(hasStage)
         )
     }          
 END

@@ -4,7 +4,7 @@
  */
 
 REFINEMENT Patients
-REFINES HospitalRef
+REFINES CancerRef
 
 SEES ContextRDF
 
@@ -21,62 +21,58 @@ INVARIANT
 
     tbl_patient: POW(
         struct(patientid: INT, name: STRING_TYPE, type: BOOL, stage: INT)) &
+    !(pt1, pt2).(pt1: tbl_patient & pt2: tbl_patient & pt1 /= pt2 => 
+        pt1'patientid /= pt2'patientid) &
     
     // Mappings
     // Mapping 1a: Patient
-    !(patient, patientid, name).(        
-        patient: tbl_patient &
-        patientid: INT & patient'patientid = patientid & 
-        name: STRING_TYPE &  patient'name = name        
-        =>
+    !(patient).(        
+        patient: tbl_patient =>
         #patientInd.(patientInd: ICEXT(Patient) & 
-            IS_IR(personIRI(patientid)) = patientInd &
-            (patientInd |-> name): IEXT_String_Range(hasName)
+            IS_IR(personIRI(patient'patientid)) = patientInd &
+            (patientInd |-> patient'name): IEXT_String_Range(hasName)
         )
     ) &
     // Mapping 2a: Neoplasm
-    !(patient, patientid).(
-        patient: tbl_patient & 
-        patientid: INT & patient'patientid = patientid 
+    !(patient).(
+        patient: tbl_patient
         =>
         #(patientInd, neoplasmInd).(
-            patientInd: ICEXT(Patient) & IS_IR(personIRI(patientid)) = patientInd &
-            neoplasmInd: ICEXT(Neoplasm) & IS_IR(neoplasmIRI(patientid)) = neoplasmInd &
-            (patientInd |-> neoplasmInd): IEXT(hasNeoplasm)
+            patientInd: ICEXT(Patient) & IS_IR(personIRI(patient'patientid)) = patientInd &
+            (patientInd |-> neoplasmInd): IEXT(hasNeoplasm) &
+            neoplasmInd: ICEXT(Neoplasm) & IS_IR(neoplasmIRI(patient'patientid)) = neoplasmInd 
+            
         )
     ) &
     // Mapping 3a: NSCLC
-    !(patient, patientid).(
+    !(patient).(
         patient: tbl_patient & 
-        patientid: INT & patient'patientid = patientid & 
         patient'type = FALSE 
         =>
         #(neoplasmInd).(
             neoplasmInd: ICEXT(NSCLC) &
-            IS_IR(neoplasmIRI(patientid)) = neoplasmInd            
+            IS_IR(neoplasmIRI(patient'patientid)) = neoplasmInd            
         )
     ) &   
     // Mapping 4a: SCLC
-    !(patient, patientid).(
+    !(patient).(
         patient: tbl_patient & 
-        patientid: INT & patient'patientid = patientid & 
         patient'type = TRUE 
         =>
         #(neoplasmInd).(
             neoplasmInd: ICEXT(SCLC) & 
-            IS_IR(neoplasmIRI(patientid)) = neoplasmInd 
+            IS_IR(neoplasmIRI(patient'patientid)) = neoplasmInd 
         )
     ) &
     // Mapping 5a: Stage IIIa
-    !(patient, patientid).(
+    !(patient).(
         patient: tbl_patient & 
-        patientid: INT & patient'patientid = patientid & 
         patient'stage = 4 &  
         patient'type = FALSE  
         =>
         #(neoplasmInd).(
             neoplasmInd: ICEXT(NSCLC) & 
-            IS_IR(neoplasmIRI(patientid)) = neoplasmInd &
+            IS_IR(neoplasmIRI(patient'patientid)) = neoplasmInd &
             (neoplasmInd |-> stageIIIa): IEXT_CancerStage_Range(hasStage)
         )
     )    
@@ -91,7 +87,8 @@ BEGIN
     res:= 
     { rcrd | 
         rcrd: struct(name: STRING_TYPE) & 
-        #ptnt.(ptnt: tbl_patient & ptnt'type = FALSE & ptnt'stage = 4 )
+        #ptnt.(ptnt: tbl_patient & ptnt'type = FALSE & ptnt'stage = 4 &
+            ptnt'name = rcrd'name)
     }          
 END
 
