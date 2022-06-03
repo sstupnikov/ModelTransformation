@@ -4,13 +4,23 @@
  */
 
 REFINEMENT Patients
-REFINES CancerRef
+REFINES Hospital
 
 SEES ContextRDF
 
 
 DEFINITIONS
     STRING_TYPE == seq(0..255)
+
+ABSTRACT_CONSTANTS
+    personIRI,
+    neoplasmIRI
+
+PROPERTIES
+    personIRI: 1..NN  >-> IRI & ran(personIRI) <: dom(IS_IR) &
+    neoplasmIRI: 1..NN >-> IRI & ran(neoplasmIRI) <: dom(IS_IR) &
+    ran(personIRI) /\ ran(neoplasmIRI) = {}
+
 
 ABSTRACT_VARIABLES
     

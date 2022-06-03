@@ -1,10 +1,6 @@
-/* CancerRef
- * Author: ssa
- * Creation date: 5/25/2022
- */
 
-REFINEMENT CancerRef
-REFINES CancerAM
+REFINEMENT Hospital
+REFINES HospitalAM
 
 SEES ContextRDF
 
@@ -33,14 +29,10 @@ ABSTRACT_CONSTANTS
     IS_IP_String_Range, // IRI for String range properties 
     IS_IP_CancerStage_Range, // IRI for CancerStage range properties 
         
-    IL_CancerStage, // IRIs for CancerStage Values 
-    
-    personIRI,
-    neoplasmIRI
-    
-PROPERTIES
-    
+    IL_CancerStage // IRIs for CancerStage Values 
 
+PROPERTIES
+  
     IS_IP: IRI +-> IP & 
     IS_IP: FIN(IS_IP) &
     IS_IP_String_Range: IRI +-> IP_String_Range &
@@ -58,12 +50,7 @@ PROPERTIES
     
     card(IRI) = card(dom(IS_IR)) + card(dom(IS_IP)) + 
         card(dom(IS_IP_String_Range)) + card(dom(IS_IP_CancerStage_Range)) +
-        card(dom(IL_String)) + card(dom(IL_CancerStage)) &
-    
-    personIRI: INT >-> IRI & ran(personIRI) <: dom(IS_IR) &
-    neoplasmIRI: INT >-> IRI & ran(neoplasmIRI) <: dom(IS_IR) &
-    ran(personIRI) /\ ran(neoplasmIRI) = {}
-    
+        card(dom(IL_String)) + card(dom(IL_CancerStage))         
     
 ABSTRACT_VARIABLES
         
@@ -79,6 +66,10 @@ INVARIANT
     IEXT_CancerStage_Range: IP_CancerStage_Range --> POW(IR*CancerStage) &
     
     ICEXT: IC --> POW(IR) &
+    
+    // Required by  personIRI and neoplasmIRI IRI constructors 
+    card(ICEXT(Patient)) <= NN &
+    card(ICEXT(Neoplasm)) <= NN &
         
     // OWL Class in a subclass of Thing.
     // Required only for class with no superclasses
@@ -100,7 +91,7 @@ INVARIANT
     !(xx, yy).(xx: IR & yy: IR & (xx|->yy):IEXT(hasNeoplasm) =>
         yy: ICEXT(Neoplasm) ) &
     // hasStage domain
-    !(xx, yy).(xx: IR & yy: CancerStage & (xx|->yy):IEXT_CancerStage_Range(hasStage) =>
+    !(xx, yy).(xx: IR & yy: CancerStage & (xx|->yy): IEXT_CancerStage_Range(hasStage) =>
         xx: ICEXT(Neoplasm) ) 
 
 

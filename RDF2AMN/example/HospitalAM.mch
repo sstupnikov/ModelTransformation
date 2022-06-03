@@ -1,7 +1,3 @@
-/* HospitalAM
- * Author: ssa
- * Creation date: 5/25/2022
- */
 MACHINE
     HospitalAM
 
