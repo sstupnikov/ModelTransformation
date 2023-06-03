@@ -1,0 +1,35 @@
+module unifier/Uni-Identifiers
+
+imports basic/Whitespace
+imports basic/StrCon
+
+exports
+  context-free start-symbols Uni-Id
+
+  sorts Letter Digit Uni-Id Id-Symbol
+
+  lexical syntax 
+    [a-z] -> Letter
+    [A-Z] -> Letter
+    [0-9] -> Digit  
+    Letter | Digit | "_" -> Id-Symbol
+     
+    Letter (("_"? Letter)|("_"? Digit))* -> Uni-Id {avoid}
+   
+  
+  context-free restrictions 
+    Uni-Id -/- [a-zA-Z0-9\_]
+
+  context-free syntax
+    lower-Case(Uni-Id) -> Uni-Id
+    to-String(Uni-Id) -> StrCon    
+   
+
+hiddens 
+  variables 
+    "Uni-Id"[0-9]* -> Uni-Id
+    "Chars" [0-9]* -> CHAR*
+
+  lexical variables
+    "Id-Symbol"[0-9]* -> Id-Symbol
+    "Id-Symbol*"[0-9]* -> Id-Symbol*

@@ -1,0 +1,83 @@
+{ SELECTION_PATH_EXAMPLE; in: module; 
+type:
+{ TREC01; in: type;
+metaframe
+{unique; { DE01, DE02, DE03 }};
+end
+DE01: integer;
+DE02: {string; length:  50;};
+DE03: integer;
+DE04: real; 
+DE10: {string; length:  10;};
+DE11: {string; length:  15;};
+},
+{ TREC02; in: type;
+metaframe
+{unique; { DE05, DE06, DE07 }};
+end
+DE05: integer;
+DE06: integer;
+DE07: integer;
+DE08: {string; length:  30;};
+DE09: {string; length:  40;}; 
+DE01: integer;
+DE02: {string; length:  50;};
+DE03: integer;
+},
+{ TREC03; in: type;
+metaframe
+{unique; { DE10, DE11 }};
+end
+DE10: {string; length:  10;};
+DE11: {string; length:  15;};
+DE12: integer;
+DE13: real;
+DE14: integer; 
+DE05: integer;
+DE06: integer;
+DE07: integer;
+},
+{ TREC04; in: type;
+metaframe
+{unique; { DE15, DE16, DE17, DE18 }};
+end
+DE15: {string; length:  20;};
+DE16: {string; length:  15;};
+DE17: {string; length:  25;};
+DE18: integer;
+DE19: integer;
+DE20: integer; 
+DE05: integer;
+DE06: integer;
+DE07: integer;
+};
+
+class_specification:
+{ TREC01; in: class;
+instance_section: TREC01; 
+
+},
+{ TREC02; in: class;
+instance_section: TREC02; 
+metaframe
+{{ all x|TREC01 (TREC01(x|TREC01[DE01, DE02, DE03]) & TREC02(x|TREC02[DE01, DE02, DE03, DE05, DE06, DE07]) -> count(x) = 1) }}
+end
+},
+{ TREC03; in: class;
+instance_section: TREC03; 
+metaframe
+{{ all x|TREC02 (TREC02(x|TREC02[DE05, DE06, DE07]) & TREC03(x|TREC03[DE05, DE06, DE07, DE10, DE11]) -> count(x) = 1) }}
+end
+},
+{ TREC04; in: class;
+instance_section: TREC04; 
+
+};
+
+assertion:
+{func; {TREC02; DE01, DE02, DE03}, {TREC01; DE01, DE02, DE03}},
+{func; {TREC03; DE05, DE06, DE07}, {TREC02; DE05, DE06, DE07}},
+{pfunc; {TREC04; DE05, DE06, DE07}, {TREC02; DE05, DE06, DE07}},
+{pfunc; {TREC01; DE10, DE11}, {TREC03; DE10, DE11}};
+}
+

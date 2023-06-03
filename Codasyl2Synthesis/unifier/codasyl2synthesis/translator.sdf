@@ -1,0 +1,200 @@
+module unifier/codasyl2synthesis/translator
+
+imports unifier/Uni-Identifiers
+imports unifier/codasyl/DDL-Syntax
+imports unifier/synthesis/Synthesis-Syntax
+
+imports basic/BoolCon
+
+exports
+
+  context-free start-symbols
+    Module-Def
+   
+    Attribute-Specification*
+    {Assertion ","}*
+    {DDL-Id ","}*
+    Formula
+    {Set-Entry ";"}*
+    
+
+  context-free syntax
+    t-Schema-Def(Schema-Def) -> Module-Def
+
+hiddens 
+  sorts
+    DDL-Id-No-Comma-List
+    Data-Subentry-No-Comma-List
+    
+    Label
+
+  context-free syntax
+    {DDL-Id ";"}* -> DDL-Id-No-Comma-List
+    {Data-Subentry ";"}* -> Data-Subentry-No-Comma-List
+   
+    Synthesis-Id -> Label
+
+%%hiddens
+exports   
+  context-free syntax
+    t-Schema-Entry(Schema-Entry) -> Header
+   
+    t-DDL-Id(DDL-Id) -> Synthesis-Id
+    t-DDL-Id-List({DDL-Id ","}*) -> {Synthesis-Id ","}*
+
+
+    t-Create-Type-Specifications(Record-Entry-List, Set-Entry-List, Record-Entry-List) -> {Type-Specification ","}*
+    t-Create-Type-Specifications(Record-Entry, Set-Entry-List, Record-Entry-List) -> Type-Specification
+    t-Extract-Owners-Keys(DDL-Id, Set-Entry-List, Record-Entry-List) -> Attribute-Specification*
+    t-Extract-Owners-Keys(DDL-Id, Set-Entry, Record-Entry-List) -> Attribute-Specification*
+    t-Extract-Owners-Keys(DDL-Id, Record-Entry-List) -> Attribute-Specification*  
+    t-Extract-Owners-Keys(DDL-Id, Record-Entry) -> Attribute-Specification* {prefer}
+    t-Extract-Owners-Keys(Data-Subentry-No-Comma-List, DDL-Id-No-Comma-List) -> Attribute-Specification*
+    t-Extract-Owners-Keys(Data-Subentry, DDL-Id-No-Comma-List) -> Attribute-Specification*
+
+    t-Calcs(Calcs) -> {Synthesis-Id ","}*
+    t-Data-Subentry-List(Data-Subentry-List) -> Attribute-Specification*
+    t-Data-Subentry(Data-Subentry) -> Attribute-Specification
+    t-DDL-Type(DDL-Type) -> Attribute-Type
+    t-DDL-Type-Name(DDL-Type-Name) -> Synthesis-Id
+    t-DDL-Built-In-Type(DDL-Built-In-Type) -> Synthesis-Built-In-Type
+
+    t-Create-Assertions(Set-Entry-List, Record-Entry-List) -> {Assertion ","}*
+    t-Create-Assertions(Set-Entry, Record-Entry-List) -> Assertion   
+    t-Extract-Key(DDL-Id, Record-Entry-List) -> {Synthesis-Id ","}*
+
+    t-Create-Class-Specifications(Record-Entry-List, Set-Entry-List, Record-Entry-List) -> {Class-Declarator ","}*
+    t-Create-Class-Specifications(Record-Entry, Set-Entry-List, Record-Entry-List) -> Class-Declarator 
+    t-Create-Class-Metaframe(Formula*) -> Class-Metaframe?
+   
+
+    t-Create-Set-Selection-Axioms(DDL-Id, Set-Entry-List, Set-Entry-List, Record-Entry-List) -> Formula*
+    t-Create-Set-Selection-Axioms(DDL-Id, Set-Entry, Set-Entry-List, Record-Entry-List) -> Formula* {prefer}
+    t-Create-Set-Selection-Axioms({Synthesis-Id ";"}*, Selection-Path-Component*, Set-Entry-List) -> Formula*
+
+    t-Extract-Set-Owner(DDL-Id, Set-Entry-List) -> DDL-Id
+
+    t-Extract-Selection-Path(Set-Entry) -> {DDL-Id ","}*
+    t-Extract-Selection-Path(Selection-Path-Component*) -> {DDL-Id ","}*
+    t-Check-Same-Selection-Path(Set-Entry, Set-Entry-List) -> BoolCon
+    t-Remove-Entries-With-Same-Selection-Path(Set-Entry-List) -> {Set-Entry ";"}*
+
+    
+    "convert-Type-Name-Into-Class-Name" "(" Label ")" -> Label
+
+    id-Is-In-List(DDL-Id, DDL-Id-No-Comma-List) -> BoolCon
+    list-Is-In-List(DDL-Id-No-Comma-List, DDL-Id-No-Comma-List) -> BoolCon
+    lists-Are-Equal(DDL-Id-No-Comma-List, DDL-Id-No-Comma-List) -> BoolCon
+
+    remove-Commas-From-DDL-Id-List({DDL-Id ","}*) -> {DDL-Id ";"}*
+    remove-Commas-From-Data-Subentry-List({Data-Subentry ","}*) -> {Data-Subentry ";"}*
+    
+    remove-Commas-From-Synthesis-Id-List({Synthesis-Id ","}*) -> {Synthesis-Id ";"}*
+    restore-Commas-In-Synthesis-Id-List({Synthesis-Id ";"}*) -> {Synthesis-Id ","}*
+
+    concatenate-Formulae(Formula*) -> Formula
+    simplify-Formula(Formula) -> Formula
+    dismiss-Boolean-Constant(Formula) -> Formula?
+ 
+hiddens
+  variables
+   "Uni-Id"[0-9\']* -> Uni-Id
+   "Uni-Id*"[0-9\']* -> {Uni-Id ","}*
+
+
+hiddens
+  variables
+   "Char*"[0-9]* -> CHAR*
+
+   "DDL-Id**"[0-9]* -> {DDL-Id ";"}*   
+   "Data-Subentry**"[0-9\']* -> {Data-Subentry ";"}*    
+   "Synthesis-Id**"[0-9\']* -> {Synthesis-Id ";"}*
+
+hiddens 
+  variables
+   "DDL-Id"[0-9\']* -> DDL-Id
+   "DDL-Id*"[0-9\']* -> {DDL-Id ","}* 
+
+   "Schema-Entry"[0-9\']* -> Schema-Entry
+
+   "Record-Entry-List"[0-9\']* -> Record-Entry-List
+   "Record-Entry*"[0-9\']* -> {Record-Entry ";"}*
+
+   "Set-Entry-List"[0-9\']* -> Set-Entry-List
+   "Set-Entry*"[0-9\']* -> {Set-Entry ";"}*
+
+   "Record-Entry"[0-9\']* -> Record-Entry 
+   "Calcs"[0-9\']* -> Calcs 
+
+   "Data-Subentry-List"[0-9\']* -> Data-Subentry-List 
+   "Data-Subentry*"[0-9\']* -> {Data-Subentry ","}*   
+
+   "Data-Subentry"[0-9\']* -> Data-Subentry
+   "DDL-Type"[0-9\']* -> DDL-Type 
+   "DDL-Type-Name"[0-9\']* -> DDL-Type-Name
+   "DDL-Built-In-Type"[0-9\']* -> DDL-Built-In-Type
+   "Unsigned-Int"[0-9\']* -> Unsigned-Int
+   "Set-Entry"[0-9\']* -> Set-Entry 
+   "Member-Subentry"[0-9\']* -> Member-Subentry 
+   "Membership-Type"[0-9\']* -> Membership-Type 
+   "Duplicates"[0-9\']* -> Duplicates 
+   "Set-Selection"[0-9\']* -> Set-Selection 
+
+   "Selection-Path-Component"[0-9\']* -> Selection-Path-Component 
+   "Selection-Path-Component*"[0-9\']* -> Selection-Path-Component* 
+
+   "Keys"[0-9\']* -> Keys
+
+
+hiddens 
+  variables
+   "Synthesis-Id"[0-9\']* -> Synthesis-Id
+   "Synthesis-Id*"[0-9\']* -> {Synthesis-Id ","}*
+
+   "Header"[0-9\']* -> Header
+   "Module-Specification"[0-9\']* -> Module-Specification
+   "Type-Section"[0-9\']* -> Type-Section 
+   "IRS-Section"[0-9\']* -> IRS-Section
+   "IRA-Section"[0-9\']* -> IRA-Section
+
+   "Type-Specification-List"[0-9\']* -> Type-Specification-List 
+   "Type-Specification*"[0-9\']* -> {Type-Specification ","}*
+
+   "Type-Specification"[0-9\']* -> Type-Specification
+   "Abstract-Type"[0-9\']* -> Abstract-Type
+   "Abstract-Type-Metaframe"[0-9\']* -> Abstract-Type-Metaframe 
+
+   "Attribute-Specification-List"[0-9\']* -> Attribute-Specification-List 
+   "Attribute-Specification*"[0-9\']* -> Attribute-Specification*
+
+   "Attribute-Specification"[0-9\']* -> Attribute-Specification
+   "Attribute-Type"[0-9\']* -> Attribute-Type 
+   "Synthesis-Type-Name"[0-9\']* -> Synthesis-Type-Name
+   "Synthesis-Built-In-Type"[0-9\']* -> Synthesis-Built-In-Type
+
+   "Class-Declarator"[0-9\']* -> Class-Declarator 
+   "Class-Declarator*"[0-9\']* -> {Class-Declarator ","}*
+
+   "Class-Metaframe"[0-9\']* -> Class-Metaframe
+   "Class-Metaframe?"[0-9\']* -> Class-Metaframe?
+
+   "Formula"[0-9\']* -> Formula
+   "Formula?"[0-9\']* -> Formula?
+   "Formula*"[0-9\']* -> Formula* 
+   "Typed-Variable"[0-9\']* -> Typed-Variable
+   "Typed-Variable*"[0-9\']* -> {Typed-Variable ","}*
+   "Term"[0-9\']* -> Term
+
+   "Assertion-List"[0-9\']* -> Assertion-List 
+   "Assertion-List-Element"[0-9\']* -> Assertion-List-Element 
+   "Assertion-List-Element*"[0-9\']* -> Assertion-List-Element*
+
+   "Assertion"[0-9\']* -> Assertion
+   "Assertion*"[0-9\']* -> {Assertion ","}*
+
+   "Assertion-Of-Uniqueness"[0-9\']* -> Assertion-Of-Uniqueness 
+   "Assertion-Of-Definiteness"[0-9\']* -> Assertion-Of-Definiteness 
+   "Assertion-Of-Conditional-Uniqueness"[0-9\']* -> Assertion-Of-Conditional-Uniqueness
+   "Assertion-Function"[0-9\']* -> Assertion-Function 
+   "Assertion-Partial-Function"[0-9\']* -> Assertion-Partial-Function
+   "Attribute-Name-List"[0-9\']* -> Attribute-Name-List   

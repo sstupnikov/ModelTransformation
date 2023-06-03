@@ -1,0 +1,154 @@
+module unifier/synthesis/Synthesis-Syntax
+
+imports basic/Whitespace
+imports unifier/Uni-Identifiers
+imports unifier/Uni-Common
+imports basic/BoolCon
+imports basic/NatCon
+
+exports 
+
+sorts 
+  Module-Def Synthesis-Id Header Module-Specification
+  Type-Section 
+  IRS-Section %% Information Resource Specification Section
+  IRA-Section %% Information Resource Assertion Section
+  
+  Type-Specification-List Type-Specification
+  Abstract-Type
+  Abstract-Type-Metaframe Attribute-Specification-List Attribute-Specification
+  Attribute-Type Synthesis-Type-Name
+  Synthesis-Built-In-Type
+
+  Class-Declarator Class-Metaframe
+
+  Formula
+  Term Typed-Variable
+  Type-Expression Reduct
+
+  Assertion-List Assertion-List-Element Assertion
+  Assertion-Of-Uniqueness Assertion-Of-Definiteness Assertion-Of-Conditional-Uniqueness
+  Assertion-Function Assertion-Partial-Function
+  Attribute-Name-List
+
+
+context-free start-symbols
+  Module-Def
+  
+  Formula
+  Type-Expression
+  Term
+
+context-free syntax
+  Uni-Id -> Synthesis-Id
+
+context-free syntax
+  "integer" -> Synthesis-Built-In-Type
+  "char"  -> Synthesis-Built-In-Type
+  "real"  -> Synthesis-Built-In-Type
+  "string"  -> Synthesis-Built-In-Type
+  "{" "string" ";" "length" ":" Unsigned-Int ";" "}"  -> Synthesis-Built-In-Type
+
+  Synthesis-Id -> Synthesis-Type-Name
+
+context-free syntax
+  "{" Header Module-Specification "}" -> Module-Def 
+
+  Synthesis-Id ";" "in" ":" "module" ";" -> Header
+
+  Type-Section? IRS-Section? IRA-Section? -> Module-Specification
+  
+context-free syntax
+  "type" ":" Type-Specification-List ";" -> Type-Section
+
+  {Type-Specification ","}* -> Type-Specification-List
+
+  Abstract-Type -> Type-Specification
+
+  "{" Synthesis-Id ";"  "in" ":" "type" ";"  
+      Abstract-Type-Metaframe?
+      Attribute-Specification-List
+  "}" 
+   -> Abstract-Type
+
+  "metaframe" Assertion-List "end" -> Abstract-Type-Metaframe 
+
+context-free syntax
+  Attribute-Specification* -> Attribute-Specification-List
+
+  Synthesis-Id ":" Attribute-Type ";" ->  Attribute-Specification
+
+  Synthesis-Type-Name  -> Attribute-Type
+  Synthesis-Built-In-Type -> Attribute-Type
+
+context-free syntax
+  "class_specification" ":" {Class-Declarator ","}* ";" -> IRS-Section
+
+  "{" Synthesis-Id ";" "in" ":" "class" ";" 
+      "instance_section" ":" Synthesis-Id ";"
+      Class-Metaframe?
+  "}" 
+  -> Class-Declarator
+   
+  "metaframe" "{" "{" Formula? "}" "}" "end" -> Class-Metaframe
+
+context-free syntax
+  Assertion-List-Element* -> Assertion-List 
+
+  (Synthesis-Id ":")? Assertion ";" ->  Assertion-List-Element
+
+  "assertion" ":" {Assertion ","}* ";" -> IRA-Section
+
+  Assertion-Of-Uniqueness ->  Assertion 
+  Assertion-Of-Definiteness ->  Assertion
+  Assertion-Of-Conditional-Uniqueness ->  Assertion
+  Assertion-Function ->  Assertion
+  Assertion-Partial-Function -> Assertion
+
+  "{" "unique" ";" "{" Attribute-Name-List "}" "}" 
+  -> Assertion-Of-Uniqueness
+
+  "{" "obligatory" ";" "{" Attribute-Name-List "}" "}" 
+  -> Assertion-Of-Definiteness
+
+  "{" "unique_nonnull" ";" "{" Attribute-Name-List "}" "}" 
+  -> Assertion-Of-Conditional-Uniqueness
+
+  "{" "func" ";" 
+      "{" Synthesis-Id ";" Attribute-Name-List "}"  ","  
+      "{" Synthesis-Id ";" Attribute-Name-List "}" 
+  "}" 
+  -> Assertion-Function
+
+   "{" "pfunc" ";" 
+      "{" Synthesis-Id ";" Attribute-Name-List "}"  ","  
+      "{" Synthesis-Id ";" Attribute-Name-List "}" 
+  "}"  
+  -> Assertion-Partial-Function
+
+  {Synthesis-Id "," }* -> Attribute-Name-List
+  
+  
+context-free syntax
+  Synthesis-Id "(" Typed-Variable ")" -> Formula
+  Formula "&" Formula -> Formula {left}
+  "(" Formula  ")" -> Formula {bracket}
+  BoolCon -> Formula  
+  "all" {Typed-Variable ","}* "(" Formula ")" -> Formula
+  Formula "->" Formula -> Formula {left}
+  Term "=" Term -> Formula
+
+  Reduct -> Type-Expression {prefer}
+  Synthesis-Id ->  Type-Expression
+  Synthesis-Id "[" {Synthesis-Id ","}* "]" ->  Reduct
+  
+
+  Synthesis-Id  "|" Type-Expression  -> Typed-Variable
+
+  Synthesis-Id -> Term 
+  NatCon -> Term
+  Synthesis-Id "(" {Term ","}* ")" -> Term
+
+context-free priorities
+   Formula "&" Formula -> Formula  >
+   Formula "->" Formula -> Formula

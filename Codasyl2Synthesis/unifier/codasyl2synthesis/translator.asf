@@ -1,0 +1,800 @@
+equations 
+
+[Id] 
+t-DDL-Id(Uni-Id) = Uni-Id
+
+[Id-List]
+Synthesis-Id := t-DDL-Id(DDL-Id),
+Synthesis-Id* := t-DDL-Id-List(DDL-Id*)
+====>
+t-DDL-Id-List(DDL-Id, DDL-Id*) = 
+Synthesis-Id, Synthesis-Id*
+
+[Id-List---Empty]
+t-DDL-Id-List( ) = 
+
+[Schema-Def]
+Header := t-Schema-Entry(Schema-Entry),
+Type-Specification* := t-Create-Type-Specifications(Record-Entry-List, Set-Entry-List, Record-Entry-List),
+Class-Declarator* := t-Create-Class-Specifications(Record-Entry-List, Set-Entry-List, Record-Entry-List),
+Assertion* := t-Create-Assertions(Set-Entry-List, Record-Entry-List)
+====>
+t-Schema-Def(Schema-Entry Record-Entry-List Set-Entry-List) =
+{ Header 
+type:
+Type-Specification*;
+
+class_specification:
+Class-Declarator*;
+
+assertion:
+Assertion*;
+}
+
+[Schema-Entry]
+Synthesis-Id := t-DDL-Id(DDL-Id)
+====>
+t-Schema-Entry(SCHEMA NAME IS DDL-Id;) = 
+Synthesis-Id; in: module;
+
+[Create-Type-Specifications---List]
+Type-Specification := t-Create-Type-Specifications(Record-Entry, Set-Entry-List, Record-Entry-List),
+Type-Specification* := t-Create-Type-Specifications(Record-Entry*, Set-Entry-List, Record-Entry-List)
+====>
+t-Create-Type-Specifications(Record-Entry; Record-Entry*, Set-Entry-List, Record-Entry-List) =
+Type-Specification,
+Type-Specification*
+
+[Create-Type-Specifications---Empty]
+t-Create-Type-Specifications( , Set-Entry-List, Record-Entry-List) =
+
+[Create-Type-Specifications]
+Synthesis-Id := t-DDL-Id(DDL-Id),
+Attribute-Name-List := t-Calcs(Calcs),
+Attribute-Specification-List := 
+t-Data-Subentry-List(Data-Subentry-List) 
+t-Extract-Owners-Keys(DDL-Id, Set-Entry-List, Record-Entry*)
+====>
+t-Create-Type-Specifications(
+  RECORD NAME IS DDL-Id; 
+  LOCATION MODE IS CALC USING Calcs
+  DUPLICATES NOT ALLOWED;
+  Data-Subentry-List
+, 
+Set-Entry-List, 
+Record-Entry*
+)=
+{ Synthesis-Id; in: type;
+metaframe
+{unique; { Attribute-Name-List }};
+end
+Attribute-Specification-List
+}
+
+[Calcs]
+Synthesis-Id := t-DDL-Id(DDL-Id),
+Synthesis-Id* := t-Calcs(DDL-Id*)
+====>
+t-Calcs(DDL-Id, DDL-Id*) = 
+Synthesis-Id, Synthesis-Id* 
+
+[Calcs---Empty]
+t-Calcs()=
+
+[Data-Subentry-List]
+Attribute-Specification := t-Data-Subentry(Data-Subentry),
+Attribute-Specification* := t-Data-Subentry-List(Data-Subentry*)
+====>
+t-Data-Subentry-List(Data-Subentry, Data-Subentry*) =
+Attribute-Specification
+Attribute-Specification*
+
+[Data-Subentry-List---Empty]
+t-Data-Subentry-List() =
+
+[Data-Subentry]
+Synthesis-Id := t-DDL-Id(DDL-Id),
+Attribute-Type := t-DDL-Type(DDL-Type)
+====>
+t-Data-Subentry(DDL-Id TYPE IS DDL-Type) =
+Synthesis-Id: Attribute-Type;
+
+[DDL-Type---DDL-Type-Name]
+t-DDL-Type(DDL-Type-Name) = 
+t-DDL-Type-Name(DDL-Type-Name)
+
+[DDL-Type---DDL-Built-In-Type]
+t-DDL-Type(DDL-Built-In-Type) = 
+t-DDL-Built-In-Type(DDL-Built-In-Type)
+
+[DDL-Type-Name]
+t-DDL-Type-Name(DDL-Id) = 
+t-DDL-Id(DDL-Id)
+
+[DDL-Built-In-Type---FIXED]
+t-DDL-Built-In-Type(FIXED) = 
+integer
+
+[DDL-Built-In-Type---FLOAT]
+t-DDL-Built-In-Type(FLOAT) = 
+real
+
+[DDL-Built-In-Type---CHARACTER]
+t-DDL-Built-In-Type(CHARACTER) = 
+string
+   
+[DDL-Built-In-Type---CHARACTER-Unsigned-Int]
+t-DDL-Built-In-Type(CHARACTER Unsigned-Int) = 
+{string; length:  Unsigned-Int;}
+
+
+%% t-Extract-Owners-Keys(DDL-Id, Set-EntryList, Record-Entry-List)
+%%
+%% For all sets x from <Set-Entry-List> where <DDL-Id> is memeber 
+%%   take data subentries of keys of x owner and 
+%%   return attribute specifications corresponding to these keys 
+%%
+[Extract-Owners-Keys---Set-Entry-List]
+Attribute-Specification*1 := t-Extract-Owners-Keys(DDL-Id, Set-Entry, Record-Entry-List),
+Attribute-Specification*2 := t-Extract-Owners-Keys(DDL-Id, Set-Entry*, Record-Entry-List)
+====>
+t-Extract-Owners-Keys(DDL-Id, Set-Entry; Set-Entry*, Record-Entry-List) =
+Attribute-Specification*1 
+Attribute-Specification*2
+
+[Extract-Owners-Keys---Set-Entry-List---Empty]
+t-Extract-Owners-Keys(DDL-Id,  , Record-Entry-List) =
+
+[Extract-Owners-Keys---Set-Entry---Required-Member]
+DDL-Id3 == DDL-Id4
+====>
+t-Extract-Owners-Keys(
+DDL-Id4
+, 
+SET NAME IS DDL-Id1; OWNER IS DDL-Id2; MEMBER IS DDL-Id3  
+Membership-Type Duplicates Set-Selection
+,
+Record-Entry*
+) =
+t-Extract-Owners-Keys(DDL-Id2, Record-Entry*)
+
+[Extract-Owners-Keys---Set-Entry---Non-Required-Member]
+DDL-Id3 != DDL-Id4
+====>
+t-Extract-Owners-Keys(
+DDL-Id4
+,
+SET NAME IS DDL-Id1; OWNER IS DDL-Id2; MEMBER IS DDL-Id3  
+Membership-Type Duplicates Set-Selection
+,
+Record-Entry*
+) =
+
+[Extract-Owners-Keys---Record-Entry-List]
+Attribute-Specification*1 := t-Extract-Owners-Keys(DDL-Id, Record-Entry),
+Attribute-Specification*2 := t-Extract-Owners-Keys(DDL-Id, Record-Entry*)
+====>
+t-Extract-Owners-Keys(DDL-Id, Record-Entry; Record-Entry*) =
+Attribute-Specification*1 
+Attribute-Specification*2
+
+[Extract-Owners-Keys---Record-Entry-List---Empty]
+t-Extract-Owners-Keys(DDL-Id,  ) =
+
+[Extract-Owners-Keys---Record-Entry---Required-Name]
+DDL-Id1 == DDL-Id,
+DDL-Id** := remove-Commas-From-DDL-Id-List(DDL-Id*),
+Data-Subentry** := remove-Commas-From-Data-Subentry-List(Data-Subentry*)
+====>
+t-Extract-Owners-Keys(
+DDL-Id
+, 
+RECORD NAME IS DDL-Id1; 
+LOCATION MODE IS CALC USING DDL-Id*
+DUPLICATES NOT ALLOWED;
+Data-Subentry*
+) =
+t-Extract-Owners-Keys(Data-Subentry**, DDL-Id**)
+
+[Extract-Owners-Keys---Record-Entry---Non-Required-Name]
+DDL-Id1 != DDL-Id
+====>
+t-Extract-Owners-Keys(
+DDL-Id, 
+  RECORD NAME IS DDL-Id1; 
+  LOCATION MODE IS CALC USING Calcs
+  DUPLICATES NOT ALLOWED;
+  Data-Subentry*
+) =
+
+[Extract-Owners-Keys---Data-Subentry-No-Comma-List---Required-Data-Subentry]
+id-Is-In-List(DDL-Id, DDL-Id**) == true,
+Attribute-Specification := t-Data-Subentry(DDL-Id TYPE IS DDL-Type),
+Attribute-Specification* := t-Extract-Owners-Keys(Data-Subentry**, DDL-Id**)
+====>
+t-Extract-Owners-Keys(
+DDL-Id TYPE IS DDL-Type; Data-Subentry**
+, 
+DDL-Id**
+) = 
+Attribute-Specification
+Attribute-Specification*
+
+[Extract-Owners-Keys---Data-Subentry-No-Comma-List---Non-Required-Data-Subentry]
+id-Is-In-List(DDL-Id, DDL-Id**) == false,
+Attribute-Specification* := t-Extract-Owners-Keys(Data-Subentry**, DDL-Id**)
+====>
+t-Extract-Owners-Keys(
+DDL-Id TYPE IS DDL-Type; Data-Subentry**
+, 
+DDL-Id**
+) = 
+Attribute-Specification*
+
+[Extract-Owners-Keys---Data-Subentry-No-Comma-List---Empty]
+t-Extract-Owners-Keys( , DDL-Id**) = 
+
+
+
+
+
+
+
+
+
+%% t-Create-Assertions(Set-Entry, Record-Entry-List)
+%% 
+%% Create assertions 
+%%
+%% For every set x in <Set-Entry> create 
+%%   - functional dependency  assertion if set association is MANDATORY AUTOMATIC
+%%   - partial functional dependency assertion if set association is OPTIONAL MANUAL
+%%   attributes of dependency are keys of owner, extract thir names from <Record-Entry-List>
+%%
+[Create-Assertions---Set-Entry-List]
+Assertion := t-Create-Assertions(Set-Entry, Record-Entry-List),
+Assertion* := t-Create-Assertions(Set-Entry*, Record-Entry-List)
+====>
+t-Create-Assertions(Set-Entry; Set-Entry*, Record-Entry-List) =
+Assertion,
+Assertion*
+
+[Create-Assertions---Set-Entry-List---Empty]
+t-Create-Assertions(, Record-Entry-List) =
+
+[Create-Assertions---Set-Entry---OPTIONAL-MANUAL]
+Synthesis-Id2 := t-DDL-Id(DDL-Id2),
+Synthesis-Id3 := t-DDL-Id(DDL-Id3),
+Synthesis-Id* := t-Extract-Key(DDL-Id2, Record-Entry-List)
+====>
+t-Create-Assertions(
+SET NAME IS DDL-Id1; OWNER IS DDL-Id2; MEMBER IS DDL-Id3  
+OPTIONAL MANUAL Duplicates Set-Selection
+,
+Record-Entry-List
+) =
+{pfunc; {Synthesis-Id3; Synthesis-Id*}, {Synthesis-Id2; Synthesis-Id*}}
+
+[Create-Assertions---Set-Entry---MANDATORY-AUTOMATIC]
+Synthesis-Id2 := t-DDL-Id(DDL-Id2),
+Synthesis-Id3 := t-DDL-Id(DDL-Id3),
+Synthesis-Id* := t-Extract-Key(DDL-Id2, Record-Entry-List)
+====>
+t-Create-Assertions(
+SET NAME IS DDL-Id1; OWNER IS DDL-Id2; MEMBER IS DDL-Id3  
+MANDATORY AUTOMATIC Duplicates Set-Selection
+,
+Record-Entry-List
+) =
+{func; {Synthesis-Id3; Synthesis-Id*}, {Synthesis-Id2; Synthesis-Id*}}
+
+%% t-Extract-Key(DDL-Id, Record-Entry-List)
+%%
+%% Extract key attribute names of record <DDL-Id> from <Record-Entry-List>
+%%
+[Extract-Key---Record-Entry-List---Required-Record]
+DDL-Id1 == DDL-Id,
+Synthesis-Id* := t-Calcs(Calcs)
+====>
+t-Extract-Key(
+DDL-Id
+, 
+RECORD NAME IS DDL-Id1; 
+LOCATION MODE IS CALC USING Calcs
+DUPLICATES NOT ALLOWED;
+Data-Subentry-List;
+Record-Entry*
+) =
+Synthesis-Id*
+
+[Extract-Key---Record-Entry-List---Non-Required-Record]
+DDL-Id1 != DDL-Id,
+Synthesis-Id* := t-Extract-Key(DDL-Id, Record-Entry*)
+====>
+t-Extract-Key(
+DDL-Id
+, 
+RECORD NAME IS DDL-Id1; 
+LOCATION MODE IS CALC USING Calcs
+DUPLICATES NOT ALLOWED;
+Data-Subentry-List;
+Record-Entry*
+) =
+Synthesis-Id*
+
+[Extract-Key---Record-Entry-List---Empty-List]
+t-Extract-Key(DDL-Id, ) =
+
+
+
+
+%% t-Create-Class-Specifications
+%%
+%% Create class specification for all record entries
+%%
+[Create-Class-Specifications---List]
+Class-Declarator := t-Create-Class-Specifications(Record-Entry, Set-Entry-List, Record-Entry-List),
+Class-Declarator* := t-Create-Class-Specifications(Record-Entry*, Set-Entry-List, Record-Entry-List)
+====>
+t-Create-Class-Specifications(Record-Entry; Record-Entry*, Set-Entry-List, Record-Entry-List) =
+Class-Declarator,
+Class-Declarator*
+
+[Create-Class-Specifications---Empty]
+t-Create-Class-Specifications( , Set-Entry-List, Record-Entry-List) =
+
+[Create-Class-Specifications]
+Synthesis-Id := t-DDL-Id(DDL-Id),
+Class-Metaframe? := 
+  t-Create-Class-Metaframe(
+    t-Create-Set-Selection-Axioms(
+      DDL-Id, 
+      t-Remove-Entries-With-Same-Selection-Path(Set-Entry-List), 
+      Set-Entry-List, 
+      Record-Entry-List
+    )
+  )
+====>
+t-Create-Class-Specifications(
+RECORD NAME IS DDL-Id; 
+LOCATION MODE IS CALC USING Calcs
+DUPLICATES NOT ALLOWED;
+Data-Subentry-List
+, 
+Set-Entry-List, 
+Record-Entry-List 
+)=
+{ Synthesis-Id; in: class;
+instance_section: Synthesis-Id; 
+Class-Metaframe?
+}
+
+[Create-Class-Metaframe---Non-Empty]
+Formula1 := simplify-Formula(simplify-Formula(concatenate-Formulae(Formula Formula*))),
+Formula1 != true,
+Formula1 != false
+====>
+t-Create-Class-Metaframe(Formula Formula*) =
+metaframe
+{{ Formula1 }}
+end
+
+[Create-Class-Metaframe---Empty]
+t-Create-Class-Metaframe( ) =
+
+[Create-Class-Metaframe---true]
+Formula1 := simplify-Formula(concatenate-Formulae(Formula Formula*)),
+Formula1 == true
+====>
+t-Create-Class-Metaframe(Formula Formula*) =
+
+[Create-Class-Metaframe---false]
+Formula1 := simplify-Formula(concatenate-Formulae(Formula Formula*)),
+Formula1 == false
+====>
+t-Create-Class-Metaframe(Formula Formula*) =
+
+
+
+%% t-Create-Set-Selection-Axioms(DDL-Id, Set-Entry-List,
+%%                               Set-Entry-List, Record-Entry-List)
+%%
+%% Creates axioms of selectivity paths for all set entries 
+%% owned by <DDL-Id>
+%%
+[Create-Set-Selection-Axioms---List]
+Formula := t-Create-Set-Selection-Axioms(DDL-Id, Set-Entry, Set-Entry-List, Record-Entry-List),
+Formula* := t-Create-Set-Selection-Axioms(DDL-Id, Set-Entry*, Set-Entry-List, Record-Entry-List)
+====>
+t-Create-Set-Selection-Axioms(DDL-Id, Set-Entry; Set-Entry*, Set-Entry-List, Record-Entry-List) =
+Formula Formula*
+
+[Create-Set-Selection-Axioms---Empty]
+t-Create-Set-Selection-Axioms(DDL-Id,  , Set-Entry-List, Record-Entry-List) =
+
+
+
+
+[Create-Set-Selection-Axioms---No-Selection-Path-Components]
+t-Create-Set-Selection-Axioms(
+DDL-Id
+,
+SET NAME IS DDL-Id1; OWNER IS DDL-Id2; MEMBER IS DDL-Id3
+Membership-Type Duplicates 
+SET SELECTION IS THROUGH DDL-Id4 OWNER IDENTIFIED BY KEY
+, 
+Set-Entry-List, 
+Record-Entry-List
+)
+= 
+true
+
+[Create-Set-Selection-Axioms---Required-Owner]
+DDL-Id2 == DDL-Id,
+Synthesis-Id := t-DDL-Id(t-Extract-Set-Owner(DDL-Id4, Set-Entry-List)),
+DDL-Id5 := t-Extract-Set-Owner(DDL-Id4, Set-Entry-List),
+Synthesis-Id* := t-Extract-Key(DDL-Id5, Record-Entry-List),
+Synthesis-Id** := remove-Commas-From-Synthesis-Id-List(Synthesis-Id*),
+Formula* := t-Create-Set-Selection-Axioms(Synthesis-Id**, Selection-Path-Component*, Set-Entry-List),
+Formula := concatenate-Formulae(Synthesis-Id(x|Synthesis-Id[Synthesis-Id*]) Formula*)
+====>
+t-Create-Set-Selection-Axioms(
+DDL-Id
+,
+SET NAME IS DDL-Id1; OWNER IS DDL-Id2; MEMBER IS DDL-Id3
+Membership-Type Duplicates 
+SET SELECTION IS THROUGH DDL-Id4 OWNER IDENTIFIED BY KEY
+Selection-Path-Component*
+, 
+Set-Entry-List, 
+Record-Entry-List
+)
+= 
+all x|Synthesis-Id ( Formula -> count(x)=1)
+
+[Create-Set-Selection-Axioms---Non-Required-Owner]
+DDL-Id2 != DDL-Id
+====>
+t-Create-Set-Selection-Axioms(
+DDL-Id
+,
+SET NAME IS DDL-Id1; OWNER IS DDL-Id2; MEMBER IS DDL-Id3
+Membership-Type Duplicates 
+SET SELECTION IS THROUGH DDL-Id4 OWNER IDENTIFIED BY KEY
+Selection-Path-Component*
+, 
+Set-Entry-List, 
+Record-Entry-List
+)
+= 
+true
+
+[Create-Set-Selection-Axioms---Selection-Path-Component]
+Synthesis-Id*1 := restore-Commas-In-Synthesis-Id-List(Synthesis-Id**),
+Synthesis-Id := t-DDL-Id(t-Extract-Set-Owner(DDL-Id, Set-Entry-List)),
+Synthesis-Id* := t-DDL-Id-List(DDL-Id*),
+Synthesis-Id**1 := remove-Commas-From-Synthesis-Id-List(Synthesis-Id*),
+Synthesis-Id**2 := Synthesis-Id**; Synthesis-Id**1,
+Formula* :=  t-Create-Set-Selection-Axioms(Synthesis-Id**2, Selection-Path-Component*, Set-Entry-List)
+====>
+t-Create-Set-Selection-Axioms(
+Synthesis-Id**
+, 
+THEN THROUGH DDL-Id OWNER IDENTIFIED BY DDL-Id*
+Selection-Path-Component*
+, 
+Set-Entry-List) =
+Synthesis-Id(x|Synthesis-Id[Synthesis-Id*1, Synthesis-Id*]) Formula*
+
+[Create-Set-Selection-Axioms---Selection-Path-Component---Empty]
+t-Create-Set-Selection-Axioms(Synthesis-Id**, , Set-Entry-List) =
+
+
+
+
+%% t-Extract-Set-Owner(DDL-Id, Set-Entry-List)
+%%
+%% Extract name of owner of set <DDL-Id> from <Set-Entry-List>
+%%
+[t-Extract-Set-Owner---Required-Set-Entry]
+DDL-Id1 == DDL-Id
+====>
+t-Extract-Set-Owner(
+DDL-Id
+, 
+ SET NAME IS DDL-Id1; OWNER IS DDL-Id2; Member-Subentry; Set-Entry*
+) =
+DDL-Id2
+
+[t-Extract-Set-Owner---Non-Required-Set-Entry]
+DDL-Id1 != DDL-Id
+====>
+t-Extract-Set-Owner(
+DDL-Id
+, 
+ SET NAME IS DDL-Id1; OWNER IS DDL-Id2; Member-Subentry; Set-Entry*
+) =
+t-Extract-Set-Owner(DDL-Id, Set-Entry*)
+
+[t-Extract-Set-Owner---Empty]
+t-Extract-Set-Owner(DDL-Id, ) =
+ERROR_No_Such_Set
+
+
+%% t-Extract-Selection-Path(Set-Entry)
+%%
+%% Extracts selection path from <Set-Entry>
+%%
+[Extract-Selection-Path---Set-Entry]
+t-Extract-Selection-Path(
+SET NAME IS DDL-Id1; OWNER IS DDL-Id2; MEMBER IS DDL-Id3
+Membership-Type Duplicates 
+SET SELECTION IS THROUGH DDL-Id4 OWNER IDENTIFIED BY KEY
+Selection-Path-Component*
+) =
+DDL-Id2, DDL-Id4, t-Extract-Selection-Path(Selection-Path-Component*)
+
+[Extract-Selection-Path---Selection-Path-Component]
+t-Extract-Selection-Path(
+THEN THROUGH DDL-Id OWNER IDENTIFIED BY DDL-Id*
+Selection-Path-Component*
+) = 
+DDL-Id*, t-Extract-Selection-Path(Selection-Path-Component*)
+
+[Extract-Selection-Path---Empty]
+t-Extract-Selection-Path() = 
+
+%% t-Check-Same-Selection-Path(Set-Entry, Set-Entry*)
+%%
+%% Check whether <Set-Entry*> contains emtry with the same selection path
+%% as selection path of Set-Entry
+%%
+[Check-Same-Selection-Path---Same-Path]
+DDL-Id** := remove-Commas-From-DDL-Id-List(t-Extract-Selection-Path(Set-Entry)),
+DDL-Id**1 := remove-Commas-From-DDL-Id-List(t-Extract-Selection-Path(Set-Entry1)),
+lists-Are-Equal(DDL-Id**, DDL-Id**1) == true
+====>
+t-Check-Same-Selection-Path(Set-Entry, Set-Entry1; Set-Entry*) =
+true
+
+[Check-Same-Selection-Path---Non-Same-Path]
+DDL-Id** := remove-Commas-From-DDL-Id-List(t-Extract-Selection-Path(Set-Entry)),
+DDL-Id**1 := remove-Commas-From-DDL-Id-List(t-Extract-Selection-Path(Set-Entry1)),
+lists-Are-Equal(DDL-Id**, DDL-Id**1) == false
+====>
+t-Check-Same-Selection-Path(Set-Entry, Set-Entry1; Set-Entry*) =
+t-Check-Same-Selection-Path(Set-Entry, Set-Entry*)
+
+[Check-Same-Selection-Path---Empty]
+t-Check-Same-Selection-Path(Set-Entry, ) =
+false
+
+%% t-Remove-Entries-With-Same-Selection-Path(Set-Entry-List)
+%%
+%% If <Set-Entry-List> contains entries s1 and s2 with the same 
+%% selection paths, remove one of them
+[Remove-Entries-With-Same-Selection-Path---Same-Path-Exists]
+t-Check-Same-Selection-Path(Set-Entry, Set-Entry*) == true 
+====>
+t-Remove-Entries-With-Same-Selection-Path(Set-Entry; Set-Entry*) =
+t-Remove-Entries-With-Same-Selection-Path(Set-Entry*)
+
+[Remove-Entries-With-Same-Selection-Path---Same-Path-Not-Exists]
+t-Check-Same-Selection-Path(Set-Entry, Set-Entry*) == false
+====>
+t-Remove-Entries-With-Same-Selection-Path(Set-Entry; Set-Entry*) =
+Set-Entry; t-Remove-Entries-With-Same-Selection-Path(Set-Entry*)
+
+[Remove-Entries-With-Same-Selection-Path---Empty]
+t-Remove-Entries-With-Same-Selection-Path( ) =
+
+
+
+%% UTILITY FUNCTIONS
+%%
+%%
+%%
+
+%% convert-Type-Name-Into-Class-Name(Synthesis-Id)
+%% 
+%% Adds postfix "_class" to identifier
+%%
+%%[Convert-Type-Name-Into-Class-Name]
+%%convert-Type-Name-Into-Class-Name(label(Char*)) =
+%%label(Char* "_class")
+
+%% id-Is-In-List(DDL-Id, DDL-Id**)
+%%
+%% Check whether <DDL-Id> is in list <DDL-Id**> or not
+%%
+[id-Is-In-List---Required-Id]
+DDL-Id1 == DDL-Id
+====>
+id-Is-In-List(DDL-Id, DDL-Id1; DDL-Id**) =
+true
+
+[id-Is-In-List---Non-Required-Id]
+DDL-Id1 != DDL-Id
+====>
+id-Is-In-List(DDL-Id, DDL-Id1; DDL-Id**) =
+id-Is-In-List(DDL-Id, DDL-Id**)
+
+[id-Is-In-List---Empty]
+id-Is-In-List(DDL-Id, ) =
+false
+
+
+%% list-Is-In-List(DDL-Id**1, DDL-Id**2)
+%%
+%% Check whether list <DDL-Id**1> is in list <DDL-Id**2>
+%%
+[list-Is-In-List---DDL-Id-Is-In-Second-List]
+id-Is-In-List(DDL-Id, DDL-Id**2) == true
+====>
+list-Is-In-List(DDL-Id; DDL-Id**1, DDL-Id**2) =
+list-Is-In-List(DDL-Id**1, DDL-Id**2)
+
+[list-Is-In-List---DDL-Id-Is-Not-In-Second-List]
+id-Is-In-List(DDL-Id, DDL-Id**2) == false
+====>
+list-Is-In-List(DDL-Id; DDL-Id**1, DDL-Id**2) =
+false
+
+[list-Is-In-List---Empty]
+list-Is-In-List( , DDL-Id**2) =
+true
+
+%% lists-Are-Equal(DDL-Id**1, DDL-Id**2)
+%%
+%% Check whether lists <DDL-Id**1> and <DDL-Id**2> are equal, 
+%% i.e. contain the same elements
+%%  
+[lists-Are-Equal---Equality]
+list-Is-In-List(DDL-Id**1, DDL-Id**2) == true,
+list-Is-In-List(DDL-Id**2, DDL-Id**1) == true
+====>
+lists-Are-Equal(DDL-Id**1, DDL-Id**2) = 
+true
+
+[lists-Are-Equal---Equality1]
+list-Is-In-List(DDL-Id**1, DDL-Id**2) == false
+====>
+lists-Are-Equal(DDL-Id**1, DDL-Id**2) = 
+false
+
+[lists-Are-Equal---Equality2]
+list-Is-In-List(DDL-Id**2, DDL-Id**1) == false
+====>
+lists-Are-Equal(DDL-Id**1, DDL-Id**2) = 
+false
+
+
+%% remove-Commas-From-DDL-Id-List(DDL-Id*)
+%%
+%% Replace commas for semicolons in list <DDL-Id*>
+%%
+[remove-Commas---DDL-Id---List]
+DDL-Id** := remove-Commas-From-DDL-Id-List(DDL-Id*)
+====>
+remove-Commas-From-DDL-Id-List(DDL-Id, DDL-Id*) = 
+DDL-Id; DDL-Id**
+
+[remove-Commas---DDL-Id---Empty]
+remove-Commas-From-DDL-Id-List( ) = 
+
+%% remove-Commas-From-Data-Subentry-List(Data-Subentry*)
+%%
+%% Replace commas for semicolons in list <Data-Subentry*>
+%%
+[remove-Commas---Data-Subentry---List]
+Data-Subentry** := 
+remove-Commas-From-Data-Subentry-List(Data-Subentry*)
+====>
+remove-Commas-From-Data-Subentry-List(Data-Subentry, Data-Subentry*) = 
+Data-Subentry; Data-Subentry**
+
+[remove-Commas---Data-Subentry---Empty]
+remove-Commas-From-Data-Subentry-List( ) = 
+
+
+%% remove-Commas-From-Synthesis-Id-List(Synthesis-Id*)
+%%
+%% Replace commas for semicolons in list <Synthesis-Id*>
+%%
+[remove-Commas---Synthesis-Id---List]
+Synthesis-Id** := remove-Commas-From-Synthesis-Id-List(Synthesis-Id*)
+====>
+remove-Commas-From-Synthesis-Id-List(Synthesis-Id, Synthesis-Id*) = 
+Synthesis-Id; Synthesis-Id**
+
+[remove-Commas---Synthisis-Id---Empty]
+remove-Commas-From-Synthesis-Id-List( ) = 
+
+%% restore-Commas-In-Synthesis-Id-List(Synthesis-Id**)
+%%
+%% Replace semicolons for commas in list <Synthesis-Id**>
+%%
+[restore-Commas---Synthesis-Id---List]
+Synthesis-Id* := restore-Commas-In-Synthesis-Id-List(Synthesis-Id**)
+====>
+restore-Commas-In-Synthesis-Id-List(Synthesis-Id; Synthesis-Id**) = 
+Synthesis-Id, Synthesis-Id*
+
+[restore-Commas---DDL---Empty]
+restore-Commas-In-Synthesis-Id-List( ) = 
+
+%% Concatenate-Formulae(Formula*)
+%%
+%% Concatenates formulas from sequence <Formula*> in one conjunct
+%%
+[Concatenate-Formulae---Non-Empty]
+concatenate-Formulae(Formula Formula*) =
+Formula & 
+concatenate-Formulae(Formula*)
+
+[Concatenate-Formulae---Empty]
+concatenate-Formulae() =
+true
+
+%% simplify-Formula(Formula)
+%%
+%%
+%%
+[Simplify-Formula---true-left]
+simplify-Formula(true & Formula) = 
+simplify-Formula(Formula)
+
+[Simplify-Formula---true-right]
+simplify-Formula(Formula & true) = 
+simplify-Formula(Formula)
+
+[Simplify-Formula---false-left]
+simplify-Formula(false & Formula) = 
+false
+
+[Simplify-Formula---false-right]
+simplify-Formula(Formula & false) = 
+false
+
+[Simplify-Formula---true]
+simplify-Formula(true) = 
+true
+
+[Simplify-Formula---false]
+simplify-Formula(false) = 
+false
+
+[Simplify-Formula---Atom]
+simplify-Formula(Synthesis-Id(Typed-Variable)) =
+Synthesis-Id(Typed-Variable)
+
+[Simplify-Formula---Conjunction]
+simplify-Formula(Formula1 & Formula2) =
+simplify-Formula(Formula1) & simplify-Formula(Formula2)
+
+[Simplify-Formula---all]
+simplify-Formula(all Typed-Variable* (Formula)) =
+all Typed-Variable* (simplify-Formula(Formula))
+
+[Simplify-Formula---Implication]
+simplify-Formula(Formula1 -> Formula2) =
+simplify-Formula(Formula1) -> simplify-Formula(Formula2)
+
+[Simplify-Formula---Equality]
+simplify-Formula(Term1 = Term2) =
+Term1 = Term2
+
+
+%% dismiss-Boolean-Constant(Formula)
+%%
+%%
+%%
+[Dismiss-Boolean-Constant---true]
+dismiss-Boolean-Constant(true) =
+
+[Dismiss-Boolean-Constant---false]
+dismiss-Boolean-Constant(false) =
+
+[Dismiss-Boolean-Constant---Formula]
+dismiss-Boolean-Constant(Formula) =
+Formula

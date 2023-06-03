@@ -1,0 +1,36 @@
+{ PERSONNEL; in: module;
+type:
+{ DEPARTMENT; in: type;
+metaframe {unique; {DEPTNO}}; end
+DEPTNO: integer;
+DEPTNAME: {string; length: 30;};
+},
+{ EMPLOYEE; in: type;
+metaframe {unique; {EMPNO}}; end
+EMPNO: integer;
+EMPNAME: {string; length: 30;};
+JOBGRADE: {string; length: 1;};
+DEPTNO: integer;
+PROJNO: integer;
+},
+{ PROJECT; in: type;
+metaframe {unique; {PROJNO}}; end
+PROJNO: integer;
+PROJNAME: {string; length: 35;};
+};
+
+class_specification:
+{ CDEPARTMENT; in: class;
+instance_section: DEPARTMENT;
+},
+{ CEMPLOYEE; in: class;
+instance_section: EMPLOYEE;
+},
+{ CPROJECT; in: class;
+instance_section: EMPLOYEE;
+};
+
+assertion:
+{func; {EMPLOYEE; DEPTNO}, {DEPARTMENT; DEPTNO}};
+{func; {EMPLOYEE; PROJNO}, {PROJECT; PROJNO}};
+}

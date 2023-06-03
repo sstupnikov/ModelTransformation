@@ -1,0 +1,17 @@
+module unifier/Uni-Common
+
+imports basic/Whitespace
+imports basic/Comments
+
+exports 
+
+  sorts 
+   Unsigned-Int
+
+  lexical syntax
+   [0] | ([1-9][0-9]*) -> Unsigned-Int
+
+    "//" ~[\n]* "\n"	-> LAYOUT
+
+  context-free restrictions
+    LAYOUT? -/- [\/]

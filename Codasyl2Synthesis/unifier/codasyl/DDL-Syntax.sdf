@@ -1,0 +1,71 @@
+module unifier/codasyl/DDL-Syntax
+
+imports basic/Whitespace
+imports unifier/Uni-Identifiers
+imports unifier/Uni-Common
+
+exports 
+
+  sorts 
+    Schema-Def
+    Schema-Entry DDL-Id
+    Record-Entry-List Set-Entry-List
+    Record-Entry Calcs Data-Subentry-List Data-Subentry
+    DDL-Type DDL-Type-Name DDL-Built-In-Type
+    Set-Entry Member-Subentry Membership-Type Duplicates Set-Selection Selection-Path-Component Keys
+
+  context-free start-symbols
+    Schema-Def
+
+  context-free syntax
+    Uni-Id -> DDL-Id
+
+  context-free syntax
+   "FIXED" -> DDL-Built-In-Type
+   "CHARACTER" Unsigned-Int? -> DDL-Built-In-Type
+   "FLOAT"  -> DDL-Built-In-Type
+
+  context-free syntax
+    Schema-Entry Record-Entry-List Set-Entry-List -> Schema-Def
+
+    "SCHEMA" "NAME" "IS" DDL-Id ";" -> Schema-Entry
+
+    {Record-Entry ";"}* -> Record-Entry-List
+
+    {Set-Entry ";"}* -> Set-Entry-List
+
+  context-free syntax
+    "RECORD" "NAME" "IS" DDL-Id ";" 
+    "LOCATION" "MODE" "IS" "CALC" "USING" Calcs 
+    "DUPLICATES" "NOT" "ALLOWED" ";"
+     Data-Subentry-List 
+     -> Record-Entry
+
+     {DDL-Id ","}* -> Calcs
+
+     {Data-Subentry ","}* -> Data-Subentry-List
+
+     DDL-Id "TYPE" "IS" DDL-Type -> Data-Subentry
+
+     DDL-Type-Name -> DDL-Type  
+     DDL-Built-In-Type -> DDL-Type        
+
+     DDL-Id -> DDL-Type-Name
+
+
+  context-free syntax    
+     "SET" "NAME" "IS" DDL-Id ";" "OWNER" "IS" DDL-Id ";" Member-Subentry -> Set-Entry   
+
+     "MEMBER" "IS"  DDL-Id  Membership-Type Duplicates Set-Selection -> Member-Subentry
+
+     ("MANDATORY" "AUTOMATIC") | ("OPTIONAL" "MANUAL") -> Membership-Type
+
+     "DUPLICATES" "ARE" "NOT" "ALLOWED" "FOR" {DDL-Id ","}* -> Duplicates
+
+     "SET" "SELECTION" "IS" "THROUGH" DDL-Id "OWNER" "IDENTIFIED" "BY" "KEY" Keys 
+     Selection-Path-Component* 
+     ->  Set-Selection
+     
+     "THEN" "THROUGH" DDL-Id "OWNER" "IDENTIFIED" "BY" Keys? -> Selection-Path-Component 
+
+      {DDL-Id ","}* -> Keys
