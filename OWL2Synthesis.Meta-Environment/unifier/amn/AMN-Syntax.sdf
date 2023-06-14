@@ -1,0 +1,128 @@
+module unifier/amn/AMN-Syntax
+
+imports basic/Whitespace
+imports unifier/Uni-Common
+imports basic/BoolCon
+imports basic/NatCon
+imports basic/StrCon
+
+exports 
+
+sorts 
+
+  Refinement
+  Set-Declaration
+  Operation
+
+  Substitution 
+  Predicate
+
+  Expression
+
+  Amn-Id
+  Amn-Id-List
+
+context-free start-symbols
+
+  Refinement
+
+context-free syntax
+  Uni-Id 		-> Amn-Id
+  {Amn-Id ","}*		-> Amn-Id-List
+ 
+context-free syntax
+  
+  ("REFINEMENT" | "MACHINE") Amn-Id
+  ("REFINES" Amn-Id)?
+  ("SEES" Amn-Id-List)?
+  ("SETS" {Set-Declaration ";"}*)?
+  ("CONSTANTS" Amn-Id-List)?
+  ("PROPERTIES" Predicate)?
+  ("VARIABLES" Amn-Id-List)?
+  ("INVARIANT" Predicate)?
+  ("INITIALISATION" Substitution)?
+  ("OPERATIONS" {Operation ";"}*)?
+  "END"  
+  -> Refinement
+
+context-free syntax
+
+  Amn-Id 			-> Set-Declaration
+  Amn-Id "=" "{" Amn-Id-List "}" 	-> Set-Declaration
+
+context-free syntax
+
+  Amn-Id-List Amn-Id ( "(" Amn-Id-List ")" )?  "=" Substitution ->  Operation
+
+context-free syntax
+  
+  "skip" 	 			-> Substitution
+  Expression ":=" Expression 		-> Substitution
+  "PRE" Predicate "THEN" Substitution "END" 	-> Substitution
+  Substitution "||" Substitution 		-> Substitution {left}
+  Substitution ";" Substitution 		-> Substitution {left}
+
+context-free syntax
+
+  BoolCon 					-> Predicate
+  
+  %% General predicates
+  "(" Predicate ")" 				-> Predicate {bracket}
+  Predicate "&" Predicate 				-> Predicate {left}
+  Predicate "=>" Predicate				-> Predicate {left}
+  "!" "(" Amn-Id-List ")" "." "(" Predicate ")" 	-> Predicate
+  Predicate "<=>" Predicate 			-> Predicate {left}	
+ 
+  %% Predicates on Expressions
+  Expression "=" Expression 			-> Predicate
+ 
+  %% Set predicates
+  Expression ":" Expression 			-> Predicate
+  Expression "<:" Expression 			-> Predicate
+
+  %% Predicates on Natural Numbers
+  Expression ">" Expression 			-> Predicate
+  Expression "<" Expression 			-> Predicate
+  Expression ">=" Expression 			-> Predicate
+  Expression "<=" Expression 			-> Predicate
+
+context-free priorities
+   Predicate "&" Predicate -> Predicate  >
+   Predicate "<=>" Predicate -> Predicate >
+   Predicate "=>" Predicate -> Predicate
+
+context-free syntax
+
+  Amn-Id						-> Expression
+  "(" Expression ")"				-> Expression {bracket}  
+
+  %% Set Expresions
+  "{" Amn-Id-List "|" Predicate "}"			-> Expression
+  "POW" "(" Expression ")" 			-> Expression 
+  Expression "\\/" Expression 			-> Expression {left}
+  Expression "/\\" Expression 			-> Expression {left} 
+  Expression "-" Expression 			-> Expression
+  "{" Amn-Id-List "}"				-> Expression
+  
+  %% Natural Numbers Expressions
+  Unsigned-Int 					-> Expression
+  "card" "(" Expression ")"			-> Expression
+
+  %% Relational Expressions
+  Expression "<->" Expression			-> Expression
+  "dom" "(" Expression ")"				-> Expression 
+  "ran" "(" Expression ")"				-> Expression
+  Expression "<|" Expression			-> Expression
+  Amn-Id "[" Expression "]"			-> Expression
+
+  %% Functions
+  Expression "+->" Expression 			-> Expression
+  Expression "-->" Expression 			-> Expression
+  Amn-Id "(" {Expression ","}* ")"			-> Expression {avoid}
+
+context-free priorities
+  Expression "-" Expression			-> Expression  >
+  Expression "/\\" Expression 			-> Expression  >
+  Expression "\\/" Expression 			-> Expression
+
+  

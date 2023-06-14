@@ -1,0 +1,460 @@
+equations
+
+[Synthesis-Id]
+t-Synthesis-Id (Uni-Id) = 
+Uni-Id
+
+[Module-Name]
+t-Module-Name(OwlID) = 
+t-Synthesis-Id(OwlID)
+
+[Module-Name---Empty]
+t-Module-Name( ) = 
+OwlOntology
+
+[Module-Def]
+Synthesis-Id := t-Module-Name(OntologyID?),
+Type-Specification* := t-Type-Specification-List(Directive*, Directive*),
+Class-Declarator* := t-Class-Declarator-List( Directive* )
+====>
+t-Module-Def( NamespaceDef* Ontology( OntologyID? Directive*) ) =
+{ Synthesis-Id; in: module, ontology;
+
+type: 
+
+Type-Specification*;
+
+class_specification:
+
+Class-Declarator*;
+}
+
+
+
+
+
+%% Type Specification creation
+%%
+%% For every subsort of Directive an equation is provided.
+%% This is required for processing a lists without delimiters,
+%% such as Directive* list.
+%%
+%% Second instance of Directive* as parameter is required to pass  
+%% to t-Attribute-Specification-List: a type of attribute is  
+%% extracted from ObjectProperty.range and ObjectProperty is a directive
+%%
+[Type-Specification-List---Empty]
+t-Type-Specification-List( , Directive*2) =
+
+[Type-Specification-List---Directive]
+t-Type-Specification-List(Directive Directive*, Directive*2) =
+t-Type-Specification-List(Directive*, Directive*2)
+
+
+[Type-Specification-List---EnumeratedClassAxiom]
+Type-Specification* := t-Type-Specification-List(Directive*, Directive*2),
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Type-Specification-List(
+  EnumeratedClass(OwlID Deprecated? Annotation* Description*)
+  Directive*
+, 
+  Directive*2
+) =
+Type-Specification*
+
+[Type-Specification-List---DatatypeAxiom]
+Type-Specification* := t-Type-Specification-List(Directive*, Directive*2),
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Type-Specification-List(
+  Datatype(OwlID Deprecated? Annotation*)
+  Directive*
+, 
+  Directive*2
+) =
+{ Synthesis-Id; in: type, owl;
+},
+
+Type-Specification*
+
+[Type-Specification-List---ClassAxiom]
+Type-Specification* := t-Type-Specification-List(Directive*, Directive*2),
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Type-Specification-List(
+  Class(OwlID Deprecated? Modality Annotation* Description*)
+  Directive*
+, 
+  Directive*2
+) =
+{ Synthesis-Id; in: type, owl;
+t-Type-Supertype-Section(Description*)
+t-Attribute-Specification-List(OwlID, Description*, Directive*2)
+},
+
+Type-Specification*
+
+%% Extract type supertypes from Class Axiom
+%%
+[Type-Supertype-Section---Empty]
+t-Type-Supertype-Section() =
+
+[Type-Supertype-Section---Description]
+t-Type-Supertype-Section(Description Description*) =
+t-Type-Supertype-Section(Description*)
+
+[Type-Supertype-Section---ClassID]
+t-Type-Supertype-Section(OwlID Description*) =
+supertype: t-Type-Supertype-List(OwlID Description*);
+
+[Type-Supertype-List---Empty]
+t-Type-Supertype-List() = 
+
+[Type-Supertype-List---Description]
+t-Type-Supertype-List(Description Description*) =
+t-Type-Supertype-List(Description*)
+
+[Type-Supertype-List---ClassID]
+Supertype-List1 := t-Type-Supertype-List(Description*),
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Type-Supertype-List(OwlID Description*) = 
+Synthesis-Id, Supertype-List1
+
+
+%% Attribute Specification creation
+%%
+%% first param is a name of type (the same as name of ClassAxiom) for which attributes are created
+%% second param is Descriptions of ClassAxiom, properties of attributes are extracted from them
+%% third param is Directives, ObjectProperty which corresponds to attribute is extracted from them
+[Attribute-Specification-List---Empty]
+t-Attribute-Specification-List(OwlID,   , Directive*2) =
+
+[Attribute-Specification-List---Description]
+t-Attribute-Specification-List(OwlID, Description Description*, Directive*2) =
+t-Attribute-Specification-List(OwlID, Description*, Directive*2)
+
+%% Restricted attribute belongs to defined type
+[Attribute-Specification-List---Restriction---Required-Attribute]
+OwlID == t-Object-Property-Domain(OwlID1, Directive*2),
+Synthesis-Id := t-Synthesis-Id(OwlID1)
+====>
+t-Attribute-Specification-List(
+  OwlID
+,
+  restriction(OwlID1 RestrictionComponent RestrictionComponent*) 
+  Description*
+, 
+  Directive*2
+) =
+Synthesis-Id: t-Extract-Attribute-Type(OwlID1, Directive*2);
+  metaslot 
+    t-Attribute-Metaslot(OwlID, RestrictionComponent RestrictionComponent*);          
+  end
+t-Attribute-Specification-List(OwlID, Description*, Directive*2)
+
+%% Restricted attribute no not belong to defined type
+[Attribute-Specification-List---Restriction---Non-Required-Attribute]
+OwlID != t-Object-Property-Domain(OwlID1, Directive*2),
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Attribute-Specification-List(
+  OwlID
+,
+  restriction(OwlID1 RestrictionComponent RestrictionComponent*) 
+  Description*
+, 
+  Directive*2
+) =
+t-Attribute-Specification-List(OwlID, Description*, Directive*2)
+
+%% Extract domain class of the object property
+%%
+[Object-Property-Domain---Empty]
+t-Object-Property-Domain(OwlID, ) =
+none
+
+[Object-Property-Domain---Directive]
+t-Object-Property-Domain(OwlID, Directive Directive*) =
+t-Object-Property-Domain(OwlID, Directive*)
+
+[Object-Property-Domain---Required-Object-Property]
+OwlID == OwlID1
+====>
+t-Object-Property-Domain(
+  OwlID, 
+  ObjectProperty(
+   OwlID1 Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+   ObjectPropertyRange* 
+  )   
+  Directive*
+) =
+t-Object-Property-Domain(ObjectPropertyDomain*)
+
+[Object-Property-Domain---Domain---Empty]
+t-Object-Property-Domain() =
+none
+
+[Object-Property-Domain---Domain]
+t-Object-Property-Domain(
+  domain(OwlID)   
+  ObjectPropertyDomain*
+) =
+OwlID
+
+
+%% Create slots of attribute metaslot
+%%
+[Attribute-Metaslot]
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Attribute-Metaslot(OwlID, RestrictionComponent*) =
+    in: Synthesis-Id;
+    t-Attribute-Metaslot(RestrictionComponent*)
+
+[Attribute-Metaslot---Empty]
+t-Attribute-Metaslot(  ) =
+
+[Attribute-Metaslot---RestrictionComponent]
+t-Attribute-Metaslot(RestrictionComponent RestrictionComponent*) =
+t-Attribute-Metaslot(RestrictionComponent*) 
+
+[Attribute-Metaslot---MinCardinality]
+Unsigned-Int1 := Unsigned-Int
+====>
+t-Attribute-Metaslot(minCardinality(Unsigned-Int) RestrictionComponent*) =
+    min_card: Unsigned-Int1;
+    t-Attribute-Metaslot(RestrictionComponent*) 
+
+[Attribute-Metaslot---MaxCardinality]
+Unsigned-Int1 := Unsigned-Int
+====>
+t-Attribute-Metaslot(maxCardinality(Unsigned-Int) RestrictionComponent*) =
+    max_card: Unsigned-Int1;
+    t-Attribute-Metaslot(RestrictionComponent*) 
+
+[Attribute-Metaslot---Cardinality]
+Unsigned-Int1 := Unsigned-Int
+====>
+t-Attribute-Metaslot(cardinality(Unsigned-Int) RestrictionComponent*) =
+    min_card: Unsigned-Int1;
+    max_card: Unsigned-Int1;
+    t-Attribute-Metaslot(RestrictionComponent*) 
+
+
+%% Extract type of attribute from ObjectProperty range
+%% name of required Object Property is <OwlID>
+%%
+[Extract-Attribute-Type---Empty]
+t-Extract-Attribute-Type(OwlID, ) =
+none
+
+[Extract-Attribute-Type---Directive]
+t-Extract-Attribute-Type(OwlID, Directive Directive*) =
+t-Extract-Attribute-Type(OwlID, Directive*)
+
+%% Object Property is found,
+%% but it is not the property with required name
+%%
+[Extract-Attribute-Type---ObjectPropertyAxiom---Non-Required-ObjectProperty]
+OwlID1 != OwlID
+====>
+t-Extract-Attribute-Type(
+  OwlID1
+, 
+  ObjectProperty(
+   OwlID Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+   ObjectPropertyRange* 
+  )   
+ Directive*
+) =
+t-Extract-Attribute-Type(OwlID1, Directive*)
+
+%% Required Object Property is found
+%% and range does not exist
+%%
+[Extract-Attribute-Type---ObjectPropertyAxiom---Required-ObjectProperty]
+OwlID1 == OwlID
+====>
+t-Extract-Attribute-Type(
+  OwlID1
+, 
+  ObjectProperty(
+   OwlID Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+  )   
+ Directive*
+) =
+none
+
+
+%% Required Object Property is found
+%% and range exists
+%%
+[Extract-Attribute-Type---ObjectPropertyAxiom---Required-ObjectProperty]
+OwlID1 == OwlID
+====>
+t-Extract-Attribute-Type(
+  OwlID1
+, 
+  ObjectProperty(
+   OwlID Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+   ObjectPropertyRange ObjectPropertyRange* 
+  )   
+ Directive*
+) =
+t-Extract-Attribute-Type(ObjectPropertyRange)
+
+[Extract-Attribute-Type---ObjectPropertyRange]
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Extract-Attribute-Type(range(OwlID))=
+Synthesis-Id
+
+
+%% Class Declarator creation
+%%
+[Class-Declarator-List---Empty]
+t-Class-Declarator-List() =
+
+[Class-Declarator-List---Directive]
+t-Class-Declarator-List(Directive Directive*) =
+t-Class-Declarator-List(Directive*)
+
+%% Extract class definition from class axiom
+%%
+[Class-Declarator-List---ClassAxiom]
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Class-Declarator-List(
+  Class(OwlID Deprecated? Modality Annotation* Description*) 
+  Directive*
+) =
+{ Synthesis-Id; in: class, owl;
+  instance_section: Synthesis-Id;
+},
+
+t-Class-Declarator-List(Directive*)
+
+
+%% Extract metatype definition from ObjectProperty
+%%
+%%
+[Class-Declarator-List---ObjectPropertyAxiom]
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Class-Declarator-List(
+  ObjectProperty(
+   OwlID Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+   ObjectPropertyRange* 
+  ) 
+  Directive*
+) =
+{ Synthesis-Id; in: association, metatype, owl;
+t-Association-Superclass-Section(SuperProperty*)
+t-Association-Inverse-Section(InverseOf?)
+instance_section: {
+  association_type: {{0, inf},{0, inf}};
+    metaslot
+      in: t-Association-Type-Metaclass(PropertyKind?);
+    end
+  t-Association-Domain(ObjectPropertyDomain*)
+  t-Association-Range(ObjectPropertyRange*)
+}; },
+
+t-Class-Declarator-List(Directive*)
+
+%% Extract superclasses of Object Property
+%%
+[Association-Superclass-Section---Empty]
+t-Association-Superclass-Section() =
+
+[Association-Superclass-Section---NonEmpty]
+t-Association-Superclass-Section(SuperProperty SuperProperty*) =
+superclass: t-Association-Superclass-List(SuperProperty SuperProperty*);
+
+[Association-Superclass-List---Empty]
+t-Association-Superclass-List() = 
+
+[Association-Superclass-List---NonEmpty]
+Synthesis-Id := t-Synthesis-Id(OwlID),
+Superclass-List := t-Association-Superclass-List(SuperProperty*)
+====>
+t-Association-Superclass-List(super(OwlID) SuperProperty*) = 
+Synthesis-Id, Superclass-List
+
+%% Extract inverse of Object Property
+%%
+[Association-Inverse-Section---Empty]
+t-Association-Inverse-Section( ) =
+
+[Association-Inverse-Section---Empty]
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Association-Inverse-Section(inverseOf(OwlID)) =
+inverse: Synthesis-Id;
+
+%% Extract Assotiation type metaclass
+%%
+[Association-Type-Metaclass---Empty]
+t-Association-Type-Metaclass(  ) =
+onProperty
+
+[Association-Type-Metaclass---Functional]
+t-Association-Type-Metaclass(Functional) =
+onProperty, functionalProperty
+
+[Association-Type-Metaclass---InverseFunctional]
+t-Association-Type-Metaclass(InverseFunctional) =
+onProperty, inverseFunctionalProperty
+
+[Association-Type-Metaclass---Functional-InverseFunctional]
+t-Association-Type-Metaclass(Functional InverseFunctional) =
+onProperty, functionalProperty, inverseFunctionalProperty
+
+[Association-Type-Metaclass---Transitive]
+t-Association-Type-Metaclass(Transitive) =
+onProperty, transitiveProperty
+
+%% Extract Association Domain
+%%
+[Association-Domain---Empty]
+t-Association-Domain(  ) =
+
+[Association-Domain---NonEmpty]
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Association-Domain(domain(OwlID) ObjectPropertyDomain*) =
+domain: Synthesis-Id;
+
+%% Extract Association Range
+%%
+[Association----Empty]
+t-Association-Range(  ) =
+
+[Association-Range---NonEmpty]
+Synthesis-Id := t-Synthesis-Id(OwlID)
+====>
+t-Association-Range(range(OwlID) ObjectPropertyRange*) =
+range: Synthesis-Id;
+

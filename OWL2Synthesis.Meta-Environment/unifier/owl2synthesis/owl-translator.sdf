@@ -1,0 +1,161 @@
+module unifier/owl2synthesis/owl-translator
+
+imports unifier/owl/OWL-Syntax
+imports unifier/synthesis/Synthesis-Syntax
+imports unifier/Uni-Common
+
+
+exports
+
+context-free start-symbols
+   Module-Def
+   
+
+
+context-free syntax
+   t-Synthesis-Id(OwlID) -> Synthesis-Id
+
+
+context-free syntax
+   t-Module-Def(OwlSpecification) -> Module-Def
+   t-Module-Name(OntologyID?) -> Synthesis-Id
+
+   t-Type-Specification-List(Directive*, Directive*) -> {Type-Specification ","}*	
+
+   t-Type-Supertype-Section(Description*) -> ("supertype" ":" Supertype-List ";")?
+   t-Type-Supertype-List(Description*) -> Supertype-List
+
+   t-Attribute-Specification-List(OwlID, Description*, Directive*) -> Attribute-Specification*
+   t-Extract-Attribute-Type(OwlID, Directive*) -> Attribute-Type
+   t-Extract-Attribute-Type(ObjectPropertyRange) -> Attribute-Type
+   t-Attribute-Metaslot(OwlID, RestrictionComponent*) -> {Metaframe-Slot ";"}*
+   t-Attribute-Metaslot(RestrictionComponent*) -> {Metaframe-Slot ";"}*
+
+   t-Object-Property-Domain(OwlID, Directive*) -> OwlID
+   t-Object-Property-Domain(ObjectPropertyDomain*) -> OwlID
+
+   t-Class-Declarator-List(Directive*) -> {Class-Declarator ","}*	
+
+   t-Association-Superclass-Section(SuperProperty*) -> ("superclass" ":" Superclass-List ";")?
+   t-Association-Superclass-List(SuperProperty*) -> Superclass-List
+
+   t-Association-Inverse-Section(InverseOf?) -> ("inverse" ":" Metaclass-Name ";")?
+
+   t-Association-Type-Metaclass(PropertyKind?) -> {Synthesis-Id ","}*
+
+   t-Association-Domain(ObjectPropertyDomain*) -> ("domain" ":"  Domain ";")?
+   t-Association-Range(ObjectPropertyRange*) -> ("range" ":"  Range ";")?
+
+hiddens 	
+
+variables
+   "Uni-Id"[0-9]* -> Uni-Id
+
+	
+variables
+
+   "OwlID"[0-9]* 			-> OwlID
+
+   "NamespaceDef*"[0-9\']*		-> NamespaceDef*
+
+   "Axiom"[0-9\']*		-> Axiom
+   "Axiom*"[0-9\']*		-> Axiom*
+
+   "Modality"[0-9\']*		-> Modality
+   "Deprecated?"[0-9\']*		-> "Deprecated"?
+   "ClassID"[0-9\']*		-> ClassID
+
+   "ClassAxiom"[0-9\']*		-> ClassAxiom  
+   "EnumeratedClassAxiom"[0-9\']*	-> EnumeratedClassAxiom  
+   "DatatypeAxiom"[0-9\']*		-> DatatypeAxiom  
+
+   "DisjointClassesAxiom"[0-9\']*		-> DisjointClassesAxiom  
+   "EquivalentClassesAxiom"[0-9\']*		-> EquivalentClassesAxiom  
+   "SubClassOfAxiom "[0-9\']*		-> SubClassOfAxiom   
+   "DatatypePropertyAxiom"[0-9\']*		-> DatatypePropertyAxiom  
+   "ObjectPropertyAxiom"[0-9\']*		-> ObjectPropertyAxiom  
+   "AnnotationPropertyAxiom"[0-9\']*	-> AnnotationPropertyAxiom  
+   "OntologyPropertyAxiom "[0-9\']*		-> OntologyPropertyAxiom   
+   "SubPropertyOfAxiom "[0-9\']*		-> SubPropertyOfAxiom   
+   "EquivalentPropertiesAxiom"[0-9\']*	-> EquivalentPropertiesAxiom  
+         
+
+   "Description"[0-9\']*	-> Description
+   "Description*"[0-9\']*	-> Description*
+
+   "IndividualID*"[0-9\']*	-> IndividualID*
+
+   "Ontology"[0-9\']*	-> Ontology
+   "OntologyID"[0-9\']*	-> OntologyID
+   "OntologyID?"[0-9\']*	-> OntologyID?   
+
+   "Directive"[0-9\']*	-> Directive
+   "Directive*"[0-9\']*	-> Directive*
+   "Directive?"[0-9\']*	-> Directive?
+
+   "AnnotationDirective"[0-9\']*	-> AnnotationDirective
+   
+   "Annotation"[0-9\']*	-> Annotation
+   "Annotation*"[0-9\']*	-> Annotation*
+   
+   "Fact"[0-9\']*		-> Fact
+   "Individual"[0-9\']*	-> Individual
+   "SameIndividualFact"[0-9\']*	-> SameIndividualFact
+   "DifferentIndividualsFact"[0-9\']*	-> DifferentIndividualsFact
+   "Value"[0-9\']*	-> Value
+   "Type"[0-9\']*	-> Type
+   "Restriction"[0-9\']*	-> Restriction
+   "RestrictionComponent"[0-9\']*	-> RestrictionComponent
+   "RestrictionComponent*"[0-9\']*	-> RestrictionComponent*
+   "RestrictionComponentValue"[0-9\']*	-> RestrictionComponentValue
+   "ValueRange"[0-9\']*	-> ValueRange
+   "Unsigned-Int"[0-9\']*	-> Unsigned-Int
+
+   "Symmetric?"[0-9\']*		-> "Symmetric"?
+   "SuperProperty"[0-9\']*		-> SuperProperty
+   "SuperProperty*"[0-9\']*	-> SuperProperty*
+   "InverseOf"[0-9\']*		-> InverseOf
+   "InverseOf?"[0-9\']*		-> InverseOf?
+   "PropertyKind"[0-9\']*		-> PropertyKind
+   "PropertyKind?"[0-9\']*		-> PropertyKind?
+   "ObjectPropertyDomain"[0-9\']*	-> ObjectPropertyDomain
+   "ObjectPropertyDomain*"[0-9\']*	-> ObjectPropertyDomain*
+   "ObjectPropertyRange"[0-9\']*	-> ObjectPropertyRange
+   "ObjectPropertyRange*"[0-9\']*	-> ObjectPropertyRange*  
+   "Superclass-List"[0-9\']*	-> { Superclass-Id "," }*      
+
+   "Supertype-List"[0-9\']*	-> { Synthesis-Type-Name "," }*      
+
+
+
+variables
+   "Synthesis-Id"[0-9]* -> Synthesis-Id
+
+   "Module-Specification"[0-9\']* -> Module-Specification
+   "Type-Section"[0-9\']* -> Type-Section 
+   "IRS-Section"[0-9\']* -> IRS-Section
+   "IRA-Section"[0-9\']* -> IRA-Section
+
+   "Type-Specification-List"[0-9\']* -> Type-Specification-List 
+   "Type-Specification*"[0-9\']* -> {Type-Specification ","}*
+   "Type-Specification"[0-9\']* -> Type-Specification
+
+   "Abstract-Type"[0-9\']* -> Abstract-Type
+
+   "Attribute-Specification-List"[0-9\']* -> Attribute-Specification-List 
+   "Attribute-Specification*"[0-9\']* -> Attribute-Specification*
+   "Attribute-Specification"[0-9\']* -> Attribute-Specification
+
+   "Attribute-Type"[0-9\']* -> Attribute-Type 
+   "Synthesis-Type-Name"[0-9\']* -> Synthesis-Type-Name
+   "Synthesis-Built-In-Type"[0-9\']* -> Synthesis-Built-In-Type
+
+   "Class-Declarator"[0-9\']* -> Class-Declarator 
+   "Class-Declarator*"[0-9\']* -> {Class-Declarator ","}*
+
+   "Formula"[0-9\']* -> Formula
+   "Formula?"[0-9\']* -> Formula?
+   "Formula*"[0-9\']* -> Formula* 
+   "Typed-Variable"[0-9\']* -> Typed-Variable
+   "Typed-Variable*"[0-9\']* -> {Typed-Variable ","}*
+   "Term"[0-9\']* -> Term

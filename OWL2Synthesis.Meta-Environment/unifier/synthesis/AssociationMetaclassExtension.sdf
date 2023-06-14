@@ -1,0 +1,46 @@
+module unifier/synthesis/AssociationMetaclassExtension
+
+imports basic/Whitespace
+imports unifier/Uni-Common
+imports basic/BoolCon
+imports basic/NatCon
+imports basic/StrCon
+
+imports unifier/synthesis/Synthesis-Syntax
+
+exports 
+
+sorts 
+
+  Association-Metaclass
+  Superclass-List Superclass-Id
+  Domain Range Bounds Lower-Bound Upper-Bound
+
+
+context-free syntax   
+  Association-Metaclass -> Class-Declarator {avoid}
+
+  "{" Synthesis-Id ";" "in" ":" "association" ("," Metaclass-Name-List)? ";" 
+      ("superclass" ":"  Superclass-List ";")?
+      ("inverse" ":" Metaclass-Name ";")?
+      ("instance_section" ":"  
+       "{" 
+           ("association_type" ":" "{" Bounds "," Bounds "}" ";" (Attribute-Metaslot)? )?
+           ("domain" ":"  Domain ";")?
+           ("range" ":"  Range ";")?
+       "}" ";"
+      )?
+  "}"
+  -> Association-Metaclass
+
+  { Superclass-Id "," }* -> Superclass-List
+  Synthesis-Id -> Superclass-Id
+
+  "{" Lower-Bound "," Upper-Bound "}" 	-> Bounds
+  "inf"			 		-> Lower-Bound
+  Arithmetic-Expression		 	-> Lower-Bound
+  "inf"					-> Upper-Bound
+  Arithmetic-Expression			-> Upper-Bound
+
+  {Synthesis-Type-Name ","}* -> Domain
+  {Synthesis-Type-Name ","}* -> Range

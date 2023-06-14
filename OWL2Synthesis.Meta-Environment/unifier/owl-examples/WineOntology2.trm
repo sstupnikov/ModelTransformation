@@ -1,0 +1,28 @@
+t-Module-Def(
+
+Ontology( WineOntology
+
+Class(Wine complete
+  restriction(hasColor minCardinality(1))
+  restriction(hasFlavor maxCardinality(1))
+  restriction(hasSugar cardinality(1)))
+Class(IceWine complete
+  restriction(hasFlavor allValuesFrom(oneOf(Strong Moderate))))
+Class(DessertWine complete
+  Wine 
+  restriction(hasSugar allValuesFrom(oneOf(OffDry Sweet))))
+EquivalentClasses(IceWine
+  intersectionOf(DessertWine restriction(hasColor value(White))))
+
+ObjectProperty(hasColor domain(Wine) range(WineColor))
+ObjectProperty(hasFlavor domain(Wine) range(WineFlavor))
+ObjectProperty(hasSugar domain(Wine) range(WineSugar))
+
+Class(WineColor complete)
+Class(WineFlavor complete)
+Class(WineSugar complete)
+
+)
+
+
+)

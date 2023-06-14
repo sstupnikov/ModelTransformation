@@ -1,0 +1,247 @@
+%% Created on the base of 
+%% OWL Web Ontology Language Semantics and Abstract Syntax. Section 2 Abstract Syntax
+%% Copyright W3C 2004
+
+module unifier/owl/OWL-Syntax
+
+
+imports basic/Whitespace
+imports unifier/Uni-Common
+
+
+
+exports 
+
+  context-free start-symbols
+    OwlSpecification
+
+  sorts 
+    OwlSpecification
+    Ontology
+    NamespaceDef NamespaceId NamespaceValue 
+    Directive AnnotationDirective Axiom Fact 
+    Annotation AnnotationValue 
+
+    OwlID
+    OntologyID OntologyPropertyID 
+    AnnotationPropertyID
+    IndividualallID 
+    DatatypeID ClassID IndividualID 
+    RestrictionID
+    IndividualvaluedPropertyID 
+    DatavaluedPropertyID 
+
+
+    DataLiteral TypedLiteral PlainLiteral LexicalForm LanguageTag
+
+    Individual IndividualType Value ValueValue Type 
+    SameIndividualFact DifferentIndividualsFact 
+
+    ClassAxiom EnumeratedClassAxiom	DisjointClassesAxiom
+    EquivalentClassesAxiom	SubClassOfAxiom DatatypeAxiom
+
+
+    Restriction Modality Description
+    RestrictionComponent 
+    %%DataRestrictionComponent IndividualRestrictionComponent 
+    RestrictionComponentValue 
+    Cardinality DataRange ValueRange
+    	 
+    DatatypePropertyAxiom 
+
+    ObjectPropertyAxiom 
+    SuperProperty InverseOf PropertyKind ObjectPropertyDomain  ObjectPropertyRange
+
+    AnnotationPropertyAxiom  OntologyPropertyAxiom 
+    SubPropertyOfAxiom EquivalentPropertiesAxiom
+
+
+  context-free syntax
+    	NamespaceDef* Ontology -> OwlSpecification
+
+ 	"Namespace" "(" NamespaceId "=" NamespaceValue ")" -> NamespaceDef
+	OwlID -> NamespaceId
+    	URIreference -> NamespaceValue
+
+  context-free syntax	
+	%% 2.1 Ontologies
+
+    	"Ontology" "(" OntologyID? Directive* ")"  -> Ontology
+
+    	AnnotationDirective 	-> Directive
+    	Axiom 			-> Directive
+    	Fact			-> Directive
+
+    	"Annotation" "(" AnnotationPropertyID AnnotationValue ")" -> AnnotationDirective
+    	"annotation" "(" AnnotationPropertyID AnnotationValue ")" -> Annotation
+
+    	URIreference	-> AnnotationValue {avoid}
+    	DataLiteral	-> AnnotationValue
+    	Individual	-> AnnotationValue
+
+	%% simplyfied, should be 
+	%% URIreference -> OwlID	
+	Uni-Id		-> OwlID
+
+	OwlID		-> OntologyID
+	OwlID		-> AnnotationPropertyID
+	OwlID		-> DatatypeID
+	OwlID		-> ClassID
+	OwlID		-> IndividualID
+	OwlID		-> IndividualallID
+	OwlID		-> OntologyPropertyID
+	OwlID		-> RestrictionID
+	OwlID		-> DatavaluedPropertyID
+	OwlID		-> IndividualvaluedPropertyID
+
+
+
+  context-free syntax	
+	%% 2.2 Facts 
+	Individual -> Fact
+
+	"Individual" "(" IndividualID? Annotation* IndividualType* Value* ")" -> Individual
+	"type" "(" Type ")" -> IndividualType
+	"value" "(" IndividualvaluedPropertyID ValueValue ")"	-> Value	
+    	IndividualID	-> ValueValue {avoid}
+    	DataLiteral	-> ValueValue
+    	Individual	-> ValueValue
+
+	Description -> Type
+
+	TypedLiteral			-> DataLiteral
+	PlainLiteral			-> DataLiteral
+	LexicalForm "^^" URIreference	-> TypedLiteral
+	LexicalForm			-> PlainLiteral
+	LexicalForm "@" LanguageTag	-> PlainLiteral
+	NFCString			-> LexicalForm
+	Uni-Id 				-> LanguageTag
+		
+	SameIndividualFact -> Fact
+	DifferentIndividualsFact -> Fact
+
+	"SameIndividual" "(" IndividualID IndividualID IndividualallID* ")"	-> SameIndividualFact
+	"DifferentIndividuals" "(" IndividualID IndividualID IndividualallID* ")" -> DifferentIndividualsFact
+	
+  context-free syntax
+	%% 2.3.2.1 OWL DL Class Axioms
+
+	ClassAxiom 		-> Axiom
+	EnumeratedClassAxiom	-> Axiom
+	DisjointClassesAxiom	-> Axiom
+	EquivalentClassesAxiom	-> Axiom
+	SubClassOfAxiom		-> Axiom
+	DatatypeAxiom		-> Axiom
+
+	"Class" "(" ClassID ("Deprecated")? Modality Annotation* Description* ")" -> ClassAxiom
+  	
+	"complete" 		-> Modality
+	"partial" 		-> Modality
+
+	"EnumeratedClass" "(" ClassID ("Deprecated")? Annotation* Description* ")" -> EnumeratedClassAxiom
+	
+	"DisjointClasses" "(" Description Description Description* ")"	-> DisjointClassesAxiom
+	"EquivalentClasses" "(" Description Description* ")"		-> EquivalentClassesAxiom
+	"SubClassOf" "(" Description Description ")"			-> SubClassOfAxiom
+	
+	"Datatype" "(" DatatypeID ("Deprecated")? Annotation* ")"	-> DatatypeAxiom
+	
+  context-free syntax	
+	%% 2.3.2.2 OWL DL Descriptions
+
+	ClassID					-> Description {avoid}
+	Restriction				-> Description
+	"unionOf" "(" Description* ")"		-> Description
+	"intersectionOf" "(" Description* ")"	-> Description
+	"complementOf" "(" Description ")"		-> Description
+	"oneOf" "(" IndividualID* ")"		-> Description
+
+  context-free syntax	
+	%% 2.3.2.3 OWL DL Restrictions
+
+	"restriction" "(" RestrictionID RestrictionComponent RestrictionComponent* ")" -> Restriction
+	
+	"allValuesFrom" "(" ValueRange ")"			-> RestrictionComponent
+	"someValuesFrom" "(" ValueRange ")"			-> RestrictionComponent
+	RestrictionComponentValue 				-> RestrictionComponent
+	Cardinality					-> RestrictionComponent
+
+	"value" "(" ValueValue ")" -> RestrictionComponentValue 
+
+	"minCardinality" "(" Unsigned-Int ")"	-> Cardinality
+	"maxCardinality" "(" Unsigned-Int ")"	-> Cardinality
+	"cardinality" "(" Unsigned-Int ")"		-> Cardinality
+
+	DatatypeID 			-> DataRange
+	"rdfs:Literal"			-> DataRange
+	"oneOf" "(" DataLiteral* ")"	-> DataRange
+
+	%% ValueRange is a union of DataRange and Description
+	OwlID	 					-> ValueRange
+	"rdfs:Literal" 					-> ValueRange
+	Restriction					-> ValueRange
+	"unionOf" "(" Description* ")"			-> ValueRange
+	"intersectionOf" "(" Description* ")"		-> ValueRange
+	"complementOf" "(" Description ")"			-> ValueRange
+	"oneOf" "(" ValueValue* ")"	-> ValueRange
+
+
+  context-free syntax	
+	%% 2.3.2.4 OWL DL Property Axioms
+
+	DatatypePropertyAxiom	-> Axiom
+	ObjectPropertyAxiom	-> Axiom
+	AnnotationPropertyAxiom	-> Axiom
+	OntologyPropertyAxiom	-> Axiom
+	SubPropertyOfAxiom	-> Axiom
+	EquivalentPropertiesAxiom	-> Axiom
+
+	"DatatypeProperty" "(" 
+		DatavaluedPropertyID 
+		("Deprecated")? 
+		Annotation* 
+		("super" "(" DatavaluedPropertyID ")")* 
+		("Functional")? 
+		("domain" "(" Description ")")* 
+		("range" "(" DataRange ")")*
+	")"						
+	-> DatatypePropertyAxiom
+	
+	"ObjectProperty" "(" 
+		IndividualvaluedPropertyID 
+		("Deprecated")? 
+		Annotation* 
+		SuperProperty*
+		InverseOf? 
+		("Symmetric")? 
+		PropertyKind? 
+		ObjectPropertyDomain* 
+		ObjectPropertyRange* 
+	")"
+	-> ObjectPropertyAxiom
+
+	"super" "(" IndividualvaluedPropertyID ")"		-> SuperProperty
+	"inverseOf" "(" IndividualvaluedPropertyID ")" 	-> InverseOf 
+
+	"Functional"					-> PropertyKind
+         "InverseFunctional"				-> PropertyKind
+         "Functional" "InverseFunctional"			-> PropertyKind
+         "Transitive"					-> PropertyKind
+
+	"domain" "(" Description ")" 			 -> ObjectPropertyDomain
+	"range" "(" Description ")" 			 -> ObjectPropertyRange
+
+
+	"AnnotationProperty" "(" AnnotationPropertyID Annotation* ")"	-> AnnotationPropertyAxiom
+
+	"OntologyProperty" "(" OntologyPropertyID Annotation* ")"	-> OntologyPropertyAxiom
+	
+	%% substitutes two rules:
+	%% with DatavaluedPropertyID and IndividualvaluedPropertyID instead of OwlID
+	"EquivalentProperties" "(" OwlID OwlID OwlID* ")"
+	-> EquivalentPropertiesAxiom
+
+	%% substitutes two rules for SubPropertyOf
+	"SubPropertyOf" "(" OwlID OwlID ")" -> SubPropertyOfAxiom
+
+	

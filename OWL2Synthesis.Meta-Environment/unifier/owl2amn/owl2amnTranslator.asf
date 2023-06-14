@@ -1,0 +1,351 @@
+equations 
+
+[Amn-Id]
+create-Amn-Id (Uni-Id) = 
+Uni-Id
+
+[Refinement-Name---Empty]
+create-Refinement-Name() =
+OwlOntology
+
+[Refinement-Name]
+create-Refinement-Name(OwlID) =
+create-Amn-Id(OwlID)
+
+[Refinement]
+Amn-Id := create-Refinement-Name(OntologyID?)
+====>
+create-Refinement (NamespaceDef* Ontology( OntologyID? Directive*)) =
+REFINEMENT Amn-Id
+
+SETS Ind
+
+VARIABLES
+
+create-Variables(Directive*)
+
+INVARIANT
+
+simplify-Predicate(simplify-Predicate(create-Invariant(Directive*)))
+
+INITIALISATION
+
+create-Initialisation(Directive*)
+
+OPERATIONS
+
+create-Operations(Directive*)
+
+END 
+
+%% VARIABLES section creation
+%%
+%%
+[create-Variables---Empty]
+create-Variables() =
+
+[create-Variables---Directive]
+create-Variables(Directive Directive*) =
+create-Variables(Directive*)
+
+[create-Variables---ClassAxiom]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+create-Variables(
+  Class(OwlID Deprecated? Modality Annotation* Description*)  
+  Directive*
+) =
+Amn-Id, 
+create-Variables(Directive*)
+
+[create-Variables---ObjectPropertyAxiom]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+create-Variables(
+  ObjectProperty(
+   OwlID Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+   ObjectPropertyRange* 
+  )   
+ Directive*
+) =
+Amn-Id,
+create-Variables(Directive*)
+
+%% INITIALISATION section creation
+%%
+%%
+%%
+[create-Initialisation---Empty]
+create-Initialisation() = skip
+
+[create-Initialisation---Directive]
+create-Initialisation(Directive Directive*) =
+create-Initialisation(Directive*)
+
+[create-Initialisation---ClassAxiom]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+create-Initialisation(
+  Class(OwlID Deprecated? Modality Annotation* Description*)  
+  Directive*
+) =
+Amn-Id := {} || 
+create-Initialisation(Directive*)
+
+[create-Initialisation---ObjectPropertyAxiom]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+create-Initialisation(
+  ObjectProperty(
+   OwlID Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+   ObjectPropertyRange* 
+  )   
+ Directive*
+) =
+Amn-Id := {} ||
+create-Initialisation(Directive*)
+
+%% OPERATIONS section creation
+%%
+%%
+%%
+[create-Operations---Empty]
+create-Operations() =
+
+[create-Operations---Directive]
+create-Operations(Directive Directive*) =
+create-Operations(Directive*)
+
+[create-Operations---ClassAxiom]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+create-Operations(
+  Class(OwlID Deprecated? Modality Annotation* Description*)  
+  Directive*
+) =
+Amn-Id(ind) =
+PRE ind: Ind
+THEN
+  Amn-Id:= Amn-Id \/ {ind}
+END;
+
+create-Operations(Directive*)
+
+[create-Operations---ObjectPropertyAxiom]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+create-Operations(
+  ObjectProperty(
+   OwlID Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+   ObjectPropertyRange* 
+  )   
+ Directive*
+) =
+Amn-Id(ind, val) =
+PRE ind: extract-Object-Property-Domain(ObjectPropertyDomain*) & val: extract-Object-Property-Range(ObjectPropertyRange*)
+THEN
+  create-Amn-Id(OwlID)(ind):= val
+END;
+
+create-Operations(Directive*)
+
+%% Extract Object Property Domain
+%%
+[extract-Object-Property-Domain---Empty]
+extract-Object-Property-Domain(  ) =
+Ind
+
+[extract-Object-Property-Domain---NonEmpty]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+extract-Object-Property-Domain(domain(OwlID) ObjectPropertyDomain*) =
+Amn-Id
+
+%% Extract Object Property Range
+%%
+[extract-Object-Property-Range----Empty]
+extract-Object-Property-Range(  ) =
+Ind
+
+[extract-Object-Property-Range---NonEmpty]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+extract-Object-Property-Range(range(OwlID) ObjectPropertyRange*) =
+Amn-Id
+ 
+%% INVARIANT section creation
+%%
+%%
+%%
+[create-Invariant---Empty]
+create-Invariant() =
+true
+
+[create-Invariant---Directive]
+create-Invariant(Directive Directive*) =
+create-Invariant(Directive*)
+
+[create-Invariant---ClassAxiom]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+create-Invariant(
+  Class(OwlID Deprecated? Modality Annotation* Description*)  
+  Directive*
+) =
+Amn-Id: POW(Ind) & 
+extract-Class-Predicate(OwlID, Description*) &
+create-Invariant(Directive*)
+
+[create-Invariant---ObjectPropertyAxiom]
+Amn-Id := create-Amn-Id(OwlID)
+====>
+create-Invariant(
+  ObjectProperty(
+   OwlID Deprecated? Annotation* 
+   SuperProperty*
+   InverseOf? Symmetric? 
+   PropertyKind? 
+   ObjectPropertyDomain* 
+   ObjectPropertyRange* 
+  )   
+ Directive*
+) =
+Amn-Id: extract-Object-Property-Domain(ObjectPropertyDomain*) <-> extract-Object-Property-Range(ObjectPropertyRange*) &
+create-Invariant(Directive*)
+
+%% Extract class predicate from Description*
+%%
+[extract-Class-Predicate---Empty]
+extract-Class-Predicate(OwlID, ) = 
+true
+
+[extract-Class-Predicate---Description]
+extract-Class-Predicate(OwlID, Description Description*) =
+extract-Class-Predicate(OwlID, Description*)
+
+[extract-Class-Predicate---ClassID]
+Amn-Id := create-Amn-Id(OwlID),
+Amn-Id1 := create-Amn-Id(OwlID1)
+====>
+extract-Class-Predicate(OwlID, OwlID1 Description*) = 
+Amn-Id <: Amn-Id1
+
+[extract-Class-Predicate---Restriction]
+extract-Class-Predicate(
+  OwlID, 
+  restriction(OwlID1 RestrictionComponent RestrictionComponent*)  Description*
+) =
+extract-Class-Predicate(OwlID, OwlID1, RestrictionComponent RestrictionComponent*) &
+extract-Class-Predicate(OwlID, Description*)   
+
+%% Extract class predicate from RestrictionComponent*
+%%
+[extract-Class-Predicate---RestrictionComponent---Empty]
+extract-Class-Predicate(OwlID, OwlID1,  ) =
+true
+
+[extract-Class-Predicate---RestrictionComponent]
+extract-Class-Predicate(OwlID, OwlID1, RestrictionComponent RestrictionComponent*) =
+extract-Class-Predicate(OwlID, OwlID1, RestrictionComponent*) 
+
+[extract-Class-Predicate---RestrictionComponent---MinCardinality]
+Amn-Id := create-Amn-Id(OwlID),
+Amn-Id1 := create-Amn-Id(OwlID1),
+Unsigned-Int1 := Unsigned-Int
+====>
+extract-Class-Predicate(OwlID, OwlID1, minCardinality(Unsigned-Int) RestrictionComponent*) =
+!(xx).(xx: Amn-Id => card(Amn-Id1[{xx}]) >= 1) &
+extract-Class-Predicate(OwlID, OwlID1, RestrictionComponent*) 
+
+[extract-Class-Predicate---RestrictionComponent---MaxCardinality]
+Amn-Id := create-Amn-Id(OwlID),
+Amn-Id1 := create-Amn-Id(OwlID1),
+Unsigned-Int1 := Unsigned-Int
+====>
+extract-Class-Predicate(OwlID, OwlID1, maxCardinality(Unsigned-Int) RestrictionComponent*) =
+!(xx).(xx: Amn-Id => card(Amn-Id1[{xx}]) <= 1) & 
+extract-Class-Predicate(OwlID, OwlID1, RestrictionComponent*) 
+
+[extract-Class-Predicate---RestrictionComponent---Cardinality]
+Amn-Id := create-Amn-Id(OwlID),
+Amn-Id1 := create-Amn-Id(OwlID1),
+Unsigned-Int1 := Unsigned-Int
+====>
+extract-Class-Predicate(OwlID, OwlID1, cardinality(Unsigned-Int) RestrictionComponent*) =
+!(xx).(xx: Amn-Id => card(Amn-Id1[{xx}]) = 1) &
+extract-Class-Predicate(OwlID, OwlID1, RestrictionComponent*) 
+
+%% Predicate simplification (true elemination)
+%% 
+[simplify-Predicate---Conjunction---true]
+simplify-Predicate(true & true) = 
+true
+
+[simplify-Predicate---Conjunction---left]
+simplify-Predicate(true & Predicate) = 
+simplify-Predicate(Predicate)
+
+[simplify-Predicate---Conjunction---right]
+simplify-Predicate(Predicate & true) = 
+simplify-Predicate(Predicate)
+
+[simplify-Predicate---Conjunction]
+simplify-Predicate(Predicate1 & Predicate2) =
+simplify-Predicate(Predicate1) & 
+simplify-Predicate(Predicate2)
+
+[simplify-Predicate---Implication]
+simplify-Predicate(Predicate1 => Predicate2) =
+Predicate1 => Predicate2
+
+[simplify-Predicate---Equality]
+simplify-Predicate(Predicate1 <=> Predicate2) =
+Predicate1 <=> Predicate2
+
+[simplify-Predicate---Forall]
+simplify-Predicate(!(Amn-Id-List).(Predicate)) =
+!(Amn-Id-List).(Predicate)
+
+[simplify-Predicate---Expression-Equality]
+simplify-Predicate(Expression1 = Expression2) =
+Expression1 = Expression2
+
+[simplify-Predicate---Membership]
+simplify-Predicate(Expression1 : Expression2) =
+Expression1 : Expression2
+ 
+[simplify-Predicate---Set-Membership]
+simplify-Predicate(Expression1 <: Expression2) =
+Expression1 <: Expression2
+
+[simplify-Predicate---Lesser]
+simplify-Predicate(Expression1 < Expression2) =
+Expression1 < Expression2
+
+[simplify-Predicate---Greater]
+simplify-Predicate(Expression1 > Expression2) =
+Expression1 > Expression2
+
+[simplify-Predicate---LesserEqual]
+simplify-Predicate(Expression1 <= Expression2) =
+Expression1 < Expression2
+
+[simplify-Predicate---GreaterEqual]
+simplify-Predicate(Expression1 >= Expression2) =
+Expression1 < Expression2
+
+
+
+

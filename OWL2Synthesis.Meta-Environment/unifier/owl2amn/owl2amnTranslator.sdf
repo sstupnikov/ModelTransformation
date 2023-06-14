@@ -1,0 +1,120 @@
+module unifier/owl2amn/owl2amnTranslator
+
+imports unifier/owl/OWL-Syntax
+imports unifier/amn/AMN-Syntax
+imports unifier/Uni-Common
+
+
+exports
+
+context-free start-symbols
+   Refinement
+   
+
+
+context-free syntax
+   create-Amn-Id(OwlID) -> Amn-Id
+
+   create-Refinement-Name(OntologyID?) -> Amn-Id
+   create-Refinement(OwlSpecification) -> Refinement   
+
+   create-Variables(Directive*) -> {Amn-Id ","}*
+   create-Initialisation(Directive*) -> Substitution
+   create-Operations(Directive*) -> {Operation ";"}*
+
+   extract-Object-Property-Range(ObjectPropertyRange*) -> Amn-Id
+   extract-Object-Property-Domain(ObjectPropertyDomain*) -> Amn-Id 
+
+   create-Invariant(Directive*) -> Predicate
+
+   extract-Class-Predicate(OwlID, Description*) -> Predicate
+   extract-Class-Predicate(OwlID, OwlID, RestrictionComponent*) -> Predicate
+
+   simplify-Predicate(Predicate) -> Predicate
+
+hiddens 	
+
+variables
+   "Uni-Id"[0-9]* -> Uni-Id
+
+	
+variables
+
+   "OwlID"[0-9]* 			-> OwlID
+
+   "NamespaceDef*"[0-9\']*		-> NamespaceDef*
+
+   "Axiom"[0-9\']*		-> Axiom
+   "Axiom*"[0-9\']*		-> Axiom*
+
+   "Modality"[0-9\']*		-> Modality
+   "Deprecated?"[0-9\']*		-> "Deprecated"?
+   "ClassID"[0-9\']*		-> ClassID
+
+   "ClassAxiom"[0-9\']*		-> ClassAxiom  
+   "EnumeratedClassAxiom"[0-9\']*	-> EnumeratedClassAxiom  
+   "DatatypeAxiom"[0-9\']*		-> DatatypeAxiom  
+
+   "DisjointClassesAxiom"[0-9\']*		-> DisjointClassesAxiom  
+   "EquivalentClassesAxiom"[0-9\']*		-> EquivalentClassesAxiom  
+   "SubClassOfAxiom "[0-9\']*		-> SubClassOfAxiom   
+   "DatatypePropertyAxiom"[0-9\']*		-> DatatypePropertyAxiom  
+   "ObjectPropertyAxiom"[0-9\']*		-> ObjectPropertyAxiom  
+   "AnnotationPropertyAxiom"[0-9\']*	-> AnnotationPropertyAxiom  
+   "OntologyPropertyAxiom "[0-9\']*		-> OntologyPropertyAxiom   
+   "SubPropertyOfAxiom "[0-9\']*		-> SubPropertyOfAxiom   
+   "EquivalentPropertiesAxiom"[0-9\']*	-> EquivalentPropertiesAxiom  
+         
+
+   "Description"[0-9\']*	-> Description
+   "Description*"[0-9\']*	-> Description*
+
+   "IndividualID*"[0-9\']*	-> IndividualID*
+
+   "Ontology"[0-9\']*	-> Ontology
+   "OntologyID"[0-9\']*	-> OntologyID
+   "OntologyID?"[0-9\']*	-> OntologyID?   
+
+   "Directive"[0-9\']*	-> Directive
+   "Directive*"[0-9\']*	-> Directive*
+   "Directive?"[0-9\']*	-> Directive?
+
+   "AnnotationDirective"[0-9\']*	-> AnnotationDirective
+   
+   "Annotation"[0-9\']*	-> Annotation
+   "Annotation*"[0-9\']*	-> Annotation*
+   
+   "Fact"[0-9\']*		-> Fact
+   "Individual"[0-9\']*	-> Individual
+   "SameIndividualFact"[0-9\']*	-> SameIndividualFact
+   "DifferentIndividualsFact"[0-9\']*	-> DifferentIndividualsFact
+   "Value"[0-9\']*	-> Value
+   "Type"[0-9\']*	-> Type
+   "Restriction"[0-9\']*	-> Restriction
+   "RestrictionComponent"[0-9\']*	-> RestrictionComponent
+   "RestrictionComponent*"[0-9\']*	-> RestrictionComponent*
+   "RestrictionComponentValue"[0-9\']*	-> RestrictionComponentValue
+   "ValueRange"[0-9\']*	-> ValueRange
+   "Unsigned-Int"[0-9\']*	-> Unsigned-Int
+
+   "Symmetric?"[0-9\']*		-> "Symmetric"?
+   "SuperProperty"[0-9\']*		-> SuperProperty
+   "SuperProperty*"[0-9\']*	-> SuperProperty*
+   "InverseOf"[0-9\']*		-> InverseOf
+   "InverseOf?"[0-9\']*		-> InverseOf?
+   "PropertyKind"[0-9\']*		-> PropertyKind
+   "PropertyKind?"[0-9\']*		-> PropertyKind?
+   "ObjectPropertyDomain"[0-9\']*	-> ObjectPropertyDomain
+   "ObjectPropertyDomain*"[0-9\']*	-> ObjectPropertyDomain*
+   "ObjectPropertyRange"[0-9\']*	-> ObjectPropertyRange
+   "ObjectPropertyRange*"[0-9\']*	-> ObjectPropertyRange*  
+
+
+
+variables
+
+   "Amn-Id"[0-9\']* 		-> Amn-Id
+   "Amn-Id-List"[0-9\']* 		-> Amn-Id-List
+   "Substitution"[0-9\']* 		-> Substitution
+   "Predicate"[0-9\']* 		-> Predicate
+   "Expression"[0-9\']* 		-> Expression
