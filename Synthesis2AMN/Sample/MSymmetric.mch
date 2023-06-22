@@ -1,3 +1,0 @@
-MACHINE MSymmetric
-
-END
