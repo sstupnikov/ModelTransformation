@@ -1,0 +1,6 @@
+MACHINE Teaches
+
+INCLUDES
+	Teacher
+
+END

@@ -1,0 +1,137 @@
+REFINEMENT DispatcherRef
+
+REFINES MDispatcher
+
+SEES
+	FundingAgency_structure_Context,
+	Expert,
+	Specialist,
+	Evaluation,
+	Submission
+
+INCLUDES
+	Evaluation
+
+VARIABLES
+	experts,
+	experts_got,
+	relevant_experts,
+	dispatcher
+
+INVARIANT
+	dispatcher : POW(ext_Dispatcher) &
+	experts : (ext_Dispatcher --> POW(ext_Specialist)) &
+	experts_got : (ext_Dispatcher --> BOOL) &
+	relevant_experts : (ext_Dispatcher --> POW(ext_Specialist))
+
+INITIALISATION
+	ANY aexperts WHERE
+		aexperts : (ext_Dispatcher --> POW(ext_Specialist))&
+		!(av).((av : ext_Dispatcher =>
+			aexperts(av) = {}))
+	THEN
+		experts := aexperts
+	END
+	||
+	ANY aexperts_got WHERE
+		aexperts_got : (ext_Dispatcher --> BOOL)&
+		!(av).((av : ext_Dispatcher =>
+			aexperts_got(av) = FALSE))
+	THEN
+		experts_got := aexperts_got
+	END
+	||
+	ANY arelevant_experts WHERE
+		arelevant_experts : (ext_Dispatcher --> POW(ext_Specialist))&
+		!(av).((av : ext_Dispatcher =>
+			arelevant_experts(av) = {}))
+	THEN
+		relevant_experts := arelevant_experts
+	END
+	||
+	dispatcher := {}
+
+OPERATIONS
+	get_experts(av) = 
+	PRE
+		av : ext_Dispatcher
+	THEN
+		ANY eff1, eff2 WHERE
+			eff1 : POW(ext_Specialist) &
+			eff2 : BOOL &
+			eff1 = expert &
+			eff2 = TRUE
+		THEN
+			experts(av) := eff1
+			||
+			experts_got(av) := eff2
+		END
+	END;
+
+	check_expert(av) = 
+	PRE
+		av : ext_Dispatcher
+	THEN
+		ANY eff1, eff2 WHERE
+			eff1 : POW(ext_Specialist) &
+			eff2 : POW(ext_Specialist) &
+			not(experts(av) = {}) &
+			#(exp).(exp : ext_Specialist &
+				exp : experts(av) &
+				(((research_field(exp) = computer_science &
+							eff1 = (relevant_experts(av) \/ {exp})) or
+					(research_field(exp) /= computer_science &
+							eff1 = relevant_experts(av)))) &
+				eff2 = (experts(av) - {exp}))
+		THEN
+			relevant_experts(av) := eff1
+			||
+			experts(av) := eff2
+		END
+	END;
+
+	number_of_experts <-- count_experts(av) = 
+	PRE
+		av : ext_Dispatcher
+	THEN
+		ANY eff1, number_of_experts1 WHERE
+			eff1 : BOOL &
+			number_of_experts1 : INTEGER &
+			experts(av) = {} &
+			eff1 = TRUE &
+			number_of_experts1 = card(relevant_experts(av))
+		THEN
+			experts_got(av) := eff1
+			||
+			number_of_experts := number_of_experts1
+		END
+	END;
+
+	appoint(av, revi) = 
+	PRE
+		av : ext_Dispatcher &
+		revi : ext_Evaluation
+	THEN
+		ANY eff1 WHERE
+			eff1 : ext_Expert &
+			experts(av) = {} &
+			not(relevant_experts(av) = {}) &
+			((#(exp).(exp : ext_Specialist &
+						exp : relevant_experts(av) &
+						field_of_expertise(exp) = field(subm_ref(revi)) &
+						degree(exp) = PhD &
+						eff1 = exp) or
+				(!(exp).((exp : ext_Specialist =>
+							((exp : relevant_experts(av) &
+										field_of_expertise(exp) = field(subm_ref(revi))) =>
+								degree(exp) /= PhD))) &
+						#(exp).(exp : ext_Specialist &
+							exp : relevant_experts(av) &
+							field_of_expertise(exp) = field(subm_ref(revi)) &
+							eff1 = exp))))
+		THEN
+			set_by_specialist({(revi |-> eff1)})
+		END
+	END
+
+END

@@ -1,0 +1,29 @@
+MACHINE Symmetric
+
+SEES
+	FundingAgency_structure_Context
+
+INCLUDES
+	Person
+
+VARIABLES
+	symmetric
+
+INVARIANT
+	symmetric : POW((person <-> person)) &
+	symmetric = {av | av : (person <-> person) &
+		!(s1, s2).((s1 : ext_Person &
+				s2 : ext_Person =>
+			((s1 |-> s2) : av =>
+				(s2 |-> s1) : av))) &
+		!(rr).((rr : (person) =>
+			card({dd | dd : (person) &
+					(dd |-> rr) : av}) >= 0)) &
+		!(dd).((dd : (person) =>
+			card({rr | rr : (person) &
+					(dd |-> rr) : av}) >= 0))}
+
+INITIALISATION
+	symmetric := {}
+
+END

@@ -1,0 +1,8 @@
+query 
+	AMN2Text = 
+		AMN!AbstractMachine.allInstances()->
+			collect(c| c.toString().writeTo('E:/Cloud@Mail.ru/Projects/Indigo Projects/Synthesis2AMN/Sample/FA/'+ c.name + '.mch'))->
+			union(AMN!Refinement.allInstances()->
+				collect(c| c.toString().writeTo('E:/Cloud@Mail.ru/Projects/Indigo Projects/Synthesis2AMN/Sample/FA/'+ c.name + '.ref')))
+	;
+uses AMN2String;

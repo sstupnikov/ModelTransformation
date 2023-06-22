@@ -1,0 +1,39 @@
+REFINEMENT StudentRef
+
+REFINES MStudent
+
+SEES
+	FundingAgency_structure_Context
+
+INCLUDES
+	Person
+
+VARIABLES
+	isTaughtBy,
+	grade,
+	student
+
+INVARIANT
+	student : POW(ext_Student) &
+	isTaughtBy : (ext_Student --> POW(ext_Teacher)) &
+	grade : (ext_Student --> INTEGER) &
+	student <: person
+
+INITIALISATION
+	ANY aisTaughtBy WHERE
+		aisTaughtBy : (ext_Student --> POW(ext_Teacher))
+	THEN
+		isTaughtBy := aisTaughtBy
+	END
+	||
+	ANY agrade WHERE
+		agrade : (ext_Student --> INTEGER)&
+		!(av).((av : ext_Student =>
+			agrade(av) = 1))
+	THEN
+		grade := agrade
+	END
+	||
+	student := {}
+
+END

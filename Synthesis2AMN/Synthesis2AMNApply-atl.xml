@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project name="Synthesis2AMNApply" default="all" basedir=".">
+
+	<property name="metamodelPath" value="Metamodels/" />
+	<property name="synthesisPath" value="../org.ipiran.language.Synthesis/metamodel/" />	
+	<property name="sourcePath" value="../Synthesis EMFText Application/CulturalHeritage/" />
+	<property name="targetPath" value="Sample/" />
+	<property name="transformationPath" value="Transformations/" />	
+	
+	<property name="sourceName" value="agency" />
+	<property name="targetName" value="${sourceName}-amn" />
+	<property name="transformationName" value="Synthesis2AMN" />	
+	
+	
+	<target name="all">
+		<!-- Loading metamodels -->		
+		<atl.loadModel name="Synthesis" metamodel="%EMF" path="${metamodelPath}Synthesis.ecore"/>
+		<atl.loadModel name="AMN" metamodel="%EMF" path="${metamodelPath}AMN.ecore"/>
+		<atl.loadModel name="RefiningTrace" metamodel="%EMF" path="${metamodelPath}RefiningTrace.ecore"/>
+		
+		<!-- Loading input model -->
+		<atl.loadModel name="${sourceName}" metamodel="Synthesis" path="${sourcePath}${sourceName}.xmi" />
+  
+		<atl.launch path="${transformationPath}${transformationName}.asm">
+		    <inmodel name="IN" model="${sourceName}"/>
+			<outModel name="OUT" model="${targetName}" metamodel="AMN" />
+		</atl.launch>
+
+		<!--
+		<atl.launch path="${transformationPath}Synthesis2AMNRefine.asm">
+		    <inoutmodel name="IN" model="${targetName}"/>
+			<outModel name="refiningTrace"	metamodel="RefiningTrace" model="refiningTrace"/>
+		</atl.launch>		
+		-->
+		
+		<atl.launch  path="${transformationPath}AMN2Text.asm">
+			<inmodel name="IN" model="${targetName}"/>			
+			<library name="ATL2String" path="${transformationPath}AMN2String.asm"/>
+		</atl.launch>				
+
+		<atl.saveModel model="${targetName}" path="${targetPath}${targetName}.ecore"/>		
+
+		
+	</target>
+
+</project>

@@ -1,0 +1,21 @@
+REFINEMENT SubmissionRef
+
+REFINES MSubmission
+
+SEES
+	FundingAgency_structure_Context
+
+VARIABLES
+	field
+
+INVARIANT
+	field : (ext_Submission --> seq((0 .. 255)))
+
+INITIALISATION
+	ANY afield WHERE
+		afield : (ext_Submission --> seq((0 .. 255)))
+	THEN
+		field := afield
+	END
+
+END
