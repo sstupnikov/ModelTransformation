@@ -1,0 +1,42 @@
+SELECT a, b, c, d, e, f FROM 
+	(SELECT a, b, c FROM 
+		A)
+JOIN
+	(SELECT * FROM 
+		(SELECT d AS df, h AS hf, m, n FROM 
+			F)
+	JOIN
+		(SELECT * FROM 
+			(SELECT p, q, r FROM 
+				E)
+		JOIN
+			(SELECT * FROM 
+				(SELECT g AS gd, h AS hd, k FROM 
+					D)
+			JOIN
+				(SELECT * FROM 
+					(SELECT d AS db, e, f FROM 
+						B)
+				JOIN
+					(SELECT * FROM 
+						(SELECT d AS dc, g AS gc, h AS hc FROM 
+							C)
+					)
+				ON 
+					db = dc
+				)
+			ON 
+				gc = gd,
+				hc = hd
+			)
+		)
+	ON 
+		hc = hf,
+		dc = df
+	)
+WHERE 
+	a <= p,
+	true <> false,
+	b + m = r,
+	(1) > (2 * 1.05 + "database"),
+	abs(5) > (1 - 3) / 2;

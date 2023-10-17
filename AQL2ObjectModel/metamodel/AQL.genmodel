@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.ipiran.language.AQL/src"
+    editDirectory="/org.ipiran.language.AQL.edit/src" editorDirectory="/org.ipiran.language.AQL.editor/src"
+    modelPluginID="org.ipiran.language.AQL" modelName="AQL" editPluginClass="org.ipiran.language.AQL.provider.AQLEditPlugin"
+    editorPluginClass="org.ipiran.language.AQL.presentation.AQLEditorPlugin" testSuiteClass="org.ipiran.language.AQL.tests.AQLAllTests"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false"
+    editPluginID="org.ipiran.language.AQL.edit" editorPluginID="org.ipiran.language.AQL.editor">
+  <foreignModel>AQL.ecore</foreignModel>
+  <genPackages prefix="AQL" disposableProviderFactory="true" ecorePackage="AQL.ecore#/">
+    <nestedGenPackages prefix="AQLDDL" basePackage="AQL" disposableProviderFactory="true"
+        ecorePackage="AQL.ecore#//AQLDDL">
+      <genClasses ecoreClass="AQL.ecore#//AQLDDL/NamedElement">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDDL/NamedElement/name"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDDL/Database">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDDL/Database/arrays"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDDL/Array">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference AQL.ecore#//AQLDDL/Array/database"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDDL/Array/dimensions"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDDL/Array/attributes"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="AQL.ecore#//AQLDDL/TypedElement">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDDL/TypedElement/type"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDDL/Attribute">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDDL/Attribute/isNullable"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDDL/Attribute/default"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDDL/Dimension">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDDL/Dimension/start"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDDL/Dimension/end"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDDL/Dimension/chunkSize"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDDL/Dimension/chunkOverlap"/>
+      </genClasses>
+      <nestedGenPackages prefix="Datatypes" basePackage="AQL.AQLDDL" disposableProviderFactory="true"
+          ecorePackage="AQL.ecore#//AQLDDL/Datatypes">
+        <genClasses image="false" ecoreClass="AQL.ecore#//AQLDDL/Datatypes/Datatype"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/bool_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/char_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/datetime_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/datetimez_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/double_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/float_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/int8_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/int16_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/int32_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/int64_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/uint8_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/uint16_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/uint32_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/uint64_aql"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDDL/Datatypes/string_aql"/>
+      </nestedGenPackages>
+    </nestedGenPackages>
+    <nestedGenPackages prefix="AQLDML" basePackage="AQL" disposableProviderFactory="true"
+        ecorePackage="AQL.ecore#//AQLDML">
+      <genClasses ecoreClass="AQL.ecore#//AQLDML/AQLRoot">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/AQLRoot/statements"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="AQL.ecore#//AQLDML/Aliasable">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Aliasable/alias"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="AQL.ecore#//AQLDML/Statement">
+        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Statement/root"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDML/Drop">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Drop/arrayName"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="AQL.ecore#//AQLDML/Select">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Select/into"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Select/fromClause"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Select/where"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Select/join"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Select/joinOn"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Select/groupBy"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Select/regrid"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Select/window"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDML/SelectAllAttributes"/>
+      <genClasses ecoreClass="AQL.ecore#//AQLDML/SelectAttributes">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/SelectAttributes/attributes"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDML/RegridPartition">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/RegridPartition/dim"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/RegridPartition/size"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDML/WindowPartition">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/WindowPartition/dim"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/WindowPartition/preceding"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/WindowPartition/following"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDML/Update">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Update/array"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Update/setStatements"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Update/where"/>
+      </genClasses>
+      <genClasses ecoreClass="AQL.ecore#//AQLDML/SetStatement">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/SetStatement/attribute"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/SetStatement/value"/>
+      </genClasses>
+      <nestedGenPackages prefix="Expression" basePackage="AQL.AQLDML" disposableProviderFactory="true"
+          ecorePackage="AQL.ecore#//AQLDML/Expression">
+        <genClasses image="false" ecoreClass="AQL.ecore#//AQLDML/Expression/Expression"/>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/Path">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/Path/components"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/BooleanValue">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/BooleanValue/value"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/IntegerValue">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/IntegerValue/value"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/FloatValue">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/FloatValue/value"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/StringValue">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/StringValue/value"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/DatetimeValue">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/DatetimeValue/year"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/DatetimeValue/month"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/DatetimeValue/day"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/DatetimeValue/hour"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/DatetimeValue/minute"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/DatetimeValue/second"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/DatetimezValue">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/DatetimezValue/hourOffset"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/DatetimezValue/minuteOffset"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/BinaryExp">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/BinaryExp/symbol"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Expression/BinaryExp/leftExp"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Expression/BinaryExp/rightExp"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/BracketExp">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Expression/BracketExp/exp"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/UnaryExp">
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Expression/UnaryExp/exp"/>
+        </genClasses>
+        <genClasses ecoreClass="AQL.ecore#//AQLDML/Expression/FunctionExp">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute AQL.ecore#//AQLDML/Expression/FunctionExp/name"/>
+          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference AQL.ecore#//AQLDML/Expression/FunctionExp/arguments"/>
+        </genClasses>
+      </nestedGenPackages>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>

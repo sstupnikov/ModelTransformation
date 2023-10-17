@@ -1,0 +1,143 @@
+library AQL2String;
+
+helper context AQL!AQLRoot def: toString(): String =
+	if self.statements->size() > 0 
+	then 
+		let s: String = self.statements->iterate(i; acc : String = '' | acc + i.toString('') + ';\n') in s		
+	else '' 
+	endif	
+;
+
+helper context AQL!Aliasable def: toString(indent: String): String =
+	''
+;
+
+helper context AQL!SelectAttributes def: toString(indent: String): String =
+	if self.root.oclIsUndefined() then '(' else '' endif +
+	
+	'SELECT ' +
+	if self.attributes->size() > 0 
+	then 
+		( let s: String = self.attributes->iterate(i; acc : String = '' | acc + i.toString('') + ', ') in s.substring(1, s.size()-2) )
+	else '' 
+	endif +
+
+	' FROM ' +
+	if self.fromClause->size() > 0 
+	then 
+		( let s: String = self.fromClause->iterate(i; acc : String = '\n' + indent + '\t' | acc + i.toString(indent + '\t') + ',\n\t' + indent) 
+		  in s.substring(1, s.size() - 3 - indent.size()) )
+	else '' 
+	endif +
+
+	if not self.join.oclIsUndefined() 
+	then 
+		'\n' + indent + 'JOIN\n' + (let s: String = self.join.toString(indent + '\t') in s)
+	else '' 
+	endif +
+	
+	if self.joinOn->size() > 0 
+	then 
+		'\n' + indent + 'ON ' +
+		( let s: String = self.joinOn->iterate(i; acc : String = '\n' + indent + '\t' | acc + i.toString(indent + '\t') + ',\n\t' + indent) 
+		  in s.substring(1, s.size() - 3 - indent.size()) )
+	else '' 
+	endif +	
+	
+	if self.where->size() > 0 
+	then 
+		'\n' + indent + 'WHERE \n' +
+		( let s: String = self.where->iterate(i; acc : String = indent + '\t' | acc + i.toString(indent + '\t') + ',\n\t' + indent) 
+		  in s.substring(1, s.size() - 3 - indent.size()) )
+	else '' 
+	endif + 
+	
+	if self.root.oclIsUndefined() then ')' else '' endif	
+;
+
+helper context AQL!SelectAllAttributes def: toString(indent: String): String =
+	if self.root.oclIsUndefined() then indent else '' endif +	
+	
+	'(SELECT * ' +
+
+	'FROM ' +
+	if self.fromClause->size() > 0 
+	then 
+		( let s: String = self.fromClause->iterate(i; acc : String = '\n'  + indent + '\t' | acc + i.toString(indent + '\t') + ',\n\t' + indent) 
+		  in s.substring(1, s.size() - 3 - indent.size()) )
+	else '' 
+	endif +
+
+	if not self.join.oclIsUndefined()
+	then 
+		'\n' + indent + 'JOIN\n' + (let s: String = self.join.toString(indent + '\t') in s)
+	else '' 
+	endif +
+	
+	if self.joinOn->size() > 0 
+	then 
+		'\n' + indent + 'ON ' +
+		( let s: String = self.joinOn->iterate(i; acc : String = '\n' + indent + '\t' | acc + i.toString(indent + '\t') + ',\n\t' + indent) 
+		  in s.substring(1, s.size() - 3 - indent.size()) )
+	else '' 
+	endif +	
+	
+	if self.where->size() > 0 
+	then 
+		'\n' + indent + 'WHERE \n' +
+		( let s: String = self.where->iterate(i; acc : String = indent + '\t' | acc + i.toString(indent + '\t') + ',\n\t' + indent) 
+		  in s.substring(1, s.size() - 3 - indent.size()) )
+	else '' 
+	endif +
+	
+	'\n' + indent + ')'
+;
+
+helper context AQL!Path def: toString(indent: String): String =
+	if self.components->size() > 0 
+	then 
+		( let s: String = self.components->iterate(i; acc : String = '' | acc + i + '.') 
+		  in s.substring(1, s.size()-1) )
+	else '' 
+	endif +
+	
+	if not self.alias.oclIsUndefined() 
+	then ' AS ' + self.alias 
+	else '' 
+	endif	
+;
+
+helper context AQL!BooleanValue def: toString(indent: String) : String =
+	self.value.toString()
+;	
+
+helper context AQL!StringValue def: toString(indent: String) : String =
+	self.value
+;	
+
+helper context AQL!IntegerValue def: toString(indent: String) : String =
+	self.value.toString()
+;
+
+helper context AQL!FloatValue def: toString(indent: String) : String =
+	self.value.toString()
+;
+
+helper context AQL!BracketExp def: toString(indent: String) : String =
+	'(' + self.exp.toString(indent) + ')'
+;
+
+helper context AQL!FunctionExp def: toString(indent: String) : String =
+	self.name + '(' + 
+	if self.arguments->size() > 0 
+	then 
+		let s: String = self.arguments->iterate(i; acc : String = '' | acc + i.toString('') + ', ') 
+		in s.substring(1, s.size()-2)		
+	else '' 
+	endif +	
+	')'
+;
+
+helper context AQL!BinaryExp def: toString(indent: String) : String =
+	self.leftExp.toString(indent) + ' ' + self.symbol + ' ' + self.rightExp.toString(indent)
+;

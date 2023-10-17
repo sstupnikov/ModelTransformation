@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<aql-dml:AQLRoot xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aql-dml="http://www.scidb.org/aql/dml/" xmlns:aql-dml-exp="http://www.scidb.org/aql/dml/expression/">
+  <statements xsi:type="aql-dml:SelectAttributes">
+    <fromClause xsi:type="aql-dml:SelectAttributes">
+      <fromClause xsi:type="aql-dml-exp:Path">
+        <components>A</components>
+      </fromClause>
+      <attributes xsi:type="aql-dml-exp:Path">
+        <components>a</components>
+      </attributes>
+      <attributes xsi:type="aql-dml-exp:Path">
+        <components>b</components>
+      </attributes>
+      <attributes xsi:type="aql-dml-exp:Path">
+        <components>c</components>
+      </attributes>
+    </fromClause>
+    <where xsi:type="aql-dml-exp:BinaryExp" symbol="&lt;=">
+      <leftExp xsi:type="aql-dml-exp:Path">
+        <components>a</components>
+      </leftExp>
+      <rightExp xsi:type="aql-dml-exp:Path">
+        <components>p</components>
+      </rightExp>
+    </where>
+    <where xsi:type="aql-dml-exp:BinaryExp" symbol="&lt;>">
+      <leftExp xsi:type="aql-dml-exp:BooleanValue" value="true"/>
+      <rightExp xsi:type="aql-dml-exp:BooleanValue"/>
+    </where>
+    <where xsi:type="aql-dml-exp:BinaryExp" symbol="=">
+      <leftExp xsi:type="aql-dml-exp:BinaryExp" symbol="+">
+        <leftExp xsi:type="aql-dml-exp:Path">
+          <components>b</components>
+        </leftExp>
+        <rightExp xsi:type="aql-dml-exp:Path">
+          <components>m</components>
+        </rightExp>
+      </leftExp>
+      <rightExp xsi:type="aql-dml-exp:Path">
+        <components>r</components>
+      </rightExp>
+    </where>
+    <where xsi:type="aql-dml-exp:BinaryExp" symbol=">">
+      <leftExp xsi:type="aql-dml-exp:BracketExp">
+        <exp xsi:type="aql-dml-exp:IntegerValue" value="1"/>
+      </leftExp>
+      <rightExp xsi:type="aql-dml-exp:BracketExp">
+        <exp xsi:type="aql-dml-exp:BinaryExp" symbol="+">
+          <leftExp xsi:type="aql-dml-exp:BinaryExp" symbol="*">
+            <leftExp xsi:type="aql-dml-exp:IntegerValue" value="2"/>
+            <rightExp xsi:type="aql-dml-exp:FloatValue" value="1.05"/>
+          </leftExp>
+          <rightExp xsi:type="aql-dml-exp:StringValue" value="&quot;database&quot;"/>
+        </exp>
+      </rightExp>
+    </where>
+    <where xsi:type="aql-dml-exp:BinaryExp" symbol=">">
+      <leftExp xsi:type="aql-dml-exp:FunctionExp" name="abs">
+        <arguments xsi:type="aql-dml-exp:IntegerValue" value="5"/>
+      </leftExp>
+      <rightExp xsi:type="aql-dml-exp:BinaryExp" symbol="/">
+        <leftExp xsi:type="aql-dml-exp:BracketExp">
+          <exp xsi:type="aql-dml-exp:BinaryExp" symbol="-">
+            <leftExp xsi:type="aql-dml-exp:IntegerValue" value="1"/>
+            <rightExp xsi:type="aql-dml-exp:IntegerValue" value="3"/>
+          </exp>
+        </leftExp>
+        <rightExp xsi:type="aql-dml-exp:IntegerValue" value="2"/>
+      </rightExp>
+    </where>
+    <join xsi:type="aql-dml:SelectAllAttributes">
+      <fromClause xsi:type="aql-dml:SelectAttributes">
+        <fromClause xsi:type="aql-dml-exp:Path">
+          <components>F</components>
+        </fromClause>
+        <attributes xsi:type="aql-dml-exp:Path" alias="df">
+          <components>d</components>
+        </attributes>
+        <attributes xsi:type="aql-dml-exp:Path" alias="hf">
+          <components>h</components>
+        </attributes>
+        <attributes xsi:type="aql-dml-exp:Path">
+          <components>m</components>
+        </attributes>
+        <attributes xsi:type="aql-dml-exp:Path">
+          <components>n</components>
+        </attributes>
+      </fromClause>
+      <join xsi:type="aql-dml:SelectAllAttributes">
+        <fromClause xsi:type="aql-dml:SelectAttributes">
+          <fromClause xsi:type="aql-dml-exp:Path">
+            <components>E</components>
+          </fromClause>
+          <attributes xsi:type="aql-dml-exp:Path">
+            <components>p</components>
+          </attributes>
+          <attributes xsi:type="aql-dml-exp:Path">
+            <components>q</components>
+          </attributes>
+          <attributes xsi:type="aql-dml-exp:Path">
+            <components>r</components>
+          </attributes>
+        </fromClause>
+        <join xsi:type="aql-dml:SelectAllAttributes">
+          <fromClause xsi:type="aql-dml:SelectAttributes">
+            <fromClause xsi:type="aql-dml-exp:Path">
+              <components>D</components>
+            </fromClause>
+            <attributes xsi:type="aql-dml-exp:Path" alias="gd">
+              <components>g</components>
+            </attributes>
+            <attributes xsi:type="aql-dml-exp:Path" alias="hd">
+              <components>h</components>
+            </attributes>
+            <attributes xsi:type="aql-dml-exp:Path">
+              <components>k</components>
+            </attributes>
+          </fromClause>
+          <join xsi:type="aql-dml:SelectAllAttributes">
+            <fromClause xsi:type="aql-dml:SelectAttributes">
+              <fromClause xsi:type="aql-dml-exp:Path">
+                <components>B</components>
+              </fromClause>
+              <attributes xsi:type="aql-dml-exp:Path" alias="db">
+                <components>d</components>
+              </attributes>
+              <attributes xsi:type="aql-dml-exp:Path">
+                <components>e</components>
+              </attributes>
+              <attributes xsi:type="aql-dml-exp:Path">
+                <components>f</components>
+              </attributes>
+            </fromClause>
+            <join xsi:type="aql-dml:SelectAllAttributes">
+              <fromClause xsi:type="aql-dml:SelectAttributes">
+                <fromClause xsi:type="aql-dml-exp:Path">
+                  <components>C</components>
+                </fromClause>
+                <attributes xsi:type="aql-dml-exp:Path" alias="dc">
+                  <components>d</components>
+                </attributes>
+                <attributes xsi:type="aql-dml-exp:Path" alias="gc">
+                  <components>g</components>
+                </attributes>
+                <attributes xsi:type="aql-dml-exp:Path" alias="hc">
+                  <components>h</components>
+                </attributes>
+              </fromClause>
+            </join>
+            <joinOn xsi:type="aql-dml-exp:BinaryExp" symbol="=">
+              <leftExp xsi:type="aql-dml-exp:Path">
+                <components>db</components>
+              </leftExp>
+              <rightExp xsi:type="aql-dml-exp:Path">
+                <components>dc</components>
+              </rightExp>
+            </joinOn>
+          </join>
+          <joinOn xsi:type="aql-dml-exp:BinaryExp" symbol="=">
+            <leftExp xsi:type="aql-dml-exp:Path">
+              <components>gc</components>
+            </leftExp>
+            <rightExp xsi:type="aql-dml-exp:Path">
+              <components>gd</components>
+            </rightExp>
+          </joinOn>
+          <joinOn xsi:type="aql-dml-exp:BinaryExp" symbol="=">
+            <leftExp xsi:type="aql-dml-exp:Path">
+              <components>hc</components>
+            </leftExp>
+            <rightExp xsi:type="aql-dml-exp:Path">
+              <components>hd</components>
+            </rightExp>
+          </joinOn>
+        </join>
+      </join>
+      <joinOn xsi:type="aql-dml-exp:BinaryExp" symbol="=">
+        <leftExp xsi:type="aql-dml-exp:Path">
+          <components>hc</components>
+        </leftExp>
+        <rightExp xsi:type="aql-dml-exp:Path">
+          <components>hf</components>
+        </rightExp>
+      </joinOn>
+      <joinOn xsi:type="aql-dml-exp:BinaryExp" symbol="=">
+        <leftExp xsi:type="aql-dml-exp:Path">
+          <components>dc</components>
+        </leftExp>
+        <rightExp xsi:type="aql-dml-exp:Path">
+          <components>df</components>
+        </rightExp>
+      </joinOn>
+    </join>
+    <attributes xsi:type="aql-dml-exp:Path">
+      <components>a</components>
+    </attributes>
+    <attributes xsi:type="aql-dml-exp:Path">
+      <components>b</components>
+    </attributes>
+    <attributes xsi:type="aql-dml-exp:Path">
+      <components>c</components>
+    </attributes>
+    <attributes xsi:type="aql-dml-exp:Path">
+      <components>d</components>
+    </attributes>
+    <attributes xsi:type="aql-dml-exp:Path">
+      <components>e</components>
+    </attributes>
+    <attributes xsi:type="aql-dml-exp:Path">
+      <components>f</components>
+    </attributes>
+  </statements>
+</aql-dml:AQLRoot>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="ObjectModelDML2AQLApply" default="all" basedir=".">
+
+	<property name="metamodelPath" value="metamodel/" />
+	<property name="synthesisPath" value="../org.ipiran.language.Synthesis/metamodel/" />	
+	<property name="sourcePath" value="../Synthesis EMFText Application/QuerySample/" />
+	<property name="targetPath" value="sample/" />
+	<property name="transformationPath" value="transformation/" />	
+	
+	<property name="sourceName" value="query" />
+	<property name="targetName" value="${sourceName}-aql" />
+	<property name="transformationName" value="ObjectModelDML2AQL" />	
+	
+	
+	<target name="all">
+		<!-- Loading metamodels -->		
+		<atl.loadModel name="Synthesis" metamodel="%EMF" path="${synthesisPath}Synthesis.ecore"/>
+		<atl.loadModel name="AQL" metamodel="%EMF" path="${metamodelPath}AQL.ecore"/>
+		
+		<!-- Loading input model -->
+		<atl.loadModel name="${sourceName}" metamodel="Synthesis" path="${sourcePath}${sourceName}.xmi" />
+  
+		<atl.launch path="${transformationPath}${transformationName}.asm">
+		    <inmodel name="IN" model="${sourceName}"/>
+			<outModel name="OUT" model="${targetName}" metamodel="AQL" />
+		</atl.launch>
+		
+		<atl.saveModel model="${targetName}" path="${targetPath}${targetName}.ecore"/>		
+
+		<atl.launch  path="${transformationPath}AQL2Text.asm">
+			<inmodel name="IN" model="${targetName}"/>			
+			<library name="AQL2String" path="${transformationPath}AQL2String.asm"/>
+		</atl.launch>				
+		
+	</target>
+
+</project>

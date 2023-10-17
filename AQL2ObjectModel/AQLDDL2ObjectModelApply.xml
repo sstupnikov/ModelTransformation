@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<project name="AQLDDL2ObjectModelApply" default="all" basedir=".">
+
+	<property name="metamodelPath" value="metamodel/" />
+	<property name="synthesisPath" value="../org.ipiran.language.Synthesis/metamodel/" />
+	<property name="sourcePath" value="../AQL Editor Application/AQL Sample/" />
+	<property name="targetPath" value="sample/" />
+	<property name="transformationPath" value="transformation/" />	
+	
+	<property name="sourceName" value="astronomy" />
+	<property name="targetName" value="${sourceName}-syn" />
+	<property name="transformationName" value="AQLDDL2ObjectModel" />	
+	
+	
+	<target name="all">
+		<!-- Loading metamodels -->		
+		<atl.loadModel name="Synthesis" metamodel="%EMF" path="${synthesisPath}Synthesis.ecore"/>
+		<atl.loadModel name="AQL" metamodel="%EMF" path="${metamodelPath}AQL.ecore"/>
+		
+		<!-- Loading input model -->
+		<atl.loadModel name="${sourceName}" metamodel="AQL" path="${sourcePath}${sourceName}.aqlddl" />
+  
+		<atl.launch path="${transformationPath}${transformationName}.asm">
+		    <inmodel name="IN" model="${sourceName}"/>
+			<outModel name="OUT" model="${targetName}" metamodel="Synthesis" />
+		</atl.launch>
+		
+		<atl.saveModel model="${targetName}" path="${targetPath}${targetName}.ecore"/>		
+		
+	</target>
+
+</project>

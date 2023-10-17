@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="AQL"
+    nsURI="http://www.scidb.org/aql/" nsPrefix="aql">
+  <eSubpackages name="AQLDDL" nsURI="http://www.scidb.org/aql/ddl/" nsPrefix="aql-ddl">
+    <eClassifiers xsi:type="ecore:EClass" name="NamedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Database" eSuperTypes="#//AQLDDL/NamedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="arrays" upperBound="-1"
+          eType="#//AQLDDL/Array" containment="true" eOpposite="#//AQLDDL/Array/database"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Array" eSuperTypes="#//AQLDDL/NamedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="database" lowerBound="1"
+          eType="#//AQLDDL/Database" eOpposite="#//AQLDDL/Database/arrays"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="dimensions" upperBound="-1"
+          eType="#//AQLDDL/Dimension" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" lowerBound="1"
+          upperBound="-1" eType="#//AQLDDL/Attribute" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="TypedElement" abstract="true" eSuperTypes="#//AQLDDL/NamedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//AQLDDL/Datatypes/Datatype"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Attribute" eSuperTypes="#//AQLDDL/TypedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isNullable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="default" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Dimension" eSuperTypes="#//AQLDDL/TypedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="end" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="chunkSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="chunkOverlap" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eClassifiers>
+    <eSubpackages name="Datatypes" nsURI="http://www.scidb.org/aql/ddl/datatypes/"
+        nsPrefix="aqlddl-datatypes">
+      <eClassifiers xsi:type="ecore:EClass" name="Datatype" abstract="true"/>
+      <eClassifiers xsi:type="ecore:EClass" name="bool_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="char_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="datetime_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="datetimez_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="double_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="float_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="int8_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="int16_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="int32_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="int64_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="uint8_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="uint16_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="uint32_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="uint64_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+      <eClassifiers xsi:type="ecore:EClass" name="string_aql" eSuperTypes="#//AQLDDL/Datatypes/Datatype"/>
+    </eSubpackages>
+  </eSubpackages>
+  <eSubpackages name="AQLDML" nsURI="http://www.scidb.org/aql/dml/" nsPrefix="aql-dml">
+    <eClassifiers xsi:type="ecore:EClass" name="AQLRoot">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
+          eType="#//AQLDML/Statement" containment="true" eOpposite="#//AQLDML/Statement/root"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Aliasable" abstract="true">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="alias" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Statement" abstract="true" eSuperTypes="#//AQLDML/Aliasable">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="root" eType="#//AQLDML/AQLRoot"
+          eOpposite="#//AQLDML/AQLRoot/statements"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Drop" eSuperTypes="#//AQLDML/Statement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="arrayName" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Select" abstract="true" eSuperTypes="#//AQLDML/Statement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="into" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="fromClause" upperBound="-1"
+          eType="#//AQLDML/Aliasable" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="where" upperBound="-1"
+          eType="#//AQLDML/Expression/Expression" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="join" eType="#//AQLDML/Aliasable"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="joinOn" upperBound="-1"
+          eType="#//AQLDML/Expression/Expression" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="groupBy" upperBound="-1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="regrid" upperBound="-1"
+          eType="#//AQLDML/RegridPartition" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="window" upperBound="-1"
+          eType="#//AQLDML/WindowPartition" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SelectAllAttributes" eSuperTypes="#//AQLDML/Select"/>
+    <eClassifiers xsi:type="ecore:EClass" name="SelectAttributes" eSuperTypes="#//AQLDML/Select">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="attributes" lowerBound="1"
+          upperBound="-1" eType="#//AQLDML/Expression/Expression" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RegridPartition">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="dim" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="WindowPartition">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="dim" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="preceding" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="following" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Update" eSuperTypes="#//AQLDML/Statement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="array" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="setStatements" lowerBound="1"
+          eType="#//AQLDML/SetStatement" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="where" upperBound="-1"
+          eType="#//AQLDML/Expression/Expression" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SetStatement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="attribute" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1"
+          eType="#//AQLDML/Expression/Expression" containment="true"/>
+    </eClassifiers>
+    <eSubpackages name="Expression" nsURI="http://www.scidb.org/aql/dml/expression/"
+        nsPrefix="aql-dml-exp">
+      <eClassifiers xsi:type="ecore:EClass" name="Expression" abstract="true" eSuperTypes="#//AQLDML/Aliasable"/>
+      <eClassifiers xsi:type="ecore:EClass" name="Path" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="components" lowerBound="1"
+            upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="BooleanValue" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="IntegerValue" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="FloatValue" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="StringValue" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DatetimeValue" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="year" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="month" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="day" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="hour" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="minute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="second" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DatetimezValue" eSuperTypes="#//AQLDML/Expression/DatetimeValue">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="hourOffset" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="minuteOffset" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="BinaryExp" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="symbol" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="leftExp" lowerBound="1"
+            eType="#//AQLDML/Expression/Expression" containment="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="rightExp" lowerBound="1"
+            eType="#//AQLDML/Expression/Expression" containment="true"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="BracketExp" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="exp" lowerBound="1"
+            eType="#//AQLDML/Expression/Expression" containment="true"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="UnaryExp" eSuperTypes="#//AQLDML/Expression/Expression">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="exp" lowerBound="1"
+            eType="#//AQLDML/Expression/Expression" containment="true"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="FunctionExp" eSuperTypes="#//AQLDML/Expression/Expression #//AQLDML/Aliasable">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+            eType="#//AQLDML/Expression/Expression" containment="true"/>
+      </eClassifiers>
+    </eSubpackages>
+  </eSubpackages>
+</ecore:EPackage>

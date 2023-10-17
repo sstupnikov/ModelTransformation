@@ -1,0 +1,6 @@
+query 
+	AQL2Text = 
+		AQL!AQLRoot.allInstances()->
+			collect(c| c.toString().writeTo('E:\Projects\Indigo Projects\AQL2ObjectModel\sample\sample.aql'))
+	;
+uses AQL2String;

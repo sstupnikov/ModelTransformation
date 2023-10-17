@@ -1,0 +1,135 @@
+-- @path Synthesis=/AQL2ObjectModel/metamodel/Synthesis.ecore
+-- @path AQL=/AQL2ObjectModel/metamodel/AQL.ecore
+
+module AQLDDL2ObjectModel;
+create OUT : Synthesis from IN : AQL;
+
+-----------------------
+-- RULES
+-----------------------
+
+rule Database{
+	from db: AQL!Database
+	to m: Synthesis!ModuleDef(
+		name <- db.name,
+		containedClasses <- db.arrays
+	)
+}
+
+rule Array{
+	from arr: AQL!Array
+	to cl: Synthesis!ClassDef(
+		name <- arr.name,
+		instanceType <- instType
+	),
+	instType: Synthesis!ADTDef(
+		name <- arr.name + 'InstanceType',
+		attributes <- arr.attributes,
+		attributes <- arr.dimensions
+    )
+}
+
+rule Attribute{
+	from attr: AQL!Attribute
+	to typeAttr: Synthesis!AttributeDef(
+		name <- attr.name,
+		type <- attr.type
+	)
+}
+
+rule Dimension{
+	from dim: AQL!Dimension
+	to typeAttr: Synthesis!AttributeDef(
+		name <- dim.name,
+		type <- dim.type
+	)
+}
+
+rule StringAQL{
+	from aqlType: AQL!string_aql
+	to objectType: Synthesis!StringDef
+}
+
+rule BoolAQL{
+	from aqlType: AQL!bool_aql
+	to objectType: Synthesis!BooleanDef
+}
+
+rule DatetimeAQL{
+	from aqlType: AQL!datetime_aql
+	to objectType: Synthesis!TimeDef
+}
+
+rule DoubleAQL{
+	from aqlType: AQL!double_aql
+	to objectType: Synthesis!RealDef(
+		precision <- 64
+	)
+}
+
+rule FloatAQL{
+	from aqlType: AQL!float_aql
+	to objectType: Synthesis!RealDef(
+		precision <- 32
+	)
+}
+
+rule Int8AQL{
+	from aqlType: AQL!int8_aql
+	to objectType: Synthesis!IntegerDef(
+		precision <- 8
+	)
+}
+
+rule Int16AQL{
+	from aqlType: AQL!int16_aql
+	to objectType: Synthesis!IntegerDef(
+		precision <- 16
+	)
+}
+
+rule Int32AQL{
+	from aqlType: AQL!int32_aql
+	to objectType: Synthesis!IntegerDef(
+		precision <- 32
+	)
+}
+
+rule Int64AQL{
+	from aqlType: AQL!int64_aql
+	to objectType: Synthesis!IntegerDef(
+		precision <- 64
+	)
+}
+
+rule UInt8AQL{
+	from aqlType: AQL!uint8_aql
+	to objectType: Synthesis!IntegerDef(
+		precision <- 8,
+		unsigned <- true
+	)
+}
+
+rule UInt16AQL{
+	from aqlType: AQL!uint16_aql
+	to objectType: Synthesis!IntegerDef(
+		precision <- 16,
+		unsigned <- true
+	)
+}
+
+rule UInt32AQL{
+	from aqlType: AQL!uint32_aql
+	to objectType: Synthesis!IntegerDef(
+		precision <- 32,
+		unsigned <- true
+	)
+}
+
+rule UInt64AQL{
+	from aqlType: AQL!uint64_aql
+	to objectType: Synthesis!IntegerDef(
+		precision <- 64,
+		unsigned <- true
+	)
+}

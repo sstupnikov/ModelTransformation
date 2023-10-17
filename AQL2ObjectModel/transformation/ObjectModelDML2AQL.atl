@@ -1,0 +1,333 @@
+-- @path Synthesis=/AQL2ObjectModel/metamodel/Synthesis.ecore
+ 
+-- @path AQL=/AQL2ObjectModel/metamodel/AQL.ecore
+
+module ObjectModelDML2AQL;
+create OUT : AQL from IN : Synthesis;
+
+-----------------------
+-- RULES
+-----------------------
+
+-- The rule to be transformed into AQL is the only rule of implementation program of 'query' function of mudule.
+rule Module2AQLRoot{
+	from m: Synthesis!ModuleDef
+	to root: AQL!AQLRoot(
+		statements <- m.containedFunctions->any(f | f.name = 'query').implementation.program.rules
+	)
+	do{
+		let s: String = 'Module ' + m.name in s.println(); -- Debug
+	}
+}
+
+-- Rule head is a collection predicate.
+-- Rule body is a conjunction of atoms.
+rule Rule2SelectStatement{
+	from r: Synthesis!Rule(
+		r.head.isCollectionPredicate and
+		r.body.isConjunction
+	)
+	using{
+		predicates: Set(Synthesis!Atom) = r.body.formula.toConjunctSet;
+		conditions: Set(Synthesis!RelationPredicate) = predicates->select(p | p.oclIsTypeOf(Synthesis!RelationPredicate) and not(p.isAttributeEquality));
+		joinOnPredicates: Set(Synthesis!RelationPredicate) = predicates->select(p | p.isAttributeEquality);
+		collectionPredicates: Set(Synthesis!Atom) = predicates->select(p | p.oclIsTypeOf(Synthesis!Atom));
+		
+		-- Aux variables
+		nonProcessedJoinOns: Set(Synthesis!RelationPredicate) = joinOnPredicates;
+		currentAtom: Synthesis!Atom = collectionPredicates->asSequence()->first();
+	}
+	to sel: AQL!SelectAttributes(
+		attributes <- r.head.terms->asSequence()->first().type.elements->
+			collect(elm | thisModule.ReductElement2SelectAttribute(elm)),
+		where <- conditions
+	)
+	do{
+		-- Process the first collection-predicate 
+		if(collectionPredicates->size() > 0){
+			sel.fromClause <- thisModule.CollectionPredicate2SelectStatement(currentAtom);
+			if(thisModule.getJoinOns(currentAtom, nonProcessedJoinOns)->notEmpty()){
+				sel.joinOn <- thisModule.getJoinOns(currentAtom, nonProcessedJoinOns)->
+					collect(eq | thisModule.AttributeEquality2Expression(eq));
+				nonProcessedJoinOns <- nonProcessedJoinOns->
+					select(j | not(thisModule.getJoinOns(currentAtom, nonProcessedJoinOns)->includes(j)));
+			}
+		}
+		let s: String = 'Select is created for atom ' + currentAtom.symbol in s.println(); -- Debug
+		
+		-- Process all the rest collection-predicates 
+		if(collectionPredicates->size() > 1){
+			let s: String = 'Join is undefined: ' + sel.join.oclIsUndefined() in s.println(); -- Debug
+			thisModule.CreateSelectAllAttributes(sel, collectionPredicates->excluding(currentAtom), nonProcessedJoinOns);
+		}
+	}
+}
+
+rule CreateSelectAllAttributes(parentSelect: AQL!Select, collectionPredicates: Set(Synthesis!Atom), nonProcessedJoinOns: Set(Synthesis!RelationPredicate)){
+	using{
+		atom: Synthesis!Atom = collectionPredicates->asSequence()->first();
+	}
+	to sel: AQL!SelectAllAttributes
+	do{
+		
+		parentSelect.join <- sel;
+		
+		sel.fromClause <- thisModule.CollectionPredicate2SelectStatement(atom);
+		if(thisModule.getJoinOns(atom, nonProcessedJoinOns)->notEmpty()){
+			sel.joinOn <- thisModule.getJoinOns(atom, nonProcessedJoinOns)->
+				collect(eq | thisModule.AttributeEquality2Expression(eq));
+		}
+		
+		let s: String = 'Select is created for atom ' + atom.symbol in s.println(); -- Debug
+		let s: String = 'Collection predicate size: ' + collectionPredicates->size() in s.println(); -- Debug
+		
+		if(collectionPredicates->size() > 1){
+			let s: String = 'Collection predicate size in if: ' + collectionPredicates->size() in s.println(); -- Debug 
+			thisModule.CreateSelectAllAttributes(sel, collectionPredicates->excluding(atom), 
+				nonProcessedJoinOns->select(j | not(thisModule.getJoinOns(atom, nonProcessedJoinOns)->includes(j))));
+		}
+		
+		let s: String = 'Create select finished for atom: ' + atom.symbol in s.println(); -- Debug
+	}
+}
+
+unique lazy rule CollectionPredicate2SelectStatement{
+	from atom: Synthesis!Atom(atom.isCollectionPredicate)
+	to sel: AQL!SelectAttributes(
+		fromClause <- path,
+		attributes <- atom.terms->asSequence()->first().type.elements->
+			collect(elm | thisModule.ReductElement2SelectAttribute(elm))
+	),
+	path: AQL!Path(components <- atom.symbol)
+	do{
+		let s: String = 'Collection Predicate ' + atom.symbol in s.println(); -- Debug
+	}
+}
+
+-- ReductElement have to have 1-component path
+unique lazy rule ReductElement2SelectAttribute{
+	from elm: Synthesis!ReductElementDef(not elm.isUniqueAttribute)
+	to p: AQL!Path(
+		components <- 
+			if elm.path->size() = 1 
+			then Set{elm.path->asSequence()->first().attribute.name}
+			else Set{} 
+			endif
+	)
+	do{
+		if(not elm.name.oclIsUndefined()){
+			p.alias <- elm.name;
+		}
+	}
+}
+
+rule Condition2Expression{
+	from rel: Synthesis!RelationPredicate(rel.isBinary and not rel.isAttributeEquality)
+	to exp: AQL!BinaryExp(
+		symbol <- rel.symbol,
+		leftExp <- rel.terms->asSequence()->first(),
+		rightExp <- rel.terms->asSequence()->last()
+	)
+}
+
+unique lazy rule AttributeEquality2Expression{
+	from rel: Synthesis!RelationPredicate(rel.isBinary and rel.isAttributeEquality)
+	to exp: AQL!BinaryExp(
+		symbol <- rel.symbol,
+		leftExp <- rel.terms->asSequence()->first(),
+		rightExp <- rel.terms->asSequence()->last()
+	)
+}
+
+rule BooleanValue{
+	from synValue: Synthesis!BooleanValueDef
+	to aqlValue: AQL!BooleanValue(
+		value <- synValue.value
+	)
+}
+
+rule IntValue{
+	from synValue: Synthesis!IntValueDef
+	to aqlValue: AQL!IntegerValue(
+		value <- synValue.value
+	)
+}
+
+rule RealValue{
+	from synValue: Synthesis!RealValueDef
+	to aqlValue: AQL!FloatValue(
+		value <- synValue.value
+	)
+}
+
+rule StringValue{
+	from synValue: Synthesis!StringValueDef
+	to aqlValue: AQL!StringValue(
+		value <- synValue.value
+	)
+}
+
+-- BracketValue is to be 1-component CompoundValue
+rule BracketValue{
+	from synValue: Synthesis!BracketValue(synValue.terms->size() = 1)
+	to aqlValue: AQL!BracketExp(
+		exp <- synValue.terms->first()
+	)
+}
+
+-- Variables with defined type (in predicate-collections) are not translated - 
+-- they are not essential
+rule Variable{
+	from var: Synthesis!Variable(
+		var.type.oclIsUndefined() and 
+		(var.termOfAtom.oclIsUndefined() or
+			not(var.termOfAtom.oclIsUndefined()) and not var.termOfAtom.oclIsTypeOf(Synthesis!Atom))
+	)
+	to p: AQL!Path(
+		components <- var.name
+	)
+}
+
+-- AdditiveOp is to be 2-component CompoundValue
+rule AdditiveOp{
+	from op: Synthesis!AdditiveOpCall(op.terms->size() = 2)
+	to exp: AQL!BinaryExp(
+		symbol <- op.name,
+		leftExp <- op.terms->first(),
+		rightExp <- op.terms->last()
+	)
+}
+
+-- MultiplicativeOp is to be 2-component CompoundValue
+rule MultiplicativeOp{
+	from op: Synthesis!MultiplicativeOpCall(op.terms->size() = 2)
+	to exp: AQL!BinaryExp(
+		symbol <- if op.name = '%' then '/' else op.name endif,
+		leftExp <- op.terms->first(),
+		rightExp <- op.terms->last()
+	)
+}
+
+rule FunctionCall{
+	from fc: Synthesis!FunctionCall(fc.oclIsTypeOf(Synthesis!FunctionCall))
+	to exp: AQL!FunctionExp(
+		name <- fc.name,
+		arguments <- fc.terms
+	)
+}
+
+
+-----------------------
+-- HELPERS
+-----------------------
+
+-- Stub for helper (no info about uniqueness is provided yet).
+-- Unique attributes (dimensions) should not be selected in AQL queries.
+helper context Synthesis!ReductElementDef def: isUniqueAttribute: Boolean =
+	false
+;
+
+-- Collection preedicate is an Atom with one Variable term typed by ReductDef.
+helper context Synthesis!Formula def: isCollectionPredicate: Boolean =
+	if self.oclIsTypeOf(Synthesis!Atom)
+	then 
+		if( not(self.symbol.oclIsUndefined()) and
+			self.terms->size() = 1 and 
+			self.terms->asSequence()->first().oclIsTypeOf(Synthesis!Variable) )  
+		then	
+			if self.terms->asSequence()->first().type.oclIsTypeOf(Synthesis!ReductDef)
+			then true
+			else false
+			endif
+		else false
+		endif
+	else false
+	endif
+;
+
+helper context Synthesis!Body def: isConjunction: Boolean =
+	if self.oclIsTypeOf(Synthesis!SimpleRuleBody)
+	then
+		if self.formula.oclIsTypeOf(Synthesis!Conjunction)
+		then true
+		else false
+		endif
+	else false
+	endif
+;
+
+-- Conjunction of multiple formulae is transformed into a set of conjunct atoms 
+-- (non-atomic formulae are ignored).
+helper context Synthesis!Conjunction def: toConjunctSet: Set(Synthesis!Atom) =
+	self.formula->iterate(f; s: Set(Synthesis!Atom) = Set{} | 
+		if f.oclIsKindOf(Synthesis!Atom) 
+		then s->including(f)
+		else
+			if f.oclIsTypeOf(Synthesis!Conjunction)
+			then s->union(f.toConjunctSet)
+			else s
+			endif				
+		endif
+		)
+;
+
+-- Attribute equity (used as join on condition) has the form 'a = b'
+helper context Synthesis!Atom def: isAttributeEquality: Boolean =
+	if (self.oclIsKindOf(Synthesis!RelationPredicate) and self.symbol = '=')
+	then 
+		if self.terms->size() = 2
+		then 
+			if self.terms->forAll(t | t.oclIsKindOf(Synthesis!Variable))
+			then true
+			else false
+			endif
+		else false
+		endif		
+	else false		
+	endif
+;
+
+helper context Synthesis!Atom def: isBinary: Boolean =
+	if self.oclIsKindOf(Synthesis!RelationPredicate)
+	then 
+		if self.terms->size() = 2
+		then true
+		else false
+		endif		
+	else false		
+	endif
+;
+
+-- Return all elements of 'attributeEqualities' such that 
+-- an attribute of collection-predicate 'atom' is contained in equality.  
+helper def: getJoinOns(atom: Synthesis!Atom, attributeEqualities: Set(Synthesis!RelationPredicate)): Set(Synthesis!RelationPredicate) =
+	if atom.isCollectionPredicate and
+		attributeEqualities->forAll(eq | eq.isAttributeEquality)
+	then 
+		attributeEqualities->
+		select(eq | atom.terms->asSequence()->first().type.elements->
+			exists(elm | elm.getName = eq.terms->asSequence()->first().name or elm.getName = eq.terms->asSequence()->last().name) )
+	else Set{}
+	endif	
+;
+
+-- If element is of form 'a', return 'a'.
+-- If element is of form 'b: a' (renaming), return 'b'.
+helper context Synthesis!ReductElementDef def: getName: String =
+	if not self.name.oclIsUndefined()
+	then self.name
+	else
+		if self.path->size() > 0
+		then
+			if not self.path->asSequence()->first().attribute.oclIsUndefined()
+			then self.path->asSequence()->first().attribute.name
+			else thisModule.emptyString
+			endif
+		else thisModule.emptyString
+		endif
+	endif
+;
+
+helper def: emptyString: String =
+	'EMPTY'
+;

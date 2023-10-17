@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:syn="http://synthesis.ipi.ac.ru/Synthesis/"
+    xmlns:syn-bit="http://synthesis.ipi.ac.ru/Synthesis/BuiltInTypes/">
+  <syn:ModuleDef name="Astronomy">
+    <containedClasses name="source" instanceType="/1"/>
+  </syn:ModuleDef>
+  <syn:ADTDef name="sourceInstanceType">
+    <attributes name="filterId" type="/4"/>
+    <attributes name="ampExposureId" type="/5"/>
+    <attributes name="ra" type="/2"/>
+    <attributes name="de" type="/3"/>
+    <attributes name="objectId" type="/6"/>
+  </syn:ADTDef>
+  <syn-bit:RealDef typeOfAttribute="/1/@attributes.2" precision="64"/>
+  <syn-bit:RealDef typeOfAttribute="/1/@attributes.3" precision="64"/>
+  <syn-bit:IntegerDef typeOfAttribute="/1/@attributes.0" precision="8"/>
+  <syn-bit:IntegerDef typeOfAttribute="/1/@attributes.1" precision="32"/>
+  <syn-bit:IntegerDef typeOfAttribute="/1/@attributes.4" precision="64"/>
+</xmi:XMI>

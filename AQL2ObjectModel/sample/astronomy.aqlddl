@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aql-ddl:Database xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aql-ddl="http://www.scidb.org/aql/ddl/" xmlns:aqlddl-datatypes="http://www.scidb.org/aql/ddl/datatypes/" name="Astronomy">
+  <arrays name="source">
+    <dimensions name="ra">
+      <type xsi:type="aqlddl-datatypes:double_aql"/>
+    </dimensions>
+    <dimensions name="de">
+      <type xsi:type="aqlddl-datatypes:double_aql"/>
+    </dimensions>
+    <dimensions name="objectId">
+      <type xsi:type="aqlddl-datatypes:int64_aql"/>
+    </dimensions>
+    <attributes name="filterId" default="">
+      <type xsi:type="aqlddl-datatypes:int8_aql"/>
+    </attributes>
+    <attributes name="ampExposureId">
+      <type xsi:type="aqlddl-datatypes:int32_aql"/>
+    </attributes>
+  </arrays>
+</aql-ddl:Database>
