@@ -1,0 +1,146 @@
+/* ArrayDM
+ * Author: ssa
+ * Creation date: 10/13/2023
+ */
+
+REFINEMENT ArrayDM
+REFINES ObjectDM
+
+SEES    
+    Context
+    
+ABSTRACT_VARIABLES
+    
+    arrayNames,
+    dimensionNames,
+    cellAttributeNames,
+    
+    arrayDimensions,
+    arrayCellAttributes,    
+    cellAtrributeType,
+    nullable,
+    dimLowerBound,
+    dimHigherBound,
+    
+    cells,
+    dimensionValue,
+    integerCellAttributeValue
+    
+INVARIANT
+    
+    arrayNames: POW(STRING_Type) &
+    dimensionNames: NAT +-> STRING_Type &
+    cellAttributeNames: NAT +-> STRING_Type &
+    
+    arrayDimensions: arrayNames --> POW(dom(dimensionNames)) &
+    arrayCellAttributes: arrayNames --> POW(dom(cellAttributeNames)) &    
+    cellAtrributeType: dom(cellAttributeNames) --> BuiltInTypes &
+    nullable: dom(cellAttributeNames) --> BOOL &
+    dimLowerBound: dom(dimensionNames) --> INT &
+    dimHigherBound: dom(dimensionNames) +-> INT &
+    
+    cells: arrayNames --> POW(NAT) & 
+    
+    /*   cellID * dimID -> dim value   */
+    dimensionValue: NAT*dom(dimensionNames) +-> INT  &
+    
+    /*   cellID * attributeID -> attribute value   */
+    integerCellAttributeValue: NAT*dom(cellAttributeNames) +-> INT &
+    
+    /* Uniqueness of dimensions */
+    !(arr, cell1, cell2).(arr: arrayNames & cell1: cells(arr) &  cell2: cells(arr) &
+        !(dim).(dim: arrayDimensions(arr) => dimensionValue(cell1, dim) = dimensionValue(cell2, dim))
+        => cell1 = cell2
+    ) &
+    
+    /* For every cell of every array: 
+       (1) all dimesions exists and
+       (2) at least one attribute is defined
+    */
+    !(arr, cell).(arr: arrayNames & cell: cells(arr) =>
+        !(dim).(dim: arrayDimensions(arr) => (cell |-> dim): dom(dimensionValue)) &
+        #(attr).(attr: arrayCellAttributes(arr) & 
+            cellAtrributeType(attr) = Integer & 
+            (cell, attr): dom(integerCellAttributeValue))
+    ) &
+    
+    /* GLUING INVARIANT*/
+    classNames = arrayNames &
+    attributeNames = dimensionNames \/ cellAttributeNames &
+    
+    !(arr, dim).(arr: arrayNames & dim: arrayDimensions(arr) =>
+        #(attr).(attr: typeAttributes(instanceType(arr)) & attr = dim &
+            attributeType(attr) = Integer)
+    ) &
+    !(arr, cattr).(arr: arrayNames & cattr: arrayCellAttributes(arr) =>
+        #(attr).(attr: typeAttributes(instanceType(arr)) & attr = cattr & 
+            attributeType(attr) = attributeType(cattr))
+    ) &
+    !(arr, cattr).(arr: arrayNames & 
+        cattr: arrayCellAttributes(arr) & cattr /: dom(nullable) => 
+        cattr: obligatory(instanceType(arr))
+    ) &
+    !(arr, dim).(arr: arrayNames & dim: arrayDimensions(arr) => 
+        dim: unique(instanceType(arr))
+    ) &
+    !(dim).(dim: dom(dimLowerBound) =>
+        dim: dom(intAttributeLowerBound) & 
+        dimLowerBound(dim) = intAttributeLowerBound(dim)
+    ) &
+    !(dim).(dim: dom(dimHigherBound) =>
+        dim: dom(intAttributeHigherBound) & 
+        dimHigherBound(dim) = intAttributeHigherBound(dim)
+    ) &
+    
+    cells = objectsOfClass &
+    
+    !(cell, dim).(cell: NAT & dim: NAT & 
+        (cell |-> dim): dom(dimensionValue) =>
+        cell: dom(integerAttributeValue(dim)) &
+        dimensionValue(cell, dim) = integerAttributeValue(dim)(cell)
+    ) &
+    
+    !(cell, cattr).(cell: NAT & cattr: NAT & 
+        (cell |-> cattr): dom(integerCellAttributeValue) =>
+        cell: dom(integerAttributeValue(cattr)) &
+        integerCellAttributeValue(cell, cattr) = integerAttributeValue(cattr)(cell)
+    ) 
+    
+    
+    
+INITIALISATION
+    
+    arrayNames := {} ||
+    dimensionNames := {} ||
+    cellAttributeNames := {} ||
+    
+    arrayDimensions := {} ||
+    arrayCellAttributes := {} ||    
+    cellAtrributeType := {} ||
+    nullable := {} ||
+    dimLowerBound := {} ||
+    dimHigherBound := {} ||
+    
+    cells := {} ||
+    dimensionValue  := {} ||
+    integerCellAttributeValue := {}
+    
+OPERATIONS
+
+    update1(cls, attr, exp, cond) =
+    PRE cls: arrayNames & attr: arrayCellAttributes(cls) & cellAtrributeType(attr) = Integer &
+        exp: INT --> INT & cond: NAT --> BOOL
+    THEN
+       integerCellAttributeValue := 
+       integerCellAttributeValue <+
+       { yy | yy: (NAT*NAT)*INT &
+           #(cell, val).(cell: cells(cls) & val: INT & yy = ((cell |-> attr)|-> val) &
+               (cond(integerCellAttributeValue(cell, attr)) = TRUE =>
+                   val = exp(integerCellAttributeValue(cell, attr))) &
+               (cond(integerCellAttributeValue(cell, attr)) = FALSE =>
+                   val = integerCellAttributeValue(cell, attr))
+           )
+       }        
+    END   
+
+ END
