@@ -1,0 +1,251 @@
+/* ObjectDM_GraphExt
+ * Author: ssa
+ * Creation date: 10/23/2023
+ */
+
+REFINEMENT ObjectDM_GraphExt
+REFINES ObjectDM_Mach_GraphExt
+
+SEES
+    Context
+    
+
+CONSTANTS
+    
+    c_edges,
+    c_vertices,
+    a_startVertex,
+    a_endVertex,
+    a_startVertexName,
+    a_endVertexName,
+    c_edges_instance_type
+    
+PROPERTIES
+    
+    c_edges: STRING_Type &
+    c_vertices: STRING_Type &
+    c_edges /= c_vertices &
+    a_startVertex: NAT &
+    a_endVertex: NAT &
+    a_startVertex /= a_endVertex &
+    a_startVertexName: STRING_Type &
+    a_endVertexName: STRING_Type &
+    a_startVertexName /= a_endVertexName &
+    c_edges_instance_type: STRING_Type
+    
+ABSTRACT_VARIABLES
+    
+    typeNames,
+    classNames,
+    attributeNames,    
+    instanceType,
+    typeAttributes,
+    attributeType,
+    unique,
+    obligatory,
+    intAttributeLowerBound,
+    intAttributeHigherBound,    
+    
+    objectIDs,
+    objectType,
+    objectsOfClass,
+    
+    stringAttributeValue,
+    booleanAttributeValue,
+    integerAttributeValue,
+    adtAttributeValue,
+    
+    subclasses,
+    superclasses,
+    
+    /*Extension for Graph DM*/
+    m_directed,
+    m_restricted,
+    m_startVertexType,
+    m_endVertexType,
+    isValidEdge
+
+   
+INVARIANT
+    
+    typeNames: POW(STRING_Type) &
+    classNames: POW(STRING_Type) &
+    
+    /* Attributes are identified by NAT ids: 
+       attributes with the same name can belong to different types.
+    */   
+    attributeNames: NAT +-> STRING_Type &
+    
+    instanceType: classNames --> typeNames &
+    
+    typeAttributes: typeNames --> POW(dom(attributeNames))  &
+    /* Every attribute belongs to some type */
+    UNION(tt).(tt: typeNames | typeAttributes(tt)) = dom(attributeNames) &
+    /* No attribute belongs to two types simultaneously */
+    !(t1, t2).(t1: typeNames & t2: typeNames => 
+        (typeAttributes(t1) /\ typeAttributes(t2) = {})) &
+    
+    attributeType: dom(attributeNames) +-> BuiltInTypes &
+    
+    /* Unique attributes of types */
+    unique: typeNames --> POW(dom(attributeNames)) & 
+    !(tt).(tt: dom(unique) => unique(tt) <: typeAttributes(tt)) &
+    
+    /* Obligatory attributes of types */    
+    obligatory: typeNames --> POW(dom(attributeNames)) &
+    !(tt).(tt: dom(obligatory) => obligatory(tt) <: typeAttributes(tt)) &    
+    
+    intAttributeLowerBound: dom(attributeNames) +-> INT &
+    !(attr).(attr: dom(intAttributeLowerBound) => 
+    	attributeType(attr) = Integer) &
+ 
+    intAttributeHigherBound: dom(attributeNames) +-> INT &
+    !(attr).(attr: dom(intAttributeHigherBound) => 
+    	attributeType(attr) = Integer) &
+
+ 
+    objectIDs: POW(NAT) &    
+    objectType: objectIDs --> typeNames &    
+    objectsOfClass: classNames --> POW(objectIDs) &
+    
+    /* A type of an object belonging to a class is the instance type of the class */
+    !(cc).(cc: classNames => 
+        !(oo).(oo: objectsOfClass(cc) => objectType(oo) = instanceType(cc))) &
+    
+    stringAttributeValue: dom(attributeNames) +-> (objectIDs +-> STRING_Type) &
+    booleanAttributeValue: dom(attributeNames) +-> (objectIDs +-> BOOL) &    
+    integerAttributeValue: dom(attributeNames) +-> (objectIDs +-> INT) & 
+    adtAttributeValue: dom(attributeNames) +-> (objectIDs +-> NAT) &
+    
+    /* Only one value function is defined for an attribute */
+    dom(adtAttributeValue) /\ dom(integerAttributeValue) = {} &
+    /* For every attribute a value function is defined */
+    dom(adtAttributeValue) \/ dom(integerAttributeValue) = dom(attributeNames) &
+    
+    /* For every obligatory attribute of an object a value of the attribute is defined */
+    !(oo, aa).(oo: dom(objectType) & aa: typeAttributes(objectType(oo)) & 
+        aa: obligatory(objectType(oo)) =>
+            (attributeType(aa) = Integer => oo: dom(integerAttributeValue(aa))) &
+            (attributeType(aa) = ADT => oo: dom(adtAttributeValue(aa)))                   
+    ) &
+    
+    /* A value of an attribute is restricted by lower and higher bounds if they are defined */
+    !(oo, aa).(oo: objectIDs & aa: typeAttributes(objectType(oo)) & 
+        oo: dom(integerAttributeValue(aa))=>        
+        (aa: dom(intAttributeLowerBound) => 
+            (integerAttributeValue(aa)(oo) >= intAttributeLowerBound(aa))) &
+        (aa: dom(intAttributeHigherBound) => 
+            (integerAttributeValue(aa)(oo) <= intAttributeHigherBound(aa)))
+    ) &
+    
+    /* An object is uniquely identified by a set of unique attributes */
+    !(oo1, oo2).(oo1: objectIDs & oo2: objectIDs & objectType(oo1) = objectType(oo2) & 
+        unique(objectType(oo1)) /= {} &
+        !(aa).(aa: unique(objectType(oo1)) => 
+            (attributeType(aa) = Integer => 
+                integerAttributeValue(aa)(oo1) = integerAttributeValue(aa)(oo2)) &
+            (attributeType(aa) = ADT => 
+                adtAttributeValue(aa)(oo1) = adtAttributeValue(aa)(oo2))                               
+        ) 
+        => 
+        oo1 = oo2        
+    )  &
+    
+    /*Subclass properties*/
+    superclasses: classNames --> POW(classNames) &
+    subclasses: classNames --> POW(classNames) &
+    !(sub, sup).(sub: classNames & sup: classNames =>
+        ((sub: subclasses(sup)) <=> (sup: superclasses(sub))) &
+        (objectsOfClass(sub) <: objectsOfClass(sup))
+    ) &
+    
+    /* Extension for Graph DM */   
+    c_edges: classNames &
+    c_vertices: classNames &
+    
+    m_directed: subclasses(c_edges) --> BOOL &
+    m_restricted: subclasses(c_edges) --> BOOL &
+    m_startVertexType: subclasses(c_edges) --> subclasses(c_vertices) &
+    m_endVertexType: subclasses(c_edges) --> subclasses(c_vertices) &
+    
+    a_startVertex |-> a_startVertexName: attributeNames &
+    a_endVertex |-> a_endVertexName: attributeNames &
+    
+    c_edges_instance_type: typeNames &
+    a_startVertex: typeAttributes(c_edges_instance_type) &
+    a_endVertex: typeAttributes(c_edges_instance_type) &
+    attributeType(a_startVertex) = ADT &
+    attributeType(a_endVertex) = ADT &
+    
+    /*Objects connecting by edges are vertices*/
+    !edg.(edg: objectsOfClass(c_edges) =>
+        adtAttributeValue(a_startVertex)(edg): objectsOfClass(c_vertices) &
+        adtAttributeValue(a_endVertex)(edg): objectsOfClass(c_vertices) 
+    ) &
+    
+    /*Vertices connected by edges are of types restricted by the edge type specification*/
+    !(cls, edg).(cls: subclasses(c_edges) & edg: objectsOfClass(cls) =>
+        (m_restricted(cls) = TRUE => 
+            adtAttributeValue(a_startVertex)(edg): objectsOfClass(m_startVertexType(cls)) &
+            adtAttributeValue(a_endVertex)(edg): objectsOfClass(m_endVertexType(cls))
+        )    
+    ) &
+    
+    /*Vertex connecting predicate*/
+    isValidEdge: objectsOfClass(c_vertices)*objectsOfClass(c_vertices) --> BOOL &
+    !(edg, v1, v2).(edg: objectsOfClass(c_edges) & 
+        v1: objectsOfClass(c_vertices) & v2: objectsOfClass(c_vertices) =>
+        ((isValidEdge(v1, v2) = TRUE) <=>  
+            (adtAttributeValue(a_startVertex)(edg) = v1 & 
+                adtAttributeValue(a_endVertex)(edg) = v2)
+        )
+    )
+   
+INITIALISATION
+       
+   typeNames := {c_edges_instance_type} ||
+   classNames := {c_edges, c_vertices} ||
+   attributeNames := {a_startVertex |-> a_startVertexName, a_endVertex |-> a_endVertexName} ||
+   instanceType := {} ||
+   typeAttributes := {c_edges_instance_type |-> {a_startVertex, a_endVertex}} ||
+   attributeType := {a_startVertex |-> ADT, a_endVertex |->ADT} ||
+   unique := {} ||   
+   obligatory := {} ||   
+   intAttributeLowerBound := {} ||  
+   intAttributeHigherBound := {} ||     
+   
+   objectIDs := {} ||
+   objectType := {} ||
+   objectsOfClass := {} ||
+   
+   stringAttributeValue:= {} ||
+   booleanAttributeValue:= {} ||   
+   integerAttributeValue:= {} ||
+   adtAttributeValue:= {} ||
+   
+   subclasses:= {} ||
+   superclasses:= {} ||
+   
+   /*Extension for Graph DM*/
+   m_directed:= {} ||
+   m_restricted:= {} ||
+   m_startVertexType:= {} ||
+   m_endVertexType:= {} ||
+   isValidEdge := {}
+
+OPERATIONS
+   deleteVertex(attr, cond) =
+   PRE
+       attr : dom(attributeNames) & cond : INT --> BOOL &
+       attributeType(attr) = Integer
+   THEN
+       objectsOfClass(c_vertices) := 
+       objectsOfClass(c_vertices) -
+       {vert | vert: objectsOfClass(c_vertices) & 
+           vert: dom(adtAttributeValue(attr))  &
+           cond(integerAttributeValue(attr)(vert)) = TRUE
+       }
+   END
+
+
+END

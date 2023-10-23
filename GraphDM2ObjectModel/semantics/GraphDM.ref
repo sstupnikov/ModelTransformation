@@ -1,0 +1,184 @@
+/* GraphDM
+ * Author: ssa
+ * Creation date: 10/23/2023
+ */
+
+REFINEMENT GraphDM
+REFINES ObjectDM_GraphExt
+
+SEES
+    Context
+    
+
+ABSTRACT_VARIABLES
+    
+    vertexTypeIDs,
+    edgeTypeIDs,
+    attributeIDs,
+    
+    typeName,
+    attributes,
+    directed,
+    restricted,
+    headType,
+    tailType,
+    
+    attributeName,
+    attributeTyping,
+    
+    vertices,
+    vertixType,
+    edges,
+    edgeType,
+    headVertix,
+    tailVertix,
+    g_integerAttributeValue
+    
+INVARIANT
+    
+    vertexTypeIDs: POW(NAT) &
+    edgeTypeIDs: POW(NAT) &
+    attributeIDs: POW(NAT) &
+    
+    vertexTypeIDs /\ edgeTypeIDs = {} &
+    
+    typeName: vertexTypeIDs \/ edgeTypeIDs --> STRING_Type &
+    attributes: vertexTypeIDs \/ edgeTypeIDs --> POW(attributeIDs) &
+    directed: edgeTypeIDs --> BOOL &
+    restricted: edgeTypeIDs --> BOOL &
+    headType: edgeTypeIDs +-> vertexTypeIDs &
+    tailType: edgeTypeIDs +-> vertexTypeIDs &
+    
+    attributeName: attributeIDs --> STRING_Type &
+    attributeTyping: attributeIDs --> BuiltInTypes &
+    
+    vertices: POW(NAT) &
+    vertixType: vertices --> vertexTypeIDs &
+    edges: POW(NAT) &
+    edgeType: edges --> edgeTypeIDs &
+    headVertix: edges --> vertices &
+    tailVertix: edges --> vertices &
+    g_integerAttributeValue: (vertices \/ edges)*attributeIDs +-> INT &
+    
+    /* For restricted edges the head and the tail are defined */
+    !(type).(type: edgeTypeIDs =>
+        (restricted(type) = TRUE => type: dom(headType) & type: dom(tailType)) &
+        (restricted(type) = FALSE => type /: dom(headType) & type /: dom(tailType))   	) &
+    
+    /* Integer attribute function is defined only for attributes of Integer type.
+    
+    An attribute for which Integer attribute function is defined, belongs to type
+    of the corresponding vertex or edge.
+    */
+    !(vert, attr).(vert: vertices & attr: attributeIDs => 
+        ((vert |-> attr) : dom(g_integerAttributeValue) => attributeTyping(attr) = Integer) &
+        attr: attributes(vertixType(vert))
+    ) &   
+    !(edg, attr).(edg: edges & attr: attributeIDs => 
+        ((edg |-> attr) : dom(g_integerAttributeValue) => attributeTyping(attr) = Integer) &
+        attr: attributes(edgeType(edg))
+    ) &
+    
+    /*Consistency of vertex types restricted for an edge type in a schema and
+    actual vertex types of edges in a database 
+    */
+    !edg.(edg: edges =>
+        (restricted(edg) = TRUE => 
+            vertixType(headVertix(edg)) = headType(edgeType(edg)) & 
+            vertixType(tailVertix(edg)) = tailType(edgeType(edg))
+        )
+    ) &
+    
+    /*GLUING INVARIANT*/
+    ran(typeName) = classNames - {c_edges, c_vertices} &
+    
+    !graph_type.(graph_type: dom(typeName) => 
+        #adt.(adt: typeNames & instanceType(typeName(graph_type)) = adt) ) &
+    
+    !(graph_type, attr).(graph_type: dom(typeName) & attr: attributeIDs =>
+        ((attr: attributes(graph_type)) <=> 
+            (attr: typeAttributes(instanceType(typeName(graph_type)))) )
+    ) &
+    
+    attributeIDs = dom(attributeNames) - {a_startVertex, a_endVertex} &
+    !attr.(attr: attributeIDs => 
+        attributeName(attr) = attributeNames(attr) &
+        attributeTyping(attr) = attributeType(attr)
+    ) &
+    
+    !et.(et: edgeTypeIDs => 
+        (directed(et) = TRUE)<=>(m_directed(typeName(et)) = TRUE) ) &
+    
+    !et.(et: edgeTypeIDs => 
+        (restricted(et) = TRUE)<=>(m_restricted(typeName(et)) = TRUE) )  &
+    
+	!et.(et: edgeTypeIDs => 
+        typeName(headType(et)) = m_startVertexType(typeName(et))  )  &    
+    
+	!et.(et: edgeTypeIDs => 
+        typeName(tailType(et)) = m_endVertexType(typeName(et))  )  &     
+    
+    vertices = objectsOfClass(c_vertices) &
+    edges = objectsOfClass(c_edges) &
+    
+    !vert.(vert: vertices => 
+        ((vert: objectsOfClass(typeName(vertixType(vert)))) <=> (vert: vertices))
+    ) &
+    
+    !edg.(edg: edges => 
+        ((edg: objectsOfClass(typeName(edgeType(edg)))) <=> (edg: edges))
+    ) &
+    
+    !edg.(edg: edges => 
+        headVertix(edg) = adtAttributeValue(a_startVertex)(edg) &
+        tailVertix(edg) = adtAttributeValue(a_endVertex)(edg)
+    ) &
+    
+    !(vert, attr).(vert: vertices & attr: attributeIDs => 
+        ((vert |-> attr) : dom(g_integerAttributeValue) => 
+            g_integerAttributeValue(vert, attr) = integerAttributeValue(attr)(vert)) 
+    ) &   
+    !(edg, attr).(edg: edges & attr: attributeIDs => 
+        ((edg |-> attr) : dom(g_integerAttributeValue) => 
+            g_integerAttributeValue(edg, attr) = integerAttributeValue(attr)(edg)) 
+    ) 
+    
+    
+    
+INITIALISATION
+    
+    vertexTypeIDs := {} ||
+    edgeTypeIDs := {} ||
+    attributeIDs := {} ||
+    
+    typeName := {} ||
+    attributes := {} ||
+    directed := {} ||
+    restricted := {} ||
+    headType := {} ||
+    tailType := {} ||
+    
+    attributeName := {} ||
+    attributeTyping := {} ||
+    
+    vertices := {} ||
+    vertixType := {} ||
+    edges := {} ||
+    edgeType := {} ||
+    headVertix := {} ||
+    tailVertix := {} ||
+    g_integerAttributeValue := {}
+    
+OPERATIONS
+    
+    deleteVertex(attr, cond) =
+    PRE attr: attributeIDs & cond: INT --> BOOL &        
+        attributeTyping(attr) = Integer 
+    THEN
+        vertices := 
+        vertices - 
+        {vert | vert: vertices & attr: attributes(vertixType(vert)) & 
+            cond(g_integerAttributeValue(vert, attr)) = TRUE }
+    END
+    
+END
