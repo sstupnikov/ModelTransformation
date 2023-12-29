@@ -1,0 +1,102 @@
+REFINEMENT WineOntology
+
+SETS Ind
+
+VARIABLES
+
+Wine, 
+IceWine, 
+DessertWine, 
+hasColor,
+hasFlavor,
+hasSugar,
+WineColor, 
+WineFlavor, 
+WineSugar
+
+INVARIANT
+
+Wine : POW(Ind) & 
+(!(xx).(xx: Wine => card(hasColor[{xx}]) >= 1) & 
+(!(xx).(xx: Wine => card(hasFlavor[{xx}]) <= 1) & 
+!(xx).(xx: Wine => card(hasSugar[{xx}]) = 1))) & 
+(IceWine : POW(Ind) & 
+(DessertWine : POW(Ind) & 
+DessertWine <: Wine & 
+(hasColor : Wine <-> WineColor & 
+(hasFlavor : Wine <-> WineFlavor & 
+(hasSugar : Wine <-> WineSugar & 
+(WineColor : POW(Ind) & 
+(WineFlavor : POW(Ind) & 
+WineSugar : POW(Ind))))))))
+
+INITIALISATION
+
+Wine := {} || 
+IceWine := {} || 
+DessertWine := {} || 
+hasColor := {} ||
+hasFlavor := {} ||
+hasSugar := {} ||
+WineColor := {} || 
+WineFlavor := {} || 
+WineSugar := {} || 
+skip
+
+OPERATIONS
+
+Wine(ind) =
+PRE ind: Ind
+THEN
+  Wine:= Wine \/ {ind}
+END;
+
+IceWine(ind) =
+PRE ind: Ind
+THEN
+  IceWine:= IceWine \/ {ind}
+END;
+
+DessertWine(ind) =
+PRE ind: Ind
+THEN
+  DessertWine:= DessertWine \/ {ind}
+END;
+
+hasColor(ind, val) =
+PRE ind: Wine & val: WineColor
+THEN
+  hasColor(ind):= val
+END;
+
+hasFlavor(ind, val) =
+PRE ind: Wine & val: WineFlavor
+THEN
+  hasFlavor(ind):= val
+END;
+
+hasSugar(ind, val) =
+PRE ind: Wine & val: WineSugar
+THEN
+  hasSugar(ind):= val
+END;
+
+WineColor(ind) =
+PRE ind: Ind
+THEN
+  WineColor:= WineColor \/ {ind}
+END;
+
+WineFlavor(ind) =
+PRE ind: Ind
+THEN
+  WineFlavor:= WineFlavor \/ {ind}
+END;
+
+WineSugar(ind) =
+PRE ind: Ind
+THEN
+  WineSugar:= WineSugar \/ {ind}
+END
+
+END

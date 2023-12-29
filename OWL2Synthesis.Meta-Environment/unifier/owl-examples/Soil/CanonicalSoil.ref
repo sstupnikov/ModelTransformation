@@ -1,0 +1,171 @@
+/* CanonicalSoil
+ * Author: ssa
+ * Creation date: 12/27/2023
+ */
+
+REFINEMENT CanonicalSoil
+REFINES AbstractSoil
+
+SEES
+
+    SoilContext
+
+ABSTRACT_CONSTANTS 
+  ext_GL_Plot, ext_GL_Site, ext_FeatureOfInterest, 
+  ext_ObservableProperty, 
+  ext_Result, ext_CropClassValueCode,
+  ext_Observation, ext_CropClass,
+  
+  cropClassPropertyCan,
+  BarleyCan,
+  RyeCan
+  
+PROPERTIES
+  ext_GL_Plot: POW(Obj) & ext_GL_Site: POW(Obj) & ext_FeatureOfInterest: POW(Obj) & 
+  ext_ObservableProperty: POW(Obj) & 
+  ext_Result: POW(Obj) & ext_CropClassValueCode: POW(Obj) &
+  ext_Observation: POW(Obj) & ext_CropClass: POW(Obj) &
+
+  ext_GL_Plot <: ext_FeatureOfInterest &
+  ext_GL_Site <: ext_FeatureOfInterest &
+  ext_CropClassValueCode <: ext_Result &
+  ext_CropClass <: ext_Observation &
+  
+  cropClassPropertyCan: ext_ObservableProperty &
+  BarleyCan: ext_CropClassValueCode &
+  RyeCan: ext_CropClassValueCode  
+
+VARIABLES         
+  gl_plot, gl_site, featureOfInterest, observableProperty, 
+  result, cropClassValueCode,
+  observation, cropClass,
+  
+  hasResultCan,
+  hasFeatureOfInterestCan,
+  observedPropertyCan
+  
+
+INVARIANT
+  gl_plot: POW(ext_GL_Plot) &
+  gl_site: POW(ext_GL_Site) &
+  featureOfInterest: POW(ext_FeatureOfInterest) &
+  observableProperty: POW(ext_ObservableProperty) & 
+  result: POW(ext_Result) &
+  cropClassValueCode: POW(ext_CropClassValueCode) &
+  observation: POW(ext_Observation) &
+  cropClass: POW(ext_CropClass) &
+
+  gl_plot <: featureOfInterest &
+  gl_site <: featureOfInterest &
+  cropClassValueCode <: result &
+  cropClass <: observation &
+
+  hasResultCan: ext_Observation +-> POW(ext_Result) & 
+  //hasResultCan: FIN(hasResultCan) &
+  
+  hasFeatureOfInterestCan: ext_Observation +-> ext_FeatureOfInterest & 
+  //hasFeatureOfInterestCan: FIN(hasFeatureOfInterestCan) &
+  
+  observedPropertyCan: ext_Observation +-> ext_ObservableProperty &
+  //observedPropertyCan: FIN(observedPropertyCan) &
+  
+  !(obs).(obs: dom(hasResultCan) => card(hasResultCan(obs)) >= 1) &
+
+  !(obs).(obs: ext_Observation & obs: observation => obs: dom(hasResultCan)) &
+  !(obs).(obs: ext_Observation & obs: observation => obs: dom(hasFeatureOfInterestCan)) & 
+  !(obs).(obs: ext_Observation & obs: observation => obs: dom(observedPropertyCan)) &   
+  
+  !(obs).(obs: ext_Observation & obs: observation => hasResultCan(obs) <: result)  &
+  !(obs).(obs: ext_Observation & obs: observation => 
+      hasFeatureOfInterestCan(obs): featureOfInterest) &
+  !(obs).(obs: ext_Observation & obs: observation => 
+      observedPropertyCan(obs): observableProperty) &
+  
+  !(cc).(cc: ext_CropClass & cc: cropClass => 
+      #(res).(res: ext_Result & res: hasResultCan(cc) & res: cropClassValueCode ) ) &
+  !(cc).(cc: ext_CropClass & cc: cropClass => 
+      hasFeatureOfInterestCan(cc): (gl_plot \/ gl_site) ) &
+  !(cc).(cc: ext_CropClass & cc: cropClass => 
+      observedPropertyCan(cc) = cropClassPropertyCan)
+  
+  
+
+INITIALISATION    
+  gl_plot := {}
+  ||
+  gl_site := {}
+  ||
+  featureOfInterest := {}
+  ||
+  observableProperty := {cropClassPropertyCan}
+  ||
+  result := {BarleyCan, RyeCan}
+  ||
+  cropClassValueCode := {BarleyCan, RyeCan}
+  ||
+  observation := {}
+  ||
+  cropClass := {}
+  ||
+  hasResultCan := {}
+  ||
+  hasFeatureOfInterestCan := {}
+  ||
+  observedPropertyCan := {}  
+
+OPERATIONS
+include_Observation(ind, results, foi, op)=
+PRE ind: ext_Observation & 
+    results: POW(ext_Result) & results <: result & results: FIN(results) & card(results) >= 1 &
+    foi: ext_FeatureOfInterest & foi: featureOfInterest &
+    op: ext_ObservableProperty & op: observableProperty
+THEN
+ hasResultCan(ind) := results ||
+ hasFeatureOfInterestCan(ind) := foi ||
+ observedPropertyCan(ind) := op ||
+ observation := observation \/ {ind}
+END;
+
+include_CropClass(ind, results, foi, op)=
+PRE ind: ext_Observation & 
+    results: POW(ext_Result) & results <: result & results: FIN(results) & card(results) >= 1 &
+    #(res).(res: ext_Result & res: results & res: cropClassValueCode) &
+    foi: ext_FeatureOfInterest & foi: featureOfInterest &
+    foi: gl_plot \/ gl_site &
+    op: ext_ObservableProperty & op: observableProperty &
+    op = cropClassPropertyCan
+THEN
+ hasResultCan(ind) := results ||
+ hasFeatureOfInterestCan(ind) := foi ||
+ observedPropertyCan(ind) := op ||
+ cropClass := cropClass \/ {ind} ||
+ observation := observation \/ {ind} 
+END;
+
+set_hasResult(ind, val)=
+PRE ind: ext_Observation & ind: observation &
+    val: POW(ext_Result) & val <: result & val: FIN(val) & card(val) >= 1 &
+    (ind: ext_CropClass & ind: cropClass => 
+        #(res).(res: ext_Result & res: val & res: cropClassValueCode))
+THEN
+ hasResultCan(ind) := val
+END;
+
+set_featureOfInterest(ind, val)=
+PRE ind: ext_Observation & ind: observation &
+    val: ext_FeatureOfInterest & val: featureOfInterest &    
+    (ind: ext_CropClass & ind: cropClass => val: gl_plot \/ gl_site)
+THEN
+ hasFeatureOfInterestCan(ind):= val
+END;
+
+
+set_observedProperty(ind, val)=
+PRE ind: ext_Observation & ind: observation &
+    val: ext_ObservableProperty & val: observableProperty &
+    (ind: ext_CropClass & ind: cropClass => val = cropClassPropertyCan)
+THEN
+ observedPropertyCan(ind):= val
+END
+
+END

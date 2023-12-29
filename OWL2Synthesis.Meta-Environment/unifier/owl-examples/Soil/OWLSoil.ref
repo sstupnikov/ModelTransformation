@@ -1,0 +1,168 @@
+/* OWLSoil
+ * Author: ssa
+ * Creation date: 12/28/2023
+ */
+
+REFINEMENT OWLSoil
+REFINES CanonicalSoil
+
+SEES
+
+    SoilContext
+
+ABSTRACT_CONSTANTS
+
+    cropClassProperty,
+    Barley,
+    Rye
+
+PROPERTIES
+    
+    cropClassProperty: Ind &
+    Barley: Ind &
+    Rye: Ind &
+
+    Barley = BarleyCan & Rye = RyeCan &
+    cropClassProperty = cropClassPropertyCan
+    
+VARIABLES
+    
+    GL_Plot, GL_Site, FeatureOfInterest, ObservableProperty,
+    Result, CropClassValueCode,
+    Observation, CropClass,
+    
+    hasResult, hasFeatureOfInterest, observedProperty  
+
+INVARIANT 
+    
+    GL_Plot: POW(Ind) & GL_Site: POW(Ind) & FeatureOfInterest: POW(Ind) & 
+    GL_Plot <: FeatureOfInterest &
+    GL_Site <: FeatureOfInterest &
+
+    ObservableProperty: POW(Ind) & Result: POW(Ind) & 
+    
+    CropClassValueCode <: Result &
+    Observation: POW(Ind) &  
+    CropClass <: Observation &
+    
+    hasResult: Observation <-> Result &
+    //hasResult: FIN(hasResult) &
+    !(obs).(obs: Observation => card(hasResult[{obs}]) >= 1 ) &
+    
+    hasFeatureOfInterest: Observation <-> FeatureOfInterest &
+    //hasFeatureOfInterest: FIN(hasFeatureOfInterest) &
+    !(obs).(obs: Observation => card(hasFeatureOfInterest[{obs}]) = 1 ) &
+    
+    observedProperty: Observation <-> ObservableProperty &
+    //observedProperty: FIN(observedProperty) &
+    !(obs).(obs: Observation => card(observedProperty[{obs}]) = 1 ) &
+    
+    CropClass <: { xx | xx: Ind & #(yy).( (xx|->yy): hasResult  & yy: CropClassValueCode ) } &
+    
+    CropClass <: { xx | xx: Ind & !(yy).( yy: Ind & (xx|->yy): hasFeatureOfInterest => yy: GL_Plot \/ GL_Site ) } &
+    
+    CropClass <: { xx | xx: Ind & (xx|->cropClassProperty): observedProperty } &
+    
+    
+    
+    GL_Plot = gl_plot & GL_Site = gl_site & FeatureOfInterest = featureOfInterest &
+    ObservableProperty = observableProperty &
+    Result = result &  CropClassValueCode = cropClassValueCode &
+    Observation = observation & CropClass = cropClass  &
+    
+    
+    !(ind, val).(ind: Ind & val: POW(Result) => 
+           ((hasResult[{ind}] = val) <=> (hasResultCan(ind) = val))) &
+    !(ind, val).(ind: Ind & val: FeatureOfInterest => 
+           (((ind|->val): hasFeatureOfInterest) <=> (hasFeatureOfInterestCan(ind) = val))) &
+    !(ind, val).(ind: Ind & val: ObservableProperty => 
+           (((ind|->val): observedProperty) <=> (observedPropertyCan(ind) = val))) 
+     
+        
+    
+
+INITIALISATION
+    
+    GL_Plot:= {}
+    ||
+    GL_Site:= {}
+    ||
+    FeatureOfInterest:= {}
+    ||
+    ObservableProperty:= { cropClassProperty }
+    ||
+    Result:= { Barley, Rye }
+    ||
+    CropClassValueCode:= { Barley, Rye }
+    ||
+    Observation:= {}
+    ||
+    CropClass:= {}
+    ||
+    hasResult:= {}
+    ||
+    hasFeatureOfInterest:= {}
+    ||
+    observedProperty:= {}
+
+
+OPERATIONS
+include_Observation(ind, results, foi, op)=
+PRE ind: Ind & 
+    results: POW(Result) & card(results) >= 1 &
+    foi: FeatureOfInterest &
+    op: ObservableProperty
+THEN
+ hasResult:= (hasResult - ({ind}<|hasResult)) \/ { pp | #(yy).(yy: results & pp = ind|->yy) } ||
+ hasFeatureOfInterest(ind) := foi ||
+ observedProperty(ind) := op ||
+ Observation := Observation \/ {ind}
+END;
+
+
+include_CropClass(ind, results, foi, op)=
+PRE ind: Ind & 
+    results: POW(Result) & card(results) >= 1 &
+    #(res).(res: Result & res: CropClassValueCode) &
+    foi: FeatureOfInterest &
+    foi: GL_Plot \/ GL_Site &
+    op: ObservableProperty &
+    op = cropClassProperty
+THEN
+ hasResult:= (hasResult - ({ind}<|hasResult)) \/ { pp | #(yy).(yy: results & pp = ind|->yy) } ||
+ hasFeatureOfInterest(ind) := foi ||
+ observedProperty(ind) := op ||
+ CropClass := CropClass \/ {ind} ||
+ Observation := Observation \/ {ind} 
+END;
+
+
+set_hasResult(ind, val)=
+PRE ind: Observation &
+    val: POW(Result) & card(val) >= 1 &
+    (ind: CropClass => 
+        #(res).(res: Result & res: val & res: CropClassValueCode))
+THEN
+ hasResult:= (hasResult - ({ind}<|hasResult)) \/ { pp | #(yy).(yy: val & pp = ind|->yy) }
+END;
+
+
+set_featureOfInterest(ind, val)=
+PRE ind: Observation &
+    val: FeatureOfInterest &    
+    (ind: CropClass => val: GL_Plot \/ GL_Site)
+THEN
+ hasFeatureOfInterest:= hasFeatureOfInterest \/ {ind|->val}
+END;
+
+
+
+set_observedProperty(ind, val)=
+PRE ind: Observation & 
+    val: ObservableProperty & 
+    (ind: CropClass => val = cropClassProperty)
+THEN
+ observedProperty:= observedProperty \/ {ind|->val}
+END
+
+END

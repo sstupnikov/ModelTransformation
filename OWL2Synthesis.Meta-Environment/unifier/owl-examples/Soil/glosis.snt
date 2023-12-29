@@ -1,0 +1,82 @@
+{ GLoSIS; 
+in: module, ontology;
+
+frame:
+{ cropClassProperty; in: ObservableProperty, observableProperty; },
+{ Barley; in: CropClassValueCode, cropClassValueCode; }, 
+{ Rye; in: CropClassValueCode, cropClassValueCode; };
+
+type:
+
+{ GL_Plot; in: type, owl; supertype: FeatureOfInterest; },
+
+{ GL_Site; in: type, owl; supertype: FeatureOfInterest; },
+
+{ FeatureOfInterest; in: type, owl; },
+
+{ ObservableProperty; in: type, owl; },
+
+{ Result; in: type, owl; },
+
+{ CropClassValueCode; in: type, owl; supertype: Result},
+
+{ Observation; in: type, owl;
+  hasResult: {set; type_of_element: Result}; 
+  metaslot in: HasResult; min_card: 1; end
+  hasFeatureOfInterest: FeatureOfInterest; 
+  metaslot in: HasFeatureOfInterest; min_card: 1; max_card: 1; end
+  observedProperty: ObservableProperty; 
+  metaslot in: ObservedProperty; min_card: 1; max_card: 1; end
+},
+
+{ CropClass; in: type, owl; supertype: Observation;};
+
+
+class_specification:
+
+{ gl_plot; in: class, owl; superclass: featureOfInterest; instance_section: GL_Plot; },
+
+{ gl_site; in: class, owl; superclass: featureOfInterest; instance_section: GL_Site; },
+
+{ featureOfInterest; in: class, owl; instance_section: FeatureOfInterest; },
+
+{ observableProperty; in: class, owl; instance_section: ObservableProperty; },
+
+{ result; in: class, owl; instance_section: Result; },
+
+{ cropClassValueCode; in: class, owl; superclass: result;
+instance_section: CropClassValueCode; 
+},
+
+{ observation; in: class, owl; 
+  instance_section: { in: type, owl; supertype: Observation; 
+	inv_hasResult: {  in: predicate, invariant;
+      {{ all obs/Observation (in(obs, observation) -> obs.hasResult <= result ) }}
+    };
+    inv_hasFeatureOfInterest: {  in: predicate, invariant;
+      {{ all obs/Observation ( in(obs, observation) -> 
+	        in(obs.hasFeatureOfInterest,   featureOfInterest)  ) }}
+    };
+    inv_observedProperty: {  in: predicate, invariant;
+      {{ all obs/Observation ( in(obs, observation) -> 
+	        in(obs.observedProperty, observableProperty)  ) }}
+    };
+  };
+},
+
+{ cropClass; in: class, owl; 
+  instance_section: { in: type, owl; supertype: CropClass; 
+    restriction_hasResult: {  in: predicate, invariant; 
+         {{ all cc/CropClass (in(cc, cropClass) ->
+		       ex res/Result(in(res, cc.hasResult) & in(res, cropClassValueCode)) ) }}
+    };
+    restriction_hasFeatureOfInterest: {  in: predicate, invariant; 
+        {{ all cc/CropClass (in(cc, cropClass) -> 
+		      in(cc.hasFeatureOfInterest, union(gl_plot, gl_site) }}
+    };
+    restriction_observedProperty: {  in: predicate, invariant; 	
+        {{ all cc/CropClass (in(cc, cropClass) -> cc.observedProperty = cropClassProperty }}
+    };
+  };
+};
+}

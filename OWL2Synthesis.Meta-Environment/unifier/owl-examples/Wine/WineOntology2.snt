@@ -1,0 +1,110 @@
+{ WineOntology; in: module, ontology;
+
+type: 
+
+{ Wine; in: type, owl;
+
+hasColor: WineColor;
+  metaslot 
+    in: hasColor;
+    min_card: 1;          
+  end
+hasFlavor: WineFlavor;
+  metaslot 
+    in: hasFlavor;
+    max_card: 1;          
+  end
+hasSugar: WineSugar;
+  metaslot 
+    in: hasSugar;
+    min_card: 1;
+    max_card: 1;          
+  end
+},
+
+{ IceWine; in: type, owl;
+
+},
+
+{ DessertWine; in: type, owl;
+supertype: Wine;
+
+},
+
+{ WineColor; in: type, owl;
+
+
+},
+
+{ WineFlavor; in: type, owl;
+
+
+},
+
+{ WineSugar; in: type, owl;
+
+
+};
+
+class_specification:
+
+{ wine; in: class, owl;
+  instance_section: Wine;
+},
+
+{ iceWine; in: class, owl;
+  instance_section: IceWine;
+},
+
+{ dessertWine; in: class, owl;
+  instance_section: DessertWine;
+},
+
+{ hasColor; in: association, metatype, owl;
+
+
+instance_section: {
+  association_type: {{0, inf},{0, inf}};
+    metaslot
+      in: onProperty;
+    end
+  domain: Wine;
+  range: WineColor;
+}; },
+
+{ hasFlavor; in: association, metatype, owl;
+
+
+instance_section: {
+  association_type: {{0, inf},{0, inf}};
+    metaslot
+      in: onProperty;
+    end
+  domain: Wine;
+  range: WineFlavor;
+}; },
+
+{ hasSugar; in: association, metatype, owl;
+
+
+instance_section: {
+  association_type: {{0, inf},{0, inf}};
+    metaslot
+      in: onProperty;
+    end
+  domain: Wine;
+  range: WineSugar;
+}; },
+
+{ wineColor; in: class, owl;
+  instance_section: WineColor;
+},
+
+{ wineFlavor; in: class, owl;
+  instance_section: WineFlavor;
+},
+
+{ wineSugar; in: class, owl;
+  instance_section: WineSugar;
+};
+}

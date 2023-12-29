@@ -1,0 +1,36 @@
+### Compatible with OWL 2004
+### https://www.w3.org/TR/owl-semantics/syntax.html
+
+Ontology ( GLoSIS
+
+Class( FeatureOfInterest )
+Class( GL_Plot  FeatureOfInterest)
+Class( GL_Site  FeatureOfInterest)
+Class( ObservableProperty )
+Class( Result )
+Class( CropClassValueCode  Result)
+
+Individual( cropClassProperty  type(ObservableProperty) )
+
+Individual( Barley  type(CropClassValueCode) )
+Individual( Rye  type(CropClassValueCode) )
+
+Class( Observation 
+restriction( hasResult  minCardinality(1) )
+restriction( hasFeatureOfInterest cardinality(1) )
+restriction( observedProperty  cardinality(1) )
+)
+
+ObjectProperty( hasResult  domain(Observation)  range(Result) )
+ObjectProperty( hasFeatureOfInterest  domain(Observation)  range(FeatureOfInterest) )
+ObjectProperty( observedProperty  domain(Observation)  range(ObservableProperty) )
+
+Class(CropClass  
+Observation
+restriction( hasResult  someValuesFrom( CropClassValueCode ))
+restriction( hasFeatureOfInterest  allValuesFrom( unionOf(GL_Plot  GL_Site) ) )
+restriction( observedProperty  value(cropClassProperty ) )
+)
+
+)
+
