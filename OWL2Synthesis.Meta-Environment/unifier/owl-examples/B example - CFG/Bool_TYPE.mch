@@ -1,5 +1,0 @@
-MACHINE     Bool_TYPE
-
-SETS        BOOL = {FALSE,TRUE}
-
-END
