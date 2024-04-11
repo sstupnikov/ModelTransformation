@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="ASCII"?>
+<syn:SchemaDef xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:syn="http://synthesis.ipi.ac.ru/Synthesis/" xmlns:syn-bit="http://synthesis.ipi.ac.ru/Synthesis/BuiltInTypes/" xmlns:syn-form="http://synthesis.ipi.ac.ru/Synthesis/Formulae/" xmlns:syn-val="http://synthesis.ipi.ac.ru/Synthesis/Values/" name="LanduseDesign">
+  <modules name="LanduseDesign_structure">
+    <containedClasses name="cultivars" instanceType="//@modules.0/@containedTypes.3"/>
+    <containedTypes xsi:type="syn:ADTDef" name="Entity" subtypes="//@modules.0/@containedTypes.1 //@modules.0/@containedTypes.2 //@modules.0/@containedTypes.3">
+      <attributes name="name" type="//@modules.0/@containedTypes.0/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.0/@containedTypes.0/@attributes.0"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="SoilType" typeOfAttribute="//@modules.0/@containedTypes.4/@attributes.0" supertypes="//@modules.0/@containedTypes.0"/>
+    <containedTypes xsi:type="syn:ADTDef" name="Crop" typeOfAttribute="//@modules.0/@containedTypes.3/@attributes.0" supertypes="//@modules.0/@containedTypes.0"/>
+    <containedTypes xsi:type="syn:ADTDef" name="Cultivar" typeOfAttribute="//@modules.0/@containedTypes.4/@attributes.1" supertypes="//@modules.0/@containedTypes.0">
+      <attributes name="crop" type="//@modules.0/@containedTypes.2"/>
+      <attributes name="soilTypes" type="//@modules.0/@containedTypes.3/@attributes.1/@containedType">
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.0/@containedTypes.3/@attributes.1" ofType="//@modules.0/@containedTypes.1"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Site">
+      <attributes name="soilType" type="//@modules.0/@containedTypes.1"/>
+      <attributes name="grownCultivar" type="//@modules.0/@containedTypes.3"/>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="LanduseDesigner">
+      <attributes name="cropCultivars" type="//@modules.0/@containedTypes.5/@attributes.0/@containedType">
+        <initialValue xsi:type="syn-val:SetValueDef"/>
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.0/@containedTypes.5/@attributes.0" ofType="//@modules.0/@containedTypes.3"/>
+      </attributes>
+      <attributes name="searchCropCultivars" type="//@modules.0/@containedTypes.5/@attributes.1/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.0/@containedTypes.5/@attributes.1">
+          <parameters name="acrop" parameterKind="+" type="//@modules.0/@containedTypes.2"/>
+          <predicativeSpec xsi:type="syn-form:RelationPredicate" symbol="=">
+            <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+              <terms xsi:type="syn-form:Variable" name="this"/>
+              <terms xsi:type="syn-form:Variable" name="cropCultivars"/>
+            </terms>
+            <terms xsi:type="syn-form:CollectionComprehension">
+              <variables name="cc" type="//@modules.0/@containedTypes.3"/>
+              <formula xsi:type="syn-form:Conjunction">
+                <formula xsi:type="syn-form:Atom" symbol="is_in">
+                  <terms xsi:type="syn-form:Variable" name="cultivars"/>
+                  <terms xsi:type="syn-form:Variable" name="cc"/>
+                </formula>
+                <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                  <terms xsi:type="syn-form:NavigationPath">
+                    <terms xsi:type="syn-form:Variable" name="cc"/>
+                    <terms xsi:type="syn-form:Variable" name="crop"/>
+                  </terms>
+                  <terms xsi:type="syn-form:Variable" name="acrop"/>
+                </formula>
+              </formula>
+            </terms>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+      <attributes name="selectCultivar" type="//@modules.0/@containedTypes.5/@attributes.2/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.0/@containedTypes.5/@attributes.2">
+          <parameters name="asite" parameterKind="+" type="//@modules.0/@containedTypes.4"/>
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:Negation">
+              <formula xsi:type="syn-form:Atom" symbol="is_empty">
+                <terms xsi:type="syn-form:NavigationPath">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-form:Variable" name="cropCultivars"/>
+                </terms>
+              </formula>
+            </formula>
+            <formula xsi:type="syn-form:ExistentiallyQuantifiedFormula">
+              <formula xsi:type="syn-form:Conjunction">
+                <formula xsi:type="syn-form:Conjunction">
+                  <formula xsi:type="syn-form:Atom" symbol="is_in">
+                    <terms xsi:type="syn-form:Variable" name="cropCultivars"/>
+                    <terms xsi:type="syn-form:Variable" name="cc"/>
+                  </formula>
+                  <formula xsi:type="syn-form:Atom" symbol="is_in">
+                    <terms xsi:type="syn-form:NavigationPath">
+                      <terms xsi:type="syn-form:Variable" name="cc"/>
+                      <terms xsi:type="syn-form:Variable" name="soilTypes"/>
+                    </terms>
+                    <terms xsi:type="syn-form:NavigationPath">
+                      <terms xsi:type="syn-form:Variable" name="asite"/>
+                      <terms xsi:type="syn-form:Variable" name="soilType"/>
+                    </terms>
+                  </formula>
+                </formula>
+                <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                  <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                    <terms xsi:type="syn-form:Variable" name="asite"/>
+                    <terms xsi:type="syn-form:Variable" name="grownCultivar"/>
+                  </terms>
+                  <terms xsi:type="syn-form:Variable" name="cc"/>
+                </formula>
+              </formula>
+              <variables name="cc" type="//@modules.0/@containedTypes.3"/>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+    </containedTypes>
+  </modules>
+  <modules name="LanduseDesign_components">
+    <containedClasses name="varieties" instanceType="//@modules.1/@containedTypes.2"/>
+    <containedClasses name="varietyParameters" instanceType="//@modules.1/@containedTypes.4"/>
+    <containedTypes xsi:type="syn:ADTDef" name="Soil" typeOfAttribute="//@modules.1/@containedTypes.3/@attributes.0 //@modules.1/@containedTypes.4/@attributes.1">
+      <attributes name="soilName" type="//@modules.1/@containedTypes.0/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.0/@attributes.0"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Agriculture" typeOfAttribute="//@modules.1/@containedTypes.2/@attributes.1">
+      <attributes name="agricultureName" type="//@modules.1/@containedTypes.1/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.1/@attributes.0"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Variety" typeOfAttribute="//@modules.1/@containedTypes.3/@attributes.1 //@modules.1/@containedTypes.4/@attributes.0">
+      <attributes name="varietyName" type="//@modules.1/@containedTypes.2/@attributes.0/@containedType">
+        <containedType xsi:type="syn-bit:StringDef" typeOfAttribute="//@modules.1/@containedTypes.2/@attributes.0"/>
+      </attributes>
+      <attributes name="agriculture" type="//@modules.1/@containedTypes.1"/>
+      <attributes name="soils" type="//@modules.1/@containedTypes.2/@attributes.2/@containedType">
+        <initialValue xsi:type="syn-val:SetValueDef"/>
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.1/@containedTypes.2/@attributes.2" ofType="//@modules.1/@containedTypes.0"/>
+      </attributes>
+      <attributes name="price" type="//@modules.1/@containedTypes.2/@attributes.3/@containedType">
+        <containedType xsi:type="syn-bit:IntegerDef" typeOfAttribute="//@modules.1/@containedTypes.2/@attributes.3"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="Field">
+      <attributes name="fieldSoil" type="//@modules.1/@containedTypes.0"/>
+      <attributes name="cultivatedVariety" type="//@modules.1/@containedTypes.2"/>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="VarietyParameters">
+      <attributes name="variety" type="//@modules.1/@containedTypes.2"/>
+      <attributes name="soil" type="//@modules.1/@containedTypes.0"/>
+      <attributes name="yield" type="//@modules.1/@containedTypes.4/@attributes.2/@containedType">
+        <containedType xsi:type="syn-bit:IntegerDef" typeOfAttribute="//@modules.1/@containedTypes.4/@attributes.2"/>
+      </attributes>
+      <attributes name="cost" type="//@modules.1/@containedTypes.4/@attributes.3/@containedType">
+        <containedType xsi:type="syn-bit:IntegerDef" typeOfAttribute="//@modules.1/@containedTypes.4/@attributes.3"/>
+      </attributes>
+    </containedTypes>
+    <containedTypes xsi:type="syn:ADTDef" name="VarietySelector">
+      <attributes name="gotVarieties" type="//@modules.1/@containedTypes.5/@attributes.0/@containedType">
+        <initialValue xsi:type="syn-val:SetValueDef"/>
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.1/@containedTypes.5/@attributes.0" ofType="//@modules.1/@containedTypes.2"/>
+      </attributes>
+      <attributes name="varietiesAreGot" type="//@modules.1/@containedTypes.5/@attributes.1/@containedType">
+        <initialValue xsi:type="syn-val:BooleanValueDef"/>
+        <containedType xsi:type="syn-bit:BooleanDef" typeOfAttribute="//@modules.1/@containedTypes.5/@attributes.1"/>
+      </attributes>
+      <attributes name="suitableVarieties" type="//@modules.1/@containedTypes.5/@attributes.2/@containedType">
+        <initialValue xsi:type="syn-val:SetValueDef"/>
+        <containedType xsi:type="syn-bit:SetDef" typeOfAttribute="//@modules.1/@containedTypes.5/@attributes.2" ofType="//@modules.1/@containedTypes.2"/>
+      </attributes>
+      <attributes name="getVarieties" type="//@modules.1/@containedTypes.5/@attributes.3/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.5/@attributes.3">
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+              <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                <terms xsi:type="syn-form:Variable" name="this"/>
+                <terms xsi:type="syn-form:Variable" name="gotVarieties"/>
+              </terms>
+              <terms xsi:type="syn-form:Variable" name="varieties"/>
+            </formula>
+            <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+              <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                <terms xsi:type="syn-form:Variable" name="this"/>
+                <terms xsi:type="syn-form:Variable" name="varietiesAreGot"/>
+              </terms>
+              <terms xsi:type="syn-val:BooleanValueDef" value="true"/>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+      <attributes name="selectAgricultureVarieties" type="//@modules.1/@containedTypes.5/@attributes.4/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.5/@attributes.4">
+          <parameters name="anagriculture" parameterKind="+" type="//@modules.1/@containedTypes.1"/>
+          <predicativeSpec xsi:type="syn-form:RelationPredicate" symbol="=">
+            <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+              <terms xsi:type="syn-form:Variable" name="this"/>
+              <terms xsi:type="syn-form:Variable" name="suitableVarieties"/>
+            </terms>
+            <terms xsi:type="syn-form:CollectionComprehension">
+              <variables name="vv" type="//@modules.1/@containedTypes.2"/>
+              <formula xsi:type="syn-form:Conjunction">
+                <formula xsi:type="syn-form:Atom" symbol="is_in">
+                  <terms xsi:type="syn-form:NavigationPath">
+                    <terms xsi:type="syn-form:Variable" name="this"/>
+                    <terms xsi:type="syn-form:Variable" name="gotVarieties"/>
+                  </terms>
+                  <terms xsi:type="syn-form:Variable" name="vv"/>
+                </formula>
+                <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                  <terms xsi:type="syn-form:NavigationPath">
+                    <terms xsi:type="syn-form:Variable" name="vv"/>
+                    <terms xsi:type="syn-form:Variable" name="agriculture"/>
+                  </terms>
+                  <terms xsi:type="syn-form:Variable" name="anagriculture"/>
+                </formula>
+              </formula>
+            </terms>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+      <attributes name="assignVariety" type="//@modules.1/@containedTypes.5/@attributes.5/@containedType">
+        <containedType xsi:type="syn:FunctionDef" typeOfAttribute="//@modules.1/@containedTypes.5/@attributes.5">
+          <parameters name="afield" parameterKind="+" type="//@modules.1/@containedTypes.3"/>
+          <predicativeSpec xsi:type="syn-form:Conjunction">
+            <formula xsi:type="syn-form:Negation">
+              <formula xsi:type="syn-form:Atom" symbol="is_empty">
+                <terms xsi:type="syn-form:NavigationPath">
+                  <terms xsi:type="syn-form:Variable" name="this"/>
+                  <terms xsi:type="syn-form:Variable" name="suitableVarieties"/>
+                </terms>
+              </formula>
+            </formula>
+            <formula xsi:type="syn-form:ExistentiallyQuantifiedFormula">
+              <formula xsi:type="syn-form:Conjunction">
+                <formula xsi:type="syn-form:Conjunction">
+                  <formula xsi:type="syn-form:Conjunction">
+                    <formula xsi:type="syn-form:Conjunction">
+                      <formula xsi:type="syn-form:Conjunction">
+                        <formula xsi:type="syn-form:Atom" symbol="is_in">
+                          <terms xsi:type="syn-form:Variable" name="varietyParameters"/>
+                          <terms xsi:type="syn-form:Variable" name="vp0"/>
+                        </formula>
+                        <formula xsi:type="syn-form:Atom" symbol="is_in">
+                          <terms xsi:type="syn-form:NavigationPath">
+                            <terms xsi:type="syn-form:Variable" name="this"/>
+                            <terms xsi:type="syn-form:Variable" name="suitableVarieties"/>
+                          </terms>
+                          <terms xsi:type="syn-form:NavigationPath">
+                            <terms xsi:type="syn-form:Variable" name="vp0"/>
+                            <terms xsi:type="syn-form:Variable" name="variety"/>
+                          </terms>
+                        </formula>
+                      </formula>
+                      <formula xsi:type="syn-form:Atom" symbol="is_in">
+                        <terms xsi:type="syn-form:NavigationPath">
+                          <terms xsi:type="syn-form:Variable" name="vp0"/>
+                          <terms xsi:type="syn-form:Variable" name="variety"/>
+                          <terms xsi:type="syn-form:Variable" name="soils"/>
+                        </terms>
+                        <terms xsi:type="syn-form:NavigationPath">
+                          <terms xsi:type="syn-form:Variable" name="afield"/>
+                          <terms xsi:type="syn-form:Variable" name="fieldSoil"/>
+                        </terms>
+                      </formula>
+                    </formula>
+                    <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                      <terms xsi:type="syn-form:NavigationPath">
+                        <terms xsi:type="syn-form:Variable" name="vp0"/>
+                        <terms xsi:type="syn-form:Variable" name="soil"/>
+                      </terms>
+                      <terms xsi:type="syn-form:NavigationPath">
+                        <terms xsi:type="syn-form:Variable" name="afield"/>
+                        <terms xsi:type="syn-form:Variable" name="fieldSoil"/>
+                      </terms>
+                    </formula>
+                  </formula>
+                  <formula xsi:type="syn-form:UniversallyQuantifiedFormula">
+                    <formula xsi:type="syn-form:Implication">
+                      <formula xsi:type="syn-form:Conjunction">
+                        <formula xsi:type="syn-form:Conjunction">
+                          <formula xsi:type="syn-form:Conjunction">
+                            <formula xsi:type="syn-form:Atom" symbol="is_in">
+                              <terms xsi:type="syn-form:Variable" name="varietyParameters"/>
+                              <terms xsi:type="syn-form:Variable" name="vp1"/>
+                            </formula>
+                            <formula xsi:type="syn-form:Atom" symbol="is_in">
+                              <terms xsi:type="syn-form:NavigationPath">
+                                <terms xsi:type="syn-form:Variable" name="this"/>
+                                <terms xsi:type="syn-form:Variable" name="suitableVarieties"/>
+                              </terms>
+                              <terms xsi:type="syn-form:NavigationPath">
+                                <terms xsi:type="syn-form:Variable" name="vp1"/>
+                                <terms xsi:type="syn-form:Variable" name="variety"/>
+                              </terms>
+                            </formula>
+                          </formula>
+                          <formula xsi:type="syn-form:Atom" symbol="is_in">
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="vp1"/>
+                              <terms xsi:type="syn-form:Variable" name="variety"/>
+                              <terms xsi:type="syn-form:Variable" name="soils"/>
+                            </terms>
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="afield"/>
+                              <terms xsi:type="syn-form:Variable" name="fieldSoil"/>
+                            </terms>
+                          </formula>
+                        </formula>
+                        <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                          <terms xsi:type="syn-form:NavigationPath">
+                            <terms xsi:type="syn-form:Variable" name="vp1"/>
+                            <terms xsi:type="syn-form:Variable" name="soil"/>
+                          </terms>
+                          <terms xsi:type="syn-form:NavigationPath">
+                            <terms xsi:type="syn-form:Variable" name="afield"/>
+                            <terms xsi:type="syn-form:Variable" name="fieldSoil"/>
+                          </terms>
+                        </formula>
+                      </formula>
+                      <formula xsi:type="syn-form:RelationPredicate" symbol="ge">
+                        <terms xsi:type="syn-form:MultiplicativeOpCall" name="*">
+                          <terms xsi:type="syn-form:BracketValue">
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="vp0"/>
+                              <terms xsi:type="syn-form:Variable" name="yield"/>
+                            </terms>
+                          </terms>
+                          <terms xsi:type="syn-form:BracketValue">
+                            <terms xsi:type="syn-form:AdditiveOpCall" name="-">
+                              <terms xsi:type="syn-form:BracketValue">
+                                <terms xsi:type="syn-form:NavigationPath">
+                                  <terms xsi:type="syn-form:Variable" name="vp0"/>
+                                  <terms xsi:type="syn-form:Variable" name="variety"/>
+                                  <terms xsi:type="syn-form:Variable" name="price"/>
+                                </terms>
+                              </terms>
+                              <terms xsi:type="syn-form:NavigationPath">
+                                <terms xsi:type="syn-form:Variable" name="vp0"/>
+                                <terms xsi:type="syn-form:Variable" name="cost"/>
+                              </terms>
+                            </terms>
+                          </terms>
+                        </terms>
+                        <terms xsi:type="syn-form:MultiplicativeOpCall" name="*">
+                          <terms xsi:type="syn-form:BracketValue">
+                            <terms xsi:type="syn-form:NavigationPath">
+                              <terms xsi:type="syn-form:Variable" name="vp1"/>
+                              <terms xsi:type="syn-form:Variable" name="yield"/>
+                            </terms>
+                          </terms>
+                          <terms xsi:type="syn-form:BracketValue">
+                            <terms xsi:type="syn-form:AdditiveOpCall" name="-">
+                              <terms xsi:type="syn-form:BracketValue">
+                                <terms xsi:type="syn-form:NavigationPath">
+                                  <terms xsi:type="syn-form:Variable" name="vp1"/>
+                                  <terms xsi:type="syn-form:Variable" name="variety"/>
+                                  <terms xsi:type="syn-form:Variable" name="price"/>
+                                </terms>
+                              </terms>
+                              <terms xsi:type="syn-form:NavigationPath">
+                                <terms xsi:type="syn-form:Variable" name="vp1"/>
+                                <terms xsi:type="syn-form:Variable" name="cost"/>
+                              </terms>
+                            </terms>
+                          </terms>
+                        </terms>
+                      </formula>
+                    </formula>
+                    <variables name="vp1" type="//@modules.1/@containedTypes.4"/>
+                  </formula>
+                </formula>
+                <formula xsi:type="syn-form:RelationPredicate" symbol="=">
+                  <terms xsi:type="syn-form:NavigationPath" refersToPoststate="true">
+                    <terms xsi:type="syn-form:Variable" name="afield"/>
+                    <terms xsi:type="syn-form:Variable" name="cultivatedVariety"/>
+                  </terms>
+                  <terms xsi:type="syn-form:Variable" name="v0"/>
+                </formula>
+              </formula>
+              <variables name="vp0" type="//@modules.1/@containedTypes.4"/>
+            </formula>
+          </predicativeSpec>
+        </containedType>
+      </attributes>
+    </containedTypes>
+  </modules>
+</syn:SchemaDef>
