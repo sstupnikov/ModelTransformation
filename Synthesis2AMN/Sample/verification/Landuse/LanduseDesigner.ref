@@ -1,0 +1,74 @@
+/* LanduseDesigner
+ * Author: ssa
+ * Creation date: 4/9/2024
+ */
+
+REFINEMENT LanduseDesigner
+REFINES MLanduseDesigner
+
+SEES
+	LanduseDesign_Context
+	
+
+INCLUDES
+	Cultivar,	
+	Site
+
+VARIABLES
+	cropCultivars
+
+INVARIANT
+	cropCultivars : (ext_LanduseDesigner --> POW(ext_Cultivar))
+
+INITIALISATION
+	ANY acropCultivars WHERE
+		acropCultivars : (ext_LanduseDesigner --> POW(ext_Cultivar))&
+		!(av).((av : ext_LanduseDesigner =>
+			acropCultivars(av) = {}))
+	THEN
+		cropCultivars := acropCultivars
+	END
+
+OPERATIONS
+    
+	getVarieties(av) = 
+	PRE
+		av : ext_VarietySelector
+	THEN
+	    skip 
+	END;
+    
+    
+	searchCropCultivars(av, acrop) = 
+	PRE
+		av : ext_LanduseDesigner &
+		acrop : ext_Crop
+	THEN
+		ANY eff1 WHERE
+			eff1 : POW(ext_Cultivar) & 
+			eff1 = {cc | cc : ext_Cultivar &
+				cc : cultivars &
+				crop(cc) = acrop}
+		THEN
+			cropCultivars(av) := eff1
+		END
+	END;
+
+	selectCultivar(av, asite) = 
+	PRE
+		av : ext_LanduseDesigner &
+		asite : ext_Site
+	THEN
+		ANY eff1 WHERE
+			eff1 : ext_Cultivar &
+			not(cropCultivars(av) = {}) &
+			#(cc).(cc : ext_Cultivar &
+				cc : cropCultivars(av) &
+				soilType(asite) : soilTypes(cc) &
+				eff1 = cc)
+		THEN
+			set_grownCultivar({(asite |-> eff1)})
+		END
+	END
+
+END
