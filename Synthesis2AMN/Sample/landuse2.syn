@@ -1,0 +1,247 @@
+{ LanduseDesign ; in : schema ; 
+} 
+
+{ LanduseDesign_structure; in: module;
+
+type:
+
+{ Entity; in: type;
+  
+  title: string;
+},
+
+{ SoilType; in: type;
+  supertypes: Entity;
+  
+  topsoilThickness: integer;
+  humusContent: integer;
+  hydrolyticAcidity: integer;
+  groundWaterLevel: integer;
+  
+},
+
+{ Crop; in: type;
+  supertypes: Entity;
+  
+  allCropCultivars: {set; type_of_element: Cultivar; };
+},
+
+{ Cultivar; in: type;
+  supertypes: Entity;
+  
+  crop: Crop;
+  soilTypes: {set; type_of_element: SoilType; };
+    
+  usage: string;
+  growingSeasonLengthDays: integer;
+  activeTemperaturesSum: integer;
+},
+
+{ Site; in: type;
+  
+  soilType: SoilType;
+  grownCultivar: Cultivar; 
+  area: integer;
+  cadastralNumber: string;
+},
+
+{ LanduseDesigner; in: type;
+
+  cropCultivars: {set; type_of_element: Cultivar; };
+  metaslot init: {( )}; end
+
+  searchCropCultivars: 
+  { in: function; params: {+acrop/Crop};  
+    { predicative:
+      { 
+        (this.cropCultivars~ = acrop.allCropCultivars )
+      }
+    };   
+  };
+
+  selectCultivar:
+  { in: function; params: {+asite/Site};
+    { predicative:
+      {
+        ^is_empty(this.cropCultivars) &
+        ex cc/Cultivar ( is_in(cropCultivars, cc) & is_in(cc.soilTypes, asite.soilType) & (asite.grownCultivar~ = cc) )
+      }
+    };
+  };
+
+};
+
+class_specification:
+
+{ cultivars; in: class;
+  instance_section: Cultivar;
+},
+
+{ entities; in: class;
+  instance_section: Entity;
+},
+
+{ soilTypes; in: class;
+  instance_section: SoilType;
+},
+
+{ crops; in: class;
+  instance_section: Crop;
+},
+
+{ landuseDesigners; in: class;
+  instance_section: LanduseDesigner;
+},
+
+{ sites; in: class;
+  instance_section: Site;
+}
+
+;
+
+}
+
+{ LanduseDesign_components; in: module;
+
+type:
+
+{ Soil; in: type;
+  soilName: string;
+  
+  plowLayer: integer;
+  humus: integer;
+  acidity: integer;
+  groundWater: integer;
+},
+
+{ Agriculture; in: type;
+  agricultureName: string;
+},
+
+{ Variety; in: type;
+  
+  varietyName: string;
+  agriculture: Agriculture;
+  
+  soils: {set; type_of_element: Soil; };
+  metaslot init: {( )}; end  
+  
+  price: integer;
+  
+  intendedUse: string;
+  vegetativePeriod: integer;
+  activeTemps: integer;  
+
+  frostResistance: string;
+  droughtTolerance: string;
+  waterResistance: string;
+  majorDiseasesResistance: string;
+},
+
+{ Field; in: type;
+  
+  fieldSoil: Soil;
+  cultivatedVariety: Variety;  
+  fieldArea: integer;
+  titleNumber: string;
+  coords: string;      
+},
+
+{ VarietyParameters; in: type;
+
+  variety: Variety;
+  soil: Soil;
+  yield: integer;
+  cost: integer;
+  
+},
+
+{ VarietySelector; in: type;
+  
+  gotVarieties: {set; type_of_element: Variety; };
+  metaslot init: {( )}; end
+
+  varietiesAreGot: Boolean;
+  metaslot init: false; end
+  
+  suitableVarieties: {set; type_of_element: Variety; };
+  metaslot init: {( )}; end
+  
+  getVarieties: 
+  { in: function;   
+    { predicative:
+      { 
+        (this.gotVarieties~ =  varieties) & (this.varietiesAreGot~ = true) 
+      }
+    };   
+  };
+
+  selectAgricultureVarieties: 
+  { in: function; params: {+anagriculture/Agriculture};  
+    { predicative:
+      { 
+        (this.suitableVarieties~ =  { vv/Variety | is_in(this.gotVarieties, vv)  & (vv.agriculture = anagriculture) })
+      }
+    };   
+  };  
+ 
+  assignVariety:
+  { in: function; params: {+afield/Field};
+    { predicative:
+      {
+        ^is_empty(this.suitableVarieties) &
+        ex vp0/VarietyParameters ( 
+          is_in(varietyParameters, vp0) &        
+          is_in(this.suitableVarieties, vp0.variety) &
+          is_in(vp0.variety.soils, afield.fieldSoil) &          
+          (vp0.soil = afield.fieldSoil) &
+           
+          all vp1/VarietyParameters ( 
+            is_in(varietyParameters, vp1) &        
+            is_in(this.suitableVarieties, vp1.variety) &
+            is_in(vp1.variety.soils, afield.fieldSoil) &          
+            (vp1.soil = afield.fieldSoil) ->          
+            ( (vp0.yield)*((vp0.variety.price) - vp0.cost) ge (vp1.yield)*((vp1.variety.price) - vp1.cost) )
+          ) &
+          
+          (afield.cultivatedVariety~ = v0)  
+        )
+      }
+    };
+  };
+  
+}
+
+;
+
+class_specification:
+
+{ varieties; in: class;
+  instance_section: Variety;
+},
+
+{ varietyParameters; in: class;
+  instance_section: VarietyParameters;
+},
+
+{ soils; in: class;
+  instance_section: Soil;
+},
+
+{ agricultures; in: class;
+  instance_section: Agriculture;
+},
+
+{ varietySelectors; in: class;
+  instance_section: VarietySelector;
+},
+
+{ fields; in: class;
+  instance_section: Field;
+}
+
+;
+
+
+
+}
